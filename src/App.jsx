@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import CustomCursor from './components/CustomCursor';
 import WhatsAppFloat from './components/WhatsAppFloat';
+import InstagramFloat from './components/InstagramFloat';
 import './index.css';
 
 // Lazy load all pages
@@ -32,6 +33,7 @@ export default function App() {
     <Router>
       <CustomCursor />
       <WhatsAppFloat />
+      <InstagramFloat />
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/" element={<Home />} />

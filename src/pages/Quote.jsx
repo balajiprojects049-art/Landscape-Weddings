@@ -13,6 +13,7 @@ const PRICES = {
     candid_video: 35000,
     traditional_video: 20000,
     drone: 10000,
+    extra_camera: 10000,
     album_synthetic: 8000,
     album_metallic: 12000,
     album_glossy: 10000,
@@ -53,8 +54,10 @@ function OptionCard({ id, label, icon: Icon, selected, onToggle, price }) {
             )}>{label}</span>
             {price && (
                 <span className={clsx(
-                    'text-xs font-light transition-colors',
-                    selected ? 'text-gold/80' : 'text-white/30'
+                    'text-xs font-semibold tracking-wider transition-all duration-300',
+                    selected
+                        ? 'text-gold opacity-100 translate-y-0'
+                        : 'text-gold/70 opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0'
                 )}>+ ₹{price.toLocaleString('en-IN')}</span>
             )}
         </motion.button>
@@ -87,13 +90,18 @@ function RadioCard({ id, label, subtitle, icon: Icon, selected, onSelect, price 
             )}><Icon size={30} /></div>
             <span className={clsx('font-medium uppercase tracking-wider text-sm text-center', selected ? 'text-gold' : 'text-white/70 group-hover:text-white')}>{label}</span>
             {subtitle && <span className="text-white/30 text-xs text-center">{subtitle}</span>}
-            {price && <span className={clsx('text-xs font-light', selected ? 'text-gold/80' : 'text-white/30')}>₹{price.toLocaleString('en-IN')}</span>}
+            {price && <span className={clsx(
+                'text-xs font-semibold tracking-wider transition-all duration-300',
+                selected
+                    ? 'text-gold opacity-100 translate-y-0'
+                    : 'text-gold/70 opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0'
+            )}>₹{price.toLocaleString('en-IN')}</span>}
         </motion.button>
     );
 }
 
 // ── EVENT STEP (multi-select toggles) ─────────────────────────────────────
-function EventStep({ title, stepKey, selections, onToggle }) {
+function EventStep({ title, stepKey, selections, onToggle, cameraCount, onCameraCount }) {
     const options = [
         { id: 'candid_photo', label: 'Candid Photo', icon: Camera, price: PRICES.candid_photo },
         { id: 'traditional_photo', label: 'Traditional Photo', icon: Image, price: PRICES.traditional_photo },
@@ -103,6 +111,8 @@ function EventStep({ title, stepKey, selections, onToggle }) {
     ];
 
     const eventSel = selections[stepKey] || [];
+    const hasPhoto = eventSel.some(s => s.includes('photo') || s.includes('video'));
+    const cameras = cameraCount[stepKey] || 1;
 
     return (
         <div className="flex flex-col items-center w-full">
@@ -121,6 +131,79 @@ function EventStep({ title, stepKey, selections, onToggle }) {
                     />
                 ))}
             </div>
+            {/* Camera Count Stepper — shows when any service is selected */}
+            <AnimatePresence>
+                {hasPhoto && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 16 }}
+                        transition={{ duration: 0.4 }}
+                        className="mt-8 flex flex-col items-center gap-3"
+                    >
+                        <div className="flex items-center gap-3">
+                            <Camera size={16} className="text-gold/60" />
+                            <span className="text-white/40 text-xs uppercase tracking-widest">Cameras</span>
+                        </div>
+
+                        {/* Stepper */}
+                        <div className="flex items-center gap-0 border border-gold/30 rounded-xl overflow-hidden bg-white/3">
+                            {/* Minus */}
+                            <motion.button
+                                whileTap={{ scale: 0.9 }}
+                                onClick={() => onCameraCount(stepKey, Math.max(1, cameras - 1))}
+                                disabled={cameras <= 1}
+                                className={clsx(
+                                    'w-12 h-12 flex items-center justify-center text-xl font-bold transition-all duration-200',
+                                    cameras <= 1
+                                        ? 'text-white/15 cursor-not-allowed'
+                                        : 'text-gold hover:bg-gold/10 cursor-pointer'
+                                )}
+                            >
+                                −
+                            </motion.button>
+
+                            {/* Count Display */}
+                            <div className="w-16 h-12 flex flex-col items-center justify-center border-x border-gold/20">
+                                <span className="text-gold font-bold text-xl leading-none">{cameras}</span>
+                                <span className="text-white/30 text-[9px] uppercase tracking-wider mt-0.5">
+                                    {cameras === 1 ? 'Camera' : 'Cameras'}
+                                </span>
+                            </div>
+
+                            {/* Plus */}
+                            <motion.button
+                                whileTap={{ scale: 0.9 }}
+                                onClick={() => onCameraCount(stepKey, Math.min(4, cameras + 1))}
+                                disabled={cameras >= 4}
+                                className={clsx(
+                                    'w-12 h-12 flex items-center justify-center text-xl font-bold transition-all duration-200',
+                                    cameras >= 4
+                                        ? 'text-white/15 cursor-not-allowed'
+                                        : 'text-gold hover:bg-gold/10 cursor-pointer'
+                                )}
+                            >
+                                +
+                            </motion.button>
+                        </div>
+
+                        {/* Cost note */}
+                        <AnimatePresence>
+                            {cameras > 1 && (
+                                <motion.p
+                                    initial={{ opacity: 0, y: -4 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -4 }}
+                                    className="text-gold/70 text-xs"
+                                >
+                                    +₹{((cameras - 1) * PRICES.extra_camera).toLocaleString('en-IN')} for extra {cameras - 1} camera{cameras > 2 ? 's' : ''}
+                                </motion.p>
+                            )}
+                        </AnimatePresence>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
         </div>
     );
 }
@@ -128,7 +211,6 @@ function EventStep({ title, stepKey, selections, onToggle }) {
 // ── STEP DEFINITIONS ───────────────────────────────────────────────────────
 const STEPS = [
     'photography',
-    'cinematography',
     'engagement',
     'haldi',
     'mehendi',
@@ -141,7 +223,6 @@ const STEPS = [
 
 const STEP_LABELS = {
     photography: 'Photography Style',
-    cinematography: 'Cinematography',
     engagement: 'Engagement',
     haldi: 'Haldi Ceremony',
     mehendi: 'Mehendi',
@@ -156,19 +237,25 @@ const STEP_LABELS = {
 export default function QuotePage() {
     const [step, setStep] = useState(0);
     const [selections, setSelections] = useState({});
+    const [cameraCount, setCameraCount] = useState({});  // { engagement: 1, haldi: 2, ... }
     const [form, setForm] = useState({ name: '', phone: '', email: '', date: '', location: '' });
     const [submitted, setSubmitted] = useState(false);
 
     const totalSteps = STEPS.length;
     const progress = ((step) / (totalSteps - 1)) * 100;
 
-    // Compute total price
-    const total = Object.values(selections).reduce((acc, val) => {
+    // Compute total price (services + extra cameras)
+    const servicesTotal = Object.values(selections).reduce((acc, val) => {
         if (Array.isArray(val)) {
             return acc + val.reduce((a, k) => a + (PRICES[k] || 0), 0);
         }
         return acc + (PRICES[val] || 0);
     }, 0);
+    const cameraTotal = Object.entries(cameraCount).reduce((acc, [key, cnt]) => {
+        const hasSel = (selections[key] || []).some(s => s.includes('photo') || s.includes('video'));
+        return acc + (hasSel && cnt > 1 ? (cnt - 1) * PRICES.extra_camera : 0);
+    }, 0);
+    const total = servicesTotal + cameraTotal;
 
     const handleToggleMulti = (key, id) => {
         setSelections((prev) => {
@@ -178,6 +265,10 @@ export default function QuotePage() {
                 [key]: current.includes(id) ? current.filter((x) => x !== id) : [...current, id],
             };
         });
+    };
+
+    const handleCameraCount = (key, count) => {
+        setCameraCount((prev) => ({ ...prev, [key]: count }));
     };
 
     const handleSelectSingle = (key, value) => {
@@ -194,7 +285,6 @@ export default function QuotePage() {
 
         // Build human-readable selections
         const photoStyle = selections.photography === 'candid' ? 'Candid Photography (₹25,000)' : selections.photography === 'traditional' ? 'Traditional Photography (₹15,000)' : 'Not selected';
-        const cinemaStyle = selections.cinematography === 'cinematic' ? 'Cinematic Films (₹35,000)' : selections.cinematography === 'traditional_v' ? 'Traditional Videography (₹20,000)' : 'Not selected';
         const albumLabel = { album_synthetic: 'Synthetic (₹8,000)', album_metallic: 'Metallic Finish (₹12,000)', album_glossy: 'Glossy Print (₹10,000)' }[selections.album] || 'Not selected';
 
         const serviceLabel = { candid_photo: 'Candid Photography', traditional_photo: 'Traditional Photography', candid_video: 'Candid Video', traditional_video: 'Traditional Video', drone: 'Drone Coverage (₹10,000)' };
@@ -202,7 +292,10 @@ export default function QuotePage() {
             .map(ev => {
                 const evSel = (selections[ev] || []);
                 if (!evSel.length) return null;
-                return `  • ${STEP_LABELS[ev]}: ${evSel.map(s => serviceLabel[s] || s).join(', ')}`;
+                const camCount = cameraCount[ev] || 1;
+                const extraCost = (camCount - 1) * PRICES.extra_camera;
+                const camNote = camCount > 1 ? ` [${camCount} Cameras +₹${extraCost.toLocaleString('en-IN')}]` : '';
+                return `  • ${STEP_LABELS[ev]}: ${evSel.map(s => serviceLabel[s] || s).join(', ')}${camNote}`;
             })
             .filter(Boolean)
             .join('\n') || '  • None selected';
@@ -217,7 +310,6 @@ export default function QuotePage() {
 📍 *Location:* ${form.location || 'Not specified'}
 
 📸 *Photography:* ${photoStyle}
-🎬 *Cinematography:* ${cinemaStyle}
 
 🎉 *Event Coverage:*
 ${eventLines}
@@ -303,19 +395,6 @@ _Sent from Quote Builder on landscapeweddings.in_`;
                                         </div>
                                     )}
 
-                                    {/* CINEMATOGRAPHY */}
-                                    {currentKey === 'cinematography' && (
-                                        <div className="flex flex-col items-center w-full gap-8">
-                                            <h2 className="font-serif text-3xl md:text-5xl text-white text-center">What Cinematography <span className="italic text-gold font-light">Do You Want?</span></h2>
-                                            <div className="grid grid-cols-2 gap-6 w-full max-w-lg">
-                                                <RadioCard id="cinematic" label="Cinematic Films" icon={Clapperboard} subtitle="Movie-style editing" price={35000}
-                                                    selected={selections.cinematography === 'cinematic'} onSelect={(v) => handleSelectSingle('cinematography', v)} />
-                                                <RadioCard id="traditional_v" label="Traditional Videography" icon={Video} subtitle="Standard coverage" price={20000}
-                                                    selected={selections.cinematography === 'traditional_v'} onSelect={(v) => handleSelectSingle('cinematography', v)} />
-                                            </div>
-                                        </div>
-                                    )}
-
                                     {/* EVENT STEPS */}
                                     {['engagement', 'haldi', 'mehendi', 'sangeeth', 'wedding', 'reception'].includes(currentKey) && (
                                         <EventStep
@@ -323,6 +402,8 @@ _Sent from Quote Builder on landscapeweddings.in_`;
                                             stepKey={currentKey}
                                             selections={selections}
                                             onToggle={handleToggleMulti}
+                                            cameraCount={cameraCount}
+                                            onCameraCount={handleCameraCount}
                                         />
                                     )}
 
