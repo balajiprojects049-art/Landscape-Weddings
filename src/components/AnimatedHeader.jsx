@@ -33,7 +33,7 @@ export default function AnimatedHeader() {
                 animate={{
                     backgroundColor: stickyState ? 'rgba(5,5,5,0.92)' : 'rgba(0,0,0,0)',
                     borderBottomColor: stickyState ? 'rgba(255,215,0,0.15)' : 'rgba(255,215,0,0)',
-                    height: stickyState ? '70px' : '100px',
+                    height: stickyState ? '90px' : '130px',
                 }}
                 style={{ backdropFilter: stickyState ? 'blur(20px)' : 'none', borderBottomWidth: 1, borderBottomStyle: 'solid' }}
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
@@ -49,21 +49,14 @@ export default function AnimatedHeader() {
                         }}
                         transition={{ type: 'spring', stiffness: 80, damping: 18 }}
                     >
-                        <Link to="/" className="flex flex-col items-center group">
-                            <motion.span
-                                className="font-cinzel font-bold tracking-[0.3em] uppercase leading-none"
-                                animate={{ fontSize: stickyState ? '1.1rem' : '1.5rem' }}
-                                style={{
-                                    background: 'linear-gradient(135deg, #B8962E 0%, #FFD700 50%, #B8962E 100%)',
-                                    WebkitBackgroundClip: 'text',
-                                    WebkitTextFillColor: 'transparent',
-                                }}
-                            >
-                                Landscape
-                            </motion.span>
-                            <span className="text-[9px] tracking-[0.5em] font-light uppercase text-gold-light/70 mt-0.5">
-                                Weddings
-                            </span>
+                        <Link to="/" className="flex items-center group">
+                            <motion.img
+                                src="/LOGO.png"
+                                alt="Landscape Weddings"
+                                animate={{ height: stickyState ? '80px' : '120px' }}
+                                transition={{ type: 'spring', stiffness: 80, damping: 18 }}
+                                className="w-auto object-contain drop-shadow-md"
+                            />
                         </Link>
                     </motion.div>
 

@@ -35,11 +35,11 @@ export default function PremiumFooter() {
                     {/* BRAND COL */}
                     <div className="lg:col-span-2">
                         <Link to="/" className="block mb-6">
-                            <h2 className="font-cinzel text-2xl font-bold tracking-[0.3em] uppercase"
-                                style={{ background: 'linear-gradient(135deg,#B8962E,#FFD700,#B8962E)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                                Landscape
-                            </h2>
-                            <span className="text-[9px] text-gold/60 tracking-[0.5em] uppercase">Weddings</span>
+                            <img
+                                src="/LOGO.png"
+                                alt="Landscape Weddings"
+                                className="h-24 w-auto object-contain"
+                            />
                         </Link>
                         <p className="text-white/40 leading-relaxed font-light text-sm max-w-xs mb-8">
                             We are romantic visual artists who translate your love story into a cinematic masterpiece — a timeless heirloom for generations to cherish.
