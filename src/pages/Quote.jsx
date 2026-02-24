@@ -635,18 +635,28 @@ export default function QuotePage() {
                     <p className="text-white/50 uppercase tracking-[0.3em] text-xs">Design your bespoke coverage package</p>
                 </div>
 
-                {/* PRICE BUBBLE */}
+                {/* PRICE BADGE — fixed top-right */}
                 <motion.div
-                    className="fixed top-20 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center"
-                    animate={{ scale: [1, 1.05, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
+                    className="fixed top-[72px] right-4 z-50"
+                    initial={{ opacity: 0, x: 40 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4 }}
                 >
-                    <div className="w-16 h-16 rounded-full bg-gold flex flex-col items-center justify-center shadow-gold-lg cursor-default">
-                        <span className="text-noir text-[8px] font-semibold uppercase tracking-widest leading-none">₹ Total</span>
-                        <span className="text-noir font-bold text-xs leading-tight">
-                            {total > 0 ? (total / 1000).toFixed(0) + 'K' : '0'}
-                        </span>
-                    </div>
+                    <motion.div
+                        animate={{ scale: total > 0 ? [1, 1.06, 1] : 1 }}
+                        transition={{ duration: 1.8, repeat: Infinity }}
+                        className="flex items-center gap-2 bg-gold text-noir pl-3 pr-4 py-2 rounded-full shadow-gold-lg cursor-default"
+                    >
+                        <div className="w-7 h-7 rounded-full bg-noir/15 flex items-center justify-center flex-shrink-0">
+                            <span className="text-noir text-[10px] font-bold">₹</span>
+                        </div>
+                        <div className="flex flex-col leading-none">
+                            <span className="text-[8px] font-semibold uppercase tracking-widest text-noir/60">Total</span>
+                            <span className="text-noir font-bold text-sm">
+                                {total > 0 ? '₹' + (total / 1000).toFixed(0) + 'K' : '₹0'}
+                            </span>
+                        </div>
+                    </motion.div>
                 </motion.div>
 
                 {/* STEP PROGRESS */}
