@@ -371,50 +371,252 @@ export default function QuotePage() {
     };
     const handleBack = () => { if (step > 0) setStep((s) => s - 1); };
 
+    // ── PDF GENERATOR ────────────────────────────────────────────────────────
+    const generateQuotePDF = async () => {
+        const { jsPDF } = await import('jspdf');
+        const autoTable = (await import('jspdf-autotable')).default;
+
+        const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        const gold = [193, 155, 65];
+        const dark = [15, 15, 15];
+        const mid = [80, 80, 80];
+        const light = [200, 200, 200];
+        const W = doc.internal.pageSize.getWidth();
+
+        // ── HEADER BAND ──────────────────────────────────────────────────────
+        doc.setFillColor(...dark);
+        doc.rect(0, 0, W, 42, 'F');
+
+        // Gold accent line
+        doc.setFillColor(...gold);
+        doc.rect(0, 42, W, 1.2, 'F');
+
+        // Studio name
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(22);
+        doc.setTextColor(...gold);
+        doc.text('LANDSCAPE WEDDINGS', W / 2, 16, { align: 'center' });
+
+        // Tagline
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.setTextColor(...light);
+        doc.text('CINEMATIC WEDDING STUDIO', W / 2, 23, { align: 'center' });
+
+        // Contact line
+        doc.setFontSize(7.5);
+        doc.setTextColor(180, 180, 180);
+        doc.text(
+            'Ph: +91 9115994999   |   landscapeweddings.in   |   info@landscapeweddings.in',
+            W / 2, 30, { align: 'center' }
+        );
+        doc.text(
+            'Madhapur, Hyderabad, Telangana - 500081, India',
+            W / 2, 36, { align: 'center' }
+        );
+
+        // ── QUOTE TITLE ──────────────────────────────────────────────────────
+        let y = 52;
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(13);
+        doc.setTextColor(...dark);
+        doc.text('WEDDING QUOTE', 14, y);
+
+        // Quote date (right-aligned)
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.setTextColor(...mid);
+        const today = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
+        doc.text(`Date: ${today}`, W - 14, y, { align: 'right' });
+
+        // Divider
+        y += 4;
+        doc.setDrawColor(...gold);
+        doc.setLineWidth(0.4);
+        doc.line(14, y, W - 14, y);
+
+        // ── COUPLE DETAILS ───────────────────────────────────────────────────
+        y += 8;
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+        doc.setTextColor(...gold);
+        doc.text('COUPLE DETAILS', 14, y);
+
+        y += 5;
+        const details = [
+            ['Bride', form.brideName || '—'],
+            ['Groom', form.groomName || '—'],
+            ['Mobile', `${form.countryCode} ${form.phone}`],
+            ['Email', form.email || '—'],
+            ['Wedding Date', form.date || 'Not specified'],
+            ['Location', form.location || 'Not specified'],
+            ['No. of Events', form.events ? `${form.events} Events` : 'Not specified'],
+        ];
+
+        details.forEach(([label, value]) => {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(8);
+            doc.setTextColor(...mid);
+            doc.text(`${label}:`, 14, y);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(30, 30, 30);
+            doc.text(value, 55, y);
+            y += 6;
+        });
+
+        // ── SERVICE BREAKDOWN ────────────────────────────────────────────────
+        y += 4;
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+        doc.setTextColor(...gold);
+        doc.text('SERVICE BREAKDOWN', 14, y);
+        y += 4;
+
+        const SVC_LABEL = {
+            candid_photo: 'Candid Photography',
+            traditional_photo: 'Traditional Photography',
+            candid_video: 'Candid Video',
+            traditional_video: 'Traditional Video',
+            drone: 'Drone Coverage',
+        };
+
+        const tableRows = [];
+
+        // Photography style
+        if (selections.photography) {
+            const pts = selections.photography === 'candid' ? 25000 : 15000;
+            tableRows.push([
+                'Photography Style',
+                selections.photography === 'candid' ? 'Candid Photography' : 'Traditional Photography',
+                '1',
+                `Rs. ${pts.toLocaleString('en-IN')}`,
+            ]);
+        }
+
+        // Event coverage
+        ['engagement', 'haldi', 'mehendi', 'sangeeth', 'wedding', 'reception'].forEach(ev => {
+            const evSel = selections[ev] || [];
+            if (!evSel.length) return;
+            const camCount = cameraCount[ev] || 1;
+            const extraCamCost = (camCount - 1) * PRICES.extra_camera;
+
+            evSel.forEach(svc => {
+                const price = PRICES[svc] || 0;
+                tableRows.push([
+                    STEP_LABELS[ev],
+                    SVC_LABEL[svc] || svc,
+                    `${camCount} Cam${camCount > 1 ? 's' : ''}`,
+                    `Rs. ${(price).toLocaleString('en-IN')}`,
+                ]);
+            });
+
+            if (camCount > 1) {
+                tableRows.push([
+                    STEP_LABELS[ev],
+                    `Extra Camera (${camCount - 1} additional)`,
+                    '',
+                    `Rs. ${extraCamCost.toLocaleString('en-IN')}`,
+                ]);
+            }
+        });
+
+        // Album
+        if (selections.album) {
+            const albumPrices = { album_synthetic: 8000, album_metallic: 12000, album_glossy: 10000 };
+            const albumNames = { album_synthetic: 'Synthetic Album', album_metallic: 'Metallic Finish Album', album_glossy: 'Glossy Print Album' };
+            tableRows.push([
+                'Album',
+                albumNames[selections.album] || selections.album,
+                '1',
+                `Rs. ${(albumPrices[selections.album] || 0).toLocaleString('en-IN')}`,
+            ]);
+        }
+
+        autoTable(doc, {
+            startY: y,
+            head: [['Event / Category', 'Service', 'Cameras', 'Amount']],
+            body: tableRows,
+            theme: 'grid',
+            headStyles: { fillColor: dark, textColor: gold, fontStyle: 'bold', fontSize: 8 },
+            bodyStyles: { fontSize: 8, textColor: [30, 30, 30] },
+            alternateRowStyles: { fillColor: [248, 246, 240] },
+            columnStyles: {
+                0: { cellWidth: 42 },
+                1: { cellWidth: 75 },
+                2: { cellWidth: 22, halign: 'center' },
+                3: { cellWidth: 35, halign: 'right' },
+            },
+            margin: { left: 14, right: 14 },
+        });
+
+        // ── TOTAL ────────────────────────────────────────────────────────────
+        const finalY = doc.lastAutoTable.finalY + 6;
+        doc.setFillColor(...gold);
+        doc.roundedRect(14, finalY, W - 28, 14, 2, 2, 'F');
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.setTextColor(10, 10, 10);
+        doc.text('ESTIMATED TOTAL', 20, finalY + 9);
+        doc.text(`Rs. ${total.toLocaleString('en-IN')}`, W - 20, finalY + 9, { align: 'right' });
+
+        // ── NOTE ─────────────────────────────────────────────────────────────
+        doc.setFont('helvetica', 'italic');
+        doc.setFontSize(7.5);
+        doc.setTextColor(...mid);
+        doc.text('* Final pricing confirmed after consultation. Taxes may apply.', 14, finalY + 22);
+
+        // ── FOOTER ───────────────────────────────────────────────────────────
+        const pageH = doc.internal.pageSize.getHeight();
+        doc.setFillColor(...dark);
+        doc.rect(0, pageH - 18, W, 18, 'F');
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(7);
+        doc.setTextColor(...light);
+        doc.text('Thank you for choosing Landscape Weddings — We capture your forever moments.', W / 2, pageH - 10, { align: 'center' });
+        doc.text('landscapeweddings.in  |  +91 9115994999', W / 2, pageH - 5, { align: 'center' });
+
+        // Download
+        const fileName = `LandscapeWeddings_Quote_${form.brideName || 'Bride'}_${form.groomName || 'Groom'}.pdf`;
+        doc.save(fileName);
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const coupleNames = `${form.brideName} & ${form.groomName}`;
         const phoneFormatted = `${form.countryCode} ${form.phone}`;
-        const albumLabel = { album_synthetic: 'Synthetic (₹8,000)', album_metallic: 'Metallic Finish (₹12,000)', album_glossy: 'Glossy Print (₹10,000)' }[selections.album] || 'Not selected';
+        const albumLabel = { album_synthetic: 'Synthetic (Rs.8,000)', album_metallic: 'Metallic Finish (Rs.12,000)', album_glossy: 'Glossy Print (Rs.10,000)' }[selections.album] || 'Not selected';
 
-        const serviceLabel = { candid_photo: 'Candid Photography', traditional_photo: 'Traditional Photography', candid_video: 'Candid Video', traditional_video: 'Traditional Video', drone: 'Drone Coverage (₹10,000)' };
+        const serviceLabel = { candid_photo: 'Candid Photography', traditional_photo: 'Traditional Photography', candid_video: 'Candid Video', traditional_video: 'Traditional Video', drone: 'Drone Coverage (Rs.10,000)' };
         const eventLines = ['engagement', 'haldi', 'mehendi', 'sangeeth', 'wedding', 'reception']
             .map(ev => {
                 const evSel = (selections[ev] || []);
                 if (!evSel.length) return null;
                 const camCount = cameraCount[ev] || 1;
                 const extraCost = (camCount - 1) * PRICES.extra_camera;
-                const camNote = camCount > 1 ? ` [${camCount} Cameras +₹${extraCost.toLocaleString('en-IN')}]` : '';
-                return `  • ${STEP_LABELS[ev]}: ${evSel.map(s => serviceLabel[s] || s).join(', ')}${camNote}`;
+                const camNote = camCount > 1 ? ` [${camCount} Cameras +Rs.${extraCost.toLocaleString('en-IN')}]` : '';
+                return `  * ${STEP_LABELS[ev]}: ${evSel.map(s => serviceLabel[s] || s).join(', ')}${camNote}`;
             })
             .filter(Boolean)
-            .join('\n') || '  • None selected';
+            .join('\n') || '  * None selected';
 
         const msg =
-            `💍 *New Quote Request — Landscape Weddings*
-
-� *Bride:* ${form.brideName}
-🤵 *Groom:* ${form.groomName}
-📞 *Phone:* ${phoneFormatted}
-✉️ *Email:* ${form.email}
-📅 *Wedding Date:* ${form.date || 'Not specified'}
-📍 *Location:* ${form.location || 'Not specified'}
-🎉 *No. of Events:* ${form.events || 'Not specified'}
-
-📸 *Photography Style:* ${selections.photography === 'candid' ? 'Candid (₹25,000)' : selections.photography === 'traditional' ? 'Traditional (₹15,000)' : 'Not selected'}
-
-🎉 *Event Coverage:*
-${eventLines}
-
-📓 *Album:* ${albumLabel}
-
-✨ *Estimated Total: ₹${total.toLocaleString('en-IN')}*
-_(Final pricing confirmed after consultation)_
-
-_Sent from Quote Builder on landscapeweddings.in_`;
+            `*New Quote Request - Landscape Weddings*\n\n` +
+            `Bride: ${form.brideName}\n` +
+            `Groom: ${form.groomName}\n` +
+            `Phone: ${phoneFormatted}\n` +
+            `Email: ${form.email}\n` +
+            `Wedding Date: ${form.date || 'Not specified'}\n` +
+            `Location: ${form.location || 'Not specified'}\n` +
+            `No. of Events: ${form.events || 'Not specified'}\n\n` +
+            `Photography: ${selections.photography === 'candid' ? 'Candid (Rs.25,000)' : selections.photography === 'traditional' ? 'Traditional (Rs.15,000)' : 'Not selected'}\n\n` +
+            `Event Coverage:\n${eventLines}\n\n` +
+            `Album: ${albumLabel}\n\n` +
+            `*Estimated Total: Rs.${total.toLocaleString('en-IN')}*\n` +
+            `_(Final pricing confirmed after consultation)_\n\n` +
+            `_Sent from Quote Builder on landscapeweddings.in_`;
 
         sendToWhatsApp(msg);
+        generateQuotePDF();
         setSubmitted(true);
     };
 
@@ -634,11 +836,26 @@ _Sent from Quote Builder on landscapeweddings.in_`;
                                         <CheckCircle2 size={48} className="text-noir" />
                                     </motion.div>
                                     <h2 className="font-serif text-4xl text-white mb-4">Your Vision Is Set!</h2>
-                                    <p className="text-white/60 leading-relaxed font-light mb-6">
-                                        We have received your royal quote request. Our team will review your selections and reach out with a personalized proposal within 24 hours.
+                                    <p className="text-white/60 leading-relaxed font-light mb-2">
+                                        Your quote has been sent to our team on WhatsApp and your PDF has been downloaded automatically.
                                     </p>
-                                    <p className="font-cinzel text-gold text-3xl font-bold mb-2">₹{total.toLocaleString('en-IN')}</p>
-                                    <p className="text-white/30 text-xs uppercase tracking-widest">Estimated Package Value</p>
+                                    <p className="text-white/40 text-sm mb-6">We'll reach out within 24 hours with a personalized proposal.</p>
+                                    <p className="font-cinzel text-gold text-3xl font-bold mb-2">Rs.{total.toLocaleString('en-IN')}</p>
+                                    <p className="text-white/30 text-xs uppercase tracking-widest mb-8">Estimated Package Value</p>
+
+                                    {/* Action Buttons */}
+                                    <div className="flex flex-col gap-3 w-full">
+                                        <motion.button
+                                            whileHover={{ scale: 1.03 }}
+                                            whileTap={{ scale: 0.97 }}
+                                            onClick={generateQuotePDF}
+                                            className="flex items-center justify-center gap-3 w-full py-4 bg-gold text-noir font-bold uppercase tracking-widest text-sm rounded-lg hover:shadow-gold-lg transition-all"
+                                        >
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
+                                            Download PDF Quote
+                                        </motion.button>
+                                    </div>
+
                                     <div className="gold-divider w-24 mt-8 mb-8" />
                                     <a href="/" className="text-gold text-sm uppercase tracking-widest hover:text-white transition-colors">← Back to Home</a>
                                 </motion.div>
