@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import AnimatedHeader from '../components/AnimatedHeader';
 import LuxuryHeroSection from '../components/LuxuryHeroSection';
 import PremiumFooter from '../components/PremiumFooter';
-import { ArrowRight, Quote as QuoteIcon, Star, Heart, Camera, Video, Award } from 'lucide-react';
+import { ArrowRight, Quote as QuoteIcon, Star, Heart, Camera, Video, Award, ChevronLeft, ChevronRight } from 'lucide-react';
 
 // ── Reusable animated reveal ──────────────────────────────────────────────
 function Reveal({ children, delay = 0, className = '' }) {
@@ -124,9 +124,21 @@ const reasons = [
     { title: 'Luxury Delivery', desc: 'Premium hand-crafted albums, offline-ready USB drives, and private online galleries for you and your family.' },
 ];
 
+// ── YOUTUBE VIDEOS DATA ───────────────────────────────────────────────────
+const youtubeVideos = [
+    "https://www.youtube.com/embed/lO6AZZbT6Xw", // 1. Already added
+    "https://www.youtube.com/embed/mwcwPh9d95E",  // 2.
+    "https://www.youtube.com/embed/1DDwp6dUc6Q",  // 3.
+    "https://www.youtube.com/embed/YHLg_rbTaVA",  // 4.
+    "https://www.youtube.com/embed/lLHlvddKeBo",  // 5.
+    "https://www.youtube.com/embed/4AimPeYr1Ac",  // 6.
+];
+
 // ═══════════════════════════════════════════════════════════════════════════
 export default function Home() {
     const [activeTestimonial, setActiveTestimonial] = useState(0);
+    const [videoSlide, setVideoSlide] = useState(0);
+    const totalVideoSlides = Math.ceil(youtubeVideos.length / 2);
 
     // Auto-rotate testimonials
     useEffect(() => {
@@ -144,7 +156,7 @@ export default function Home() {
             <LuxuryHeroSection />
 
             {/* ── BRAND STATEMENT ───────────────────────────────── */}
-            <section className="relative py-28 md:py-36 overflow-hidden">
+            <section className="relative pt-10 pb-4 md:pt-16 md:pb-8 overflow-hidden">
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <div className="w-[60vw] h-[40vh] rounded-full bg-gold/5 blur-[150px]" />
                 </div>
@@ -165,7 +177,7 @@ export default function Home() {
             </section>
 
             {/* ── SERVICES ──────────────────────────────────────── */}
-            <section className="py-24 md:py-32 px-6 md:px-12 lg:px-24 max-w-[1600px] mx-auto">
+            <section className="pt-10 pb-24 md:pt-12 md:pb-32 px-6 md:px-12 lg:px-24 max-w-[1600px] mx-auto">
                 <SectionHeading
                     eyebrow="What We Offer"
                     title="Our"
@@ -228,7 +240,7 @@ export default function Home() {
             </section>
 
             {/* ── GALLERY GRID ──────────────────────────────────── */}
-            <section className="py-24 md:py-32 px-4 md:px-8 lg:px-16 max-w-[1600px] mx-auto">
+            <section className="pt-24 pb-10 md:pt-32 md:pb-12 px-4 md:px-8 lg:px-16 max-w-[1600px] mx-auto">
                 <SectionHeading
                     eyebrow="Our Portfolio"
                     title="Cinematic"
@@ -261,7 +273,7 @@ export default function Home() {
             </section>
 
             {/* ── WHY US ────────────────────────────────────────── */}
-            <section className="py-24 md:py-32 px-6 md:px-12 lg:px-24 max-w-[1600px] mx-auto">
+            <section className="pt-10 pb-10 md:pt-12 md:pb-16 px-6 md:px-12 lg:px-24 max-w-[1600px] mx-auto">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     <Reveal className="relative">
                         <div
@@ -320,7 +332,7 @@ export default function Home() {
             </section>
 
             {/* ── TESTIMONIALS ─────────────────────────────────── */}
-            <section className="py-24 md:py-32 relative overflow-hidden bg-noir-100">
+            <section className="pt-12 pb-10 md:pt-16 md:pb-16 relative overflow-hidden bg-noir-100">
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <div className="w-[70vw] h-[50vh] rounded-full bg-gold/4 blur-[200px]" />
                 </div>
@@ -361,44 +373,73 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* ── BUILD QUOTE CTA BLOCK ─────────────────────────── */}
-            <section className="relative py-32 md:py-40 overflow-hidden">
-                <div
-                    className="absolute inset-0 bg-cover bg-center brightness-30"
-                    style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1606216794074-735e91aa2c92?q=80&w=2000&auto=format&fit=crop)' }}
+            {/* ── YOUTUBE VIDEOS BLOCK ─────────────────────────── */}
+            <section className="pt-10 pb-24 md:pt-12 md:pb-32 px-6 md:px-12 lg:px-24 max-w-[1600px] mx-auto text-center">
+                <SectionHeading
+                    eyebrow="Cinematic Films"
+                    title="Watch Our"
+                    highlight="Masterpieces"
+                    subtitle="Immerse yourself in the magic and emotion of our cinematic wedding videos."
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-noir via-noir/80 to-noir/50" />
-                <div className="relative z-10 max-w-[1600px] mx-auto px-8 md:px-16">
-                    <div className="max-w-3xl">
-                        <Reveal>
-                            <span className="text-gold text-xs uppercase tracking-[0.4em] font-medium block mb-6 flex items-center gap-3">
-                                <span className="h-px w-8 bg-gold opacity-60" /> Ready to Begin?
-                            </span>
-                        </Reveal>
-                        <Reveal delay={0.1}>
-                            <h2 className="font-serif text-5xl md:text-6xl lg:text-7xl text-white leading-tight mb-8">
-                                Design Your<br /><span className="text-gold italic font-light">Royal Wedding</span>
-                            </h2>
-                        </Reveal>
-                        <Reveal delay={0.2}>
-                            <p className="text-white/60 text-lg font-light leading-relaxed mb-12 max-w-xl">
-                                Use our interactive quote builder to craft a completely bespoke package — tailored precisely to every event, style, and vision you have.
-                            </p>
-                        </Reveal>
-                        <Reveal delay={0.3}>
-                            <div className="flex flex-col sm:flex-row gap-4">
-                                <Link to="/quote">
-                                    <button className="group flex items-center gap-3 px-10 py-5 bg-gold text-noir font-bold text-sm uppercase tracking-widest rounded-sm hover:shadow-gold-lg transition-all duration-300 hover:scale-105">
-                                        Build My Quote <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                                    </button>
-                                </Link>
-                                <Link to="/contact">
-                                    <button className="px-10 py-5 border border-white/20 hover:border-gold/50 text-white/70 hover:text-white text-sm uppercase tracking-widest transition-all duration-300 rounded-sm">
-                                        Contact Studio
-                                    </button>
-                                </Link>
-                            </div>
-                        </Reveal>
+
+                <div className="relative mt-8 group/slider">
+                    {/* Left Arrow */}
+                    <button
+                        onClick={() => setVideoSlide(prev => (prev - 1 + totalVideoSlides) % totalVideoSlides)}
+                        className="absolute left-0 top-1/2 -translate-y-1/2 -ml-6 z-10 w-12 h-12 rounded-full bg-noir border border-gold/30 flex items-center justify-center text-gold hover:bg-gold hover:text-noir transition-all duration-300"
+                    >
+                        <ChevronLeft size={22} />
+                    </button>
+
+                    <div className="overflow-hidden mx-8">
+                        <motion.div
+                            className="flex"
+                            animate={{ x: `-${videoSlide * (100 / totalVideoSlides)}%` }}
+                            transition={{ ease: "easeInOut", duration: 0.6 }}
+                            style={{ width: `${totalVideoSlides * 100}%` }}
+                        >
+                            {Array.from({ length: totalVideoSlides }).map((_, slideIndex) => (
+                                <div
+                                    key={slideIndex}
+                                    className="flex justify-center gap-8 md:gap-12 px-2"
+                                    style={{ width: `${100 / totalVideoSlides}%` }}
+                                >
+                                    {youtubeVideos.slice(slideIndex * 2, slideIndex * 2 + 2).map((src, i) => (
+                                        <div key={i} className="flex-1 min-w-0">
+                                            <div className="aspect-video w-full rounded-xl overflow-hidden">
+                                                <iframe
+                                                    className="w-full h-full"
+                                                    src={src}
+                                                    title="YouTube video player"
+                                                    frameBorder="0"
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                                    allowFullScreen
+                                                ></iframe>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ))}
+                        </motion.div>
+                    </div>
+
+                    {/* Right Arrow */}
+                    <button
+                        onClick={() => setVideoSlide(prev => (prev + 1) % totalVideoSlides)}
+                        className="absolute right-0 top-1/2 -translate-y-1/2 -mr-6 z-10 w-12 h-12 rounded-full bg-noir border border-gold/30 flex items-center justify-center text-gold hover:bg-gold hover:text-noir transition-all duration-300"
+                    >
+                        <ChevronRight size={22} />
+                    </button>
+
+                    {/* Dots Indicator */}
+                    <div className="flex justify-center gap-3 mt-8">
+                        {Array.from({ length: totalVideoSlides }).map((_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => setVideoSlide(i)}
+                                className={`h-px transition-all duration-500 ${i === videoSlide ? 'w-12 bg-gold' : 'w-4 bg-white/20'}`}
+                            />
+                        ))}
                     </div>
                 </div>
             </section>
