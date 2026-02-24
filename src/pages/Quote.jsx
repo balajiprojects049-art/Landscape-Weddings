@@ -1,10 +1,97 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Camera, Video, Clapperboard, Image, CheckCircle2, ArrowLeft, ArrowRight, Heart, Star, MapPin, User, Phone, Mail, CalendarDays, Check } from 'lucide-react';
+import { Camera, Video, Clapperboard, Image, CheckCircle2, ArrowLeft, ArrowRight, Heart, Star, MapPin, User, Phone, Mail, CalendarDays, Check, ChevronDown } from 'lucide-react';
 import clsx from 'clsx';
 import AnimatedHeader from '../components/AnimatedHeader';
 import PremiumFooter from '../components/PremiumFooter';
 import { sendToWhatsApp } from '../components/WhatsAppFloat';
+
+// ── COUNTRY LIST ────────────────────────────────────────────────────────────
+const COUNTRIES = [
+    { code: '+91', flag: '🇮🇳', name: 'India' },
+    { code: '+1', flag: '🇺🇸', name: 'USA' },
+    { code: '+44', flag: '🇬🇧', name: 'UK' },
+    { code: '+61', flag: '🇦🇺', name: 'Australia' },
+    { code: '+971', flag: '🇦🇪', name: 'UAE' },
+    { code: '+966', flag: '🇸🇦', name: 'Saudi Arabia' },
+    { code: '+65', flag: '🇸🇬', name: 'Singapore' },
+    { code: '+60', flag: '🇲🇾', name: 'Malaysia' },
+    { code: '+1CA', flag: '🇨🇦', name: 'Canada' },
+    { code: '+49', flag: '🇩🇪', name: 'Germany' },
+    { code: '+33', flag: '🇫🇷', name: 'France' },
+    { code: '+81', flag: '🇯🇵', name: 'Japan' },
+    { code: '+82', flag: '🇰🇷', name: 'South Korea' },
+    { code: '+55', flag: '🇧🇷', name: 'Brazil' },
+    { code: '+27', flag: '🇿🇦', name: 'South Africa' },
+    { code: '+64', flag: '🇳🇿', name: 'New Zealand' },
+    { code: '+94', flag: '🇱🇰', name: 'Sri Lanka' },
+    { code: '+880', flag: '🇧🇩', name: 'Bangladesh' },
+    { code: '+977', flag: '🇳🇵', name: 'Nepal' },
+    { code: '+92', flag: '🇵🇰', name: 'Pakistan' },
+];
+
+// ── CUSTOM COUNTRY PICKER ───────────────────────────────────────────────────
+function CountryPicker({ value, onChange }) {
+    const [open, setOpen] = useState(false);
+    const ref = useRef(null);
+    const selected = COUNTRIES.find(c => c.code === value) || COUNTRIES[0];
+
+    // Close on outside click
+    useEffect(() => {
+        const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+        document.addEventListener('mousedown', handler);
+        return () => document.removeEventListener('mousedown', handler);
+    }, []);
+
+    return (
+        <div ref={ref} className="relative flex-shrink-0">
+            {/* Trigger button */}
+            <button
+                type="button"
+                onClick={() => setOpen(o => !o)}
+                className="flex items-center gap-2 h-full px-3 py-4 bg-white/5 border border-white/15 rounded-lg text-white text-sm hover:border-gold/50 focus:outline-none focus:border-gold/50 transition-all whitespace-nowrap min-w-[130px]"
+            >
+                <span className="text-lg leading-none">{selected.flag}</span>
+                <span className="text-white/80 font-medium">{selected.code}</span>
+                <ChevronDown size={14} className={clsx('text-gold/50 ml-auto transition-transform duration-200', open && 'rotate-180')} />
+            </button>
+
+            {/* Dropdown list */}
+            <AnimatePresence>
+                {open && (
+                    <motion.ul
+                        initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                        transition={{ duration: 0.18 }}
+                        className="absolute top-full left-0 mt-1 z-50 w-56 max-h-64 overflow-y-auto rounded-xl border border-gold/20 bg-[#111] shadow-2xl"
+                        style={{ backdropFilter: 'blur(12px)' }}
+                    >
+                        {COUNTRIES.map(c => (
+                            <li key={c.code}>
+                                <button
+                                    type="button"
+                                    onClick={() => { onChange(c.code); setOpen(false); }}
+                                    className={clsx(
+                                        'w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors',
+                                        c.code === value
+                                            ? 'bg-gold/15 text-gold'
+                                            : 'text-white/70 hover:bg-white/8 hover:text-white'
+                                    )}
+                                >
+                                    <span className="text-lg leading-none">{c.flag}</span>
+                                    <span className="flex-1 text-left">{c.name}</span>
+                                    <span className="text-white/40 text-xs font-mono">{c.code}</span>
+                                </button>
+                            </li>
+                        ))}
+                    </motion.ul>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}
+
 
 // ── PRICE MAP ──────────────────────────────────────────────────────────────
 const PRICES = {
@@ -238,7 +325,11 @@ export default function QuotePage() {
     const [step, setStep] = useState(0);
     const [selections, setSelections] = useState({});
     const [cameraCount, setCameraCount] = useState({});  // { engagement: 1, haldi: 2, ... }
-    const [form, setForm] = useState({ name: '', phone: '', email: '', date: '', location: '' });
+    const [form, setForm] = useState({
+        brideName: '', groomName: '',
+        countryCode: '+91', phone: '',
+        email: '', events: '', date: '', location: '',
+    });
     const [submitted, setSubmitted] = useState(false);
 
     const totalSteps = STEPS.length;
@@ -283,8 +374,8 @@ export default function QuotePage() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Build human-readable selections
-        const photoStyle = selections.photography === 'candid' ? 'Candid Photography (₹25,000)' : selections.photography === 'traditional' ? 'Traditional Photography (₹15,000)' : 'Not selected';
+        const coupleNames = `${form.brideName} & ${form.groomName}`;
+        const phoneFormatted = `${form.countryCode} ${form.phone}`;
         const albumLabel = { album_synthetic: 'Synthetic (₹8,000)', album_metallic: 'Metallic Finish (₹12,000)', album_glossy: 'Glossy Print (₹10,000)' }[selections.album] || 'Not selected';
 
         const serviceLabel = { candid_photo: 'Candid Photography', traditional_photo: 'Traditional Photography', candid_video: 'Candid Video', traditional_video: 'Traditional Video', drone: 'Drone Coverage (₹10,000)' };
@@ -303,13 +394,15 @@ export default function QuotePage() {
         const msg =
             `💍 *New Quote Request — Landscape Weddings*
 
-👤 *Name:* ${form.name}
-📞 *Phone:* ${form.phone}
+� *Bride:* ${form.brideName}
+🤵 *Groom:* ${form.groomName}
+📞 *Phone:* ${phoneFormatted}
 ✉️ *Email:* ${form.email}
 📅 *Wedding Date:* ${form.date || 'Not specified'}
 📍 *Location:* ${form.location || 'Not specified'}
+🎉 *No. of Events:* ${form.events || 'Not specified'}
 
-📸 *Photography:* ${photoStyle}
+📸 *Photography Style:* ${selections.photography === 'candid' ? 'Candid (₹25,000)' : selections.photography === 'traditional' ? 'Traditional (₹15,000)' : 'Not selected'}
 
 🎉 *Event Coverage:*
 ${eventLines}
@@ -429,53 +522,97 @@ _Sent from Quote Builder on landscapeweddings.in_`;
                                             <h2 className="font-serif text-3xl md:text-5xl text-white text-center">
                                                 Your <span className="italic text-gold font-light">Details</span>
                                             </h2>
-                                            {/* Summary */}
+
+                                            {/* Estimated Total Summary */}
                                             <div className="glass border border-gold/15 rounded-xl p-6 w-full text-sm">
                                                 <p className="text-gold uppercase tracking-widest text-xs mb-4 font-medium">Estimated Total</p>
                                                 <p className="font-cinzel text-4xl text-gold font-bold">₹{total.toLocaleString('en-IN')}</p>
                                                 <p className="text-white/40 text-xs mt-1">Final pricing confirmed after consultation</p>
                                             </div>
-                                            <form onSubmit={handleSubmit} className="w-full flex flex-col gap-5">
+
+                                            <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
+                                                {/* Row 1: Bride & Groom */}
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                    {[
-                                                        { key: 'name', placeholder: 'Your Name', icon: User, type: 'text' },
-                                                        { key: 'phone', placeholder: 'Phone Number', icon: Phone, type: 'tel' },
-                                                        { key: 'email', placeholder: 'Email Address', icon: Mail, type: 'email' },
-                                                        { key: 'date', placeholder: 'Wedding Date', icon: CalendarDays, type: 'date' },
-                                                    ].map((f) => {
-                                                        const Icon = f.icon;
-                                                        return (
-                                                            <div key={f.key} className="relative">
-                                                                <Icon size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/40" />
-                                                                <input
-                                                                    required
-                                                                    type={f.type}
-                                                                    placeholder={f.placeholder}
-                                                                    value={form[f.key]}
-                                                                    onChange={(e) => setForm((p) => ({ ...p, [f.key]: e.target.value }))}
-                                                                    className="w-full bg-white/5 border border-white/15 rounded-lg pl-11 pr-4 py-4 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-gold/50 transition-all"
-                                                                />
-                                                            </div>
-                                                        );
-                                                    })}
+                                                    <div className="relative">
+                                                        <Heart size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/40" />
+                                                        <input required type="text" placeholder="Bride's Name"
+                                                            value={form.brideName}
+                                                            onChange={e => setForm(p => ({ ...p, brideName: e.target.value }))}
+                                                            className="w-full bg-white/5 border border-white/15 rounded-lg pl-11 pr-4 py-4 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-gold/50 transition-all" />
+                                                    </div>
+                                                    <div className="relative">
+                                                        <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/40" />
+                                                        <input required type="text" placeholder="Groom's Name"
+                                                            value={form.groomName}
+                                                            onChange={e => setForm(p => ({ ...p, groomName: e.target.value }))}
+                                                            className="w-full bg-white/5 border border-white/15 rounded-lg pl-11 pr-4 py-4 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-gold/50 transition-all" />
+                                                    </div>
                                                 </div>
-                                                <div className="relative">
-                                                    <MapPin size={16} className="absolute left-4 top-4 text-gold/40" />
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Event Location (City / Venue)"
-                                                        value={form.location}
-                                                        onChange={(e) => setForm((p) => ({ ...p, location: e.target.value }))}
-                                                        className="w-full bg-white/5 border border-white/15 rounded-lg pl-11 pr-4 py-4 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-gold/50 transition-all"
+
+                                                {/* Row 2: Phone with country code */}
+                                                <div className="flex gap-2">
+                                                    <CountryPicker
+                                                        value={form.countryCode}
+                                                        onChange={code => setForm(p => ({ ...p, countryCode: code }))}
                                                     />
+                                                    <div className="relative flex-1">
+                                                        <Phone size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/40" />
+                                                        <input required type="tel" placeholder="Mobile Number"
+                                                            value={form.phone}
+                                                            onChange={e => setForm(p => ({ ...p, phone: e.target.value }))}
+                                                            className="w-full bg-white/5 border border-white/15 rounded-lg pl-11 pr-4 py-4 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-gold/50 transition-all" />
+                                                    </div>
                                                 </div>
+
+                                                {/* Row 3: Email */}
+                                                <div className="relative">
+                                                    <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/40" />
+                                                    <input required type="email" placeholder="Email Address"
+                                                        value={form.email}
+                                                        onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
+                                                        className="w-full bg-white/5 border border-white/15 rounded-lg pl-11 pr-4 py-4 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-gold/50 transition-all" />
+                                                </div>
+
+                                                {/* Row 4: No. of Events & Wedding Date */}
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <div className="relative">
+                                                        <Star size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/40" />
+                                                        <select
+                                                            value={form.events}
+                                                            onChange={e => setForm(p => ({ ...p, events: e.target.value }))}
+                                                            className="w-full bg-white/5 border border-white/15 rounded-lg pl-11 pr-4 py-4 text-white text-sm focus:outline-none focus:border-gold/50 transition-all appearance-none"
+                                                        >
+                                                            <option value="" disabled className="bg-noir">No. of Events</option>
+                                                            {[1, 2, 3, 4, 5, 6, 7, '8+'].map(n => (
+                                                                <option key={n} value={n} className="bg-noir">{n} Event{n !== 1 ? 's' : ''}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                    <div className="relative">
+                                                        <CalendarDays size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/40" />
+                                                        <input required type="date" placeholder="Wedding Date"
+                                                            value={form.date}
+                                                            onChange={e => setForm(p => ({ ...p, date: e.target.value }))}
+                                                            className="w-full bg-white/5 border border-white/15 rounded-lg pl-11 pr-4 py-4 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-gold/50 transition-all [color-scheme:dark]" />
+                                                    </div>
+                                                </div>
+
+                                                {/* Row 5: Location */}
+                                                <div className="relative">
+                                                    <MapPin size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/40" />
+                                                    <input type="text" placeholder="Wedding Location (City / Venue)"
+                                                        value={form.location}
+                                                        onChange={e => setForm(p => ({ ...p, location: e.target.value }))}
+                                                        className="w-full bg-white/5 border border-white/15 rounded-lg pl-11 pr-4 py-4 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-gold/50 transition-all" />
+                                                </div>
+
                                                 <motion.button
                                                     type="submit"
                                                     whileHover={{ scale: 1.02 }}
                                                     whileTap={{ scale: 0.97 }}
-                                                    className="w-full py-5 bg-gold text-noir font-bold uppercase tracking-[0.2em] text-sm rounded-lg hover:shadow-gold-lg transition-all duration-300 mt-4"
+                                                    className="w-full py-5 bg-gold text-noir font-bold uppercase tracking-[0.2em] text-sm rounded-lg hover:shadow-gold-lg transition-all duration-300 mt-2"
                                                 >
-                                                    ✦ Submit My Quote Request
+                                                    ❖ Submit My Quote Request
                                                 </motion.button>
                                             </form>
                                         </div>
