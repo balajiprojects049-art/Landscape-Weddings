@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import CustomCursor from './components/CustomCursor';
 import WhatsAppFloat from './components/WhatsAppFloat';
 import InstagramFloat from './components/InstagramFloat';
+import ScrollToTop from './components/ScrollToTop';
 import './index.css';
 
 // Lazy load all pages
@@ -31,6 +32,7 @@ function PageLoader() {
 export default function App() {
   return (
     <Router>
+      <ScrollToTop />
       <CustomCursor />
       <WhatsAppFloat />
       <InstagramFloat />
