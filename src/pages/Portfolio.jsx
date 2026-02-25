@@ -26,16 +26,16 @@ const stories = [
         date: 'December 2024',
         venue: 'ITC Kohenur, Hyderabad',
         type: 'Full Wedding Coverage',
-        cover: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1200&auto=format&fit=crop',
-        cover2: 'https://images.unsplash.com/photo-1606216794074-735e91aa2c92?q=80&w=800&auto=format&fit=crop',
+        cover: '/IMG_0176.JPG.jpeg',
+        cover2: '/IMG_0177.JPG.jpeg',
         story: 'A grand celebration of love that unfolded over three magnificent days. Priya and Arjun\'s wedding was nothing short of a royal saga — draped in ivory and gold, set against the backdrop of one of Hyderabad\'s most iconic properties.',
         images: [
-            'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1200&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1606216794074-735e91aa2c92?q=80&w=1200&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1544928147-79a2dbc1f389?q=80&w=1200&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=1200&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1200&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1532712938730-4e36c56b1bf1?q=80&w=1200&auto=format&fit=crop',
+            '/IMG_0176.JPG.jpeg',
+            '/IMG_0177.JPG.jpeg',
+            '/IMG_0182.JPG.jpeg',
+            '/IMG_0211.JPG.jpeg',
+            '/IMG_0437.JPG.jpeg',
+            '/IMG_0438.JPG.jpeg',
         ],
         services: ['Candid Photography', 'Cinematic Film', 'Drone Coverage', 'Premium Album'],
         featured: true,
@@ -47,14 +47,14 @@ const stories = [
         date: 'January 2025',
         venue: 'Leela Palace, Goa',
         type: 'Destination Wedding',
-        cover: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=1200&auto=format&fit=crop',
-        cover2: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?q=80&w=800&auto=format&fit=crop',
+        cover: '/IMG_0440.JPG.jpeg',
+        cover2: '/IMG_0441.JPG.jpeg',
         story: 'Barefoot on the beach at sunset, surrounded by their closest loved ones — Sneha and Karan\'s Goa wedding was the definition of cinematic romance. Every frame was bathed in golden light.',
         images: [
-            'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=1200&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?q=80&w=1200&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=1200&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1529636798458-92182e662485?q=80&w=1200&auto=format&fit=crop',
+            '/IMG_0440.JPG.jpeg',
+            '/IMG_0441.JPG.jpeg',
+            '/IMG_0442.JPG.jpeg',
+            '/IMG_0443.JPG.jpeg',
         ],
         services: ['Candid Photography', 'Cinematic Film', 'Pre-Wedding Shoot'],
         featured: false,
@@ -66,14 +66,14 @@ const stories = [
         date: 'November 2024',
         venue: 'Rambagh Palace, Jaipur',
         type: 'Palace Wedding',
-        cover: 'https://images.unsplash.com/photo-1607190074257-dd4b7af0309f?q=80&w=1200&auto=format&fit=crop',
-        cover2: 'https://images.unsplash.com/photo-1550005809-91ad75fb315f?q=80&w=800&auto=format&fit=crop',
+        cover: '/IMG_0445.JPG.jpeg',
+        cover2: '/IMG_0446.JPG.jpeg',
         story: 'The pink city gave them the perfect canvas. Divya and Rahul chose an intimate 100-guest affair, grand in elegance but intimate in emotion. The palace halls echoed with laughter, music and pure joy.',
         images: [
-            'https://images.unsplash.com/photo-1607190074257-dd4b7af0309f?q=80&w=1200&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1550005809-91ad75fb315f?q=80&w=1200&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1537633552985-df8429e8048b?q=80&w=1200&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?q=80&w=1200&auto=format&fit=crop',
+            '/IMG_0445.JPG.jpeg',
+            '/IMG_0446.JPG.jpeg',
+            '/IMG_0447.JPG.jpeg',
+            '/IMG_0448.JPG.jpeg',
         ],
         services: ['Candid Photography', 'Traditional Videography', 'Premium Album'],
         featured: false,
@@ -85,13 +85,13 @@ const stories = [
         date: 'February 2025',
         venue: 'The Oberoi Bangalore',
         type: 'Contemporary Wedding',
-        cover: 'https://images.unsplash.com/photo-1532712938730-4e36c56b1bf1?q=80&w=1200&auto=format&fit=crop',
-        cover2: 'https://images.unsplash.com/photo-1446768500601-ac47e5ec3719?q=80&w=800&auto=format&fit=crop',
+        cover: '/IMG_0451.JPG.jpeg',
+        cover2: '/IMG_0453.JPG.jpeg',
         story: 'Clean lines, ivory florals, no-fuss elegance. Ananya and Vikram wanted a wedding that felt like them — modern, refined, deeply personal. We captured every quiet glance and stolen smile.',
         images: [
-            'https://images.unsplash.com/photo-1532712938730-4e36c56b1bf1?q=80&w=1200&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1446768500601-ac47e5ec3719?q=80&w=1200&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1504196606672-aef5c9cefc92?q=80&w=1200&auto=format&fit=crop',
+            '/IMG_0451.JPG.jpeg',
+            '/IMG_0453.JPG.jpeg',
+            '/IMG_0455.JPG.jpeg',
         ],
         services: ['Candid Photography', 'Cinematic Film', 'Drone Coverage'],
         featured: false,
@@ -103,14 +103,14 @@ const stories = [
         date: 'March 2025',
         venue: 'Sri Satya Sai Nigamagamam, Hyderabad',
         type: 'Traditional Wedding',
-        cover: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1200&auto=format&fit=crop',
-        cover2: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?q=80&w=800&auto=format&fit=crop',
+        cover: '/IMG_0788.JPG.jpeg',
+        cover2: '/IMG_0792.JPG.jpeg',
         story: 'Every ritual, every sacred moment, every tear of joy — documented with reverence and artistry. Meera and Siddharth\'s traditional Telugu wedding was a masterclass in culture, colour and emotion.',
         images: [
-            'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1200&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?q=80&w=1200&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1528360983277-13d401cdc186?q=80&w=1200&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?q=80&w=1200&auto=format&fit=crop',
+            '/IMG_0788.JPG.jpeg',
+            '/IMG_0792.JPG.jpeg',
+            '/IMG_0853.JPG.jpeg',
+            '/IMG_0876.JPG.jpeg',
         ],
         services: ['Candid Photography', 'Traditional Videography', 'Drone Coverage', 'Album'],
         featured: false,
@@ -122,13 +122,13 @@ const stories = [
         date: 'October 2024',
         venue: 'Maaya Villas, Lonavala',
         type: 'Garden Wedding',
-        cover: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=1200&auto=format&fit=crop',
-        cover2: 'https://images.unsplash.com/photo-1537633552985-df8429e8048b?q=80&w=800&auto=format&fit=crop',
+        cover: '/IMG_1165.JPG.jpeg',
+        cover2: '/IMG_1166.JPG.jpeg',
         story: 'Lush greens, misty mornings, and love in the air. Riya and Aditya chose the scenic hills of Lonavala for their big day — and the resulting photographs feel like paintings brought to life.',
         images: [
-            'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=1200&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1537633552985-df8429e8048b?q=80&w=1200&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?q=80&w=1200&auto=format&fit=crop',
+            '/IMG_1165.JPG.jpeg',
+            '/IMG_1166.JPG.jpeg',
+            '/IMG_1167.JPG.jpeg',
         ],
         services: ['Candid Photography', 'Cinematic Film'],
         featured: false,
@@ -307,8 +307,12 @@ export default function Portfolio() {
                                 onClick={() => setActiveStory(featured)}
                             >
                                 {/* BG */}
-                                <div className="absolute inset-0 bg-cover bg-center transition-transform duration-[3s] group-hover:scale-105"
-                                    style={{ backgroundImage: `url(${featured.cover})` }} />
+                                <img
+                                    src={featured.cover}
+                                    alt={featured.couple}
+                                    loading="lazy"
+                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-[3s] group-hover:scale-105"
+                                />
                                 <div className="absolute inset-0 bg-gradient-to-r from-noir/90 via-noir/50 to-transparent" />
 
                                 {/* FEATURED BADGE */}
@@ -353,8 +357,8 @@ export default function Portfolio() {
                     {filterTabs.map(tab => (
                         <button key={tab} onClick={() => setFilter(tab)}
                             className={`px-5 py-2 text-[10px] uppercase tracking-[0.25em] font-medium transition-all duration-300 rounded-sm border ${filter === tab
-                                    ? 'bg-gold text-noir border-gold'
-                                    : 'border-white/10 text-white/40 hover:border-gold/40 hover:text-white'
+                                ? 'bg-gold text-noir border-gold'
+                                : 'border-white/10 text-white/40 hover:border-gold/40 hover:text-white'
                                 }`}
                         >
                             {tab}
@@ -379,8 +383,12 @@ export default function Portfolio() {
                                 >
                                     {/* COVER IMAGE */}
                                     <div className="relative overflow-hidden h-64">
-                                        <div className="absolute inset-0 bg-cover bg-center transition-transform duration-[2s] group-hover:scale-108"
-                                            style={{ backgroundImage: `url(${story.cover})` }} />
+                                        <img
+                                            src={story.cover}
+                                            alt={story.couple}
+                                            loading="lazy"
+                                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-108"
+                                        />
                                         <div className="absolute inset-0 bg-gradient-to-t from-noir/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                                         {/* Type badge */}
                                         <div className="absolute top-4 left-4 bg-noir/80 backdrop-blur-sm border border-gold/20 text-gold text-[9px] uppercase tracking-widest px-3 py-1.5 rounded-full">

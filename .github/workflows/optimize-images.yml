@@ -1,0 +1,22 @@
+name: Image Optimization
+on:
+  push:
+    paths:
+      - 'public/**'
+jobs:
+  build:
+    name: calibreapp/image-actions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Compress Images
+        uses: calibreapp/image-actions@main
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          # For maximum quality conservation
+          jpegQuality: '90'
+          pngQuality: '90'
+          webpQuality: '90'
+          ignorePaths: 'node_modules/**,build/**,dist/**'

@@ -54,38 +54,38 @@ function SectionHeading({ eyebrow, title, highlight, subtitle }) {
 // ── Scroll-driven Gallery images ───────────────────────────────────────────────────
 const scrollGallery = [
     {
-        src: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=2070&auto=format&fit=crop',
-        label: 'Royal Ceremony',
+        src: '/IMG_1164.JPG.jpeg',
+        label: 'Eternal Vows',
         caption: 'Every vow, every tear, every smile — preserved for eternity.',
         tag: '01 / Ceremonies',
     },
     {
-        src: 'https://images.unsplash.com/photo-1606216794074-735e91aa2c92?q=80&w=2000&auto=format&fit=crop',
-        label: 'Golden Hour Portraits',
+        src: '/IMG_1174.JPG.jpeg',
+        label: 'Golden Hour',
         caption: 'The magic that lives between dusk and devotion.',
         tag: '02 / Portraits',
     },
     {
-        src: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2069&auto=format&fit=crop',
+        src: '/IMG_2248.JPG.jpeg',
         label: 'Sacred Rituals',
         caption: 'Ancient traditions captured with a modern, artistic eye.',
         tag: '03 / Rituals',
     },
     {
-        src: 'https://images.unsplash.com/photo-1532712938730-4e36c56b1bf1?q=80&w=2070&auto=format&fit=crop',
-        label: 'Candid Emotions',
+        src: '/IMG_2636.JPG.jpeg',
+        label: 'Candid Grace',
         caption: 'The moments you didn\'t know were happening — we did.',
         tag: '04 / Candid',
     },
     {
-        src: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=2070&auto=format&fit=crop',
-        label: 'Editorial Style',
+        src: '/IMG_2643.JPG.jpeg',
+        label: 'Editorial Art',
         caption: 'Frames composed like fine art, worthy of every wall.',
         tag: '05 / Editorial',
     },
     {
-        src: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=1974&auto=format&fit=crop',
-        label: 'Forever Together',
+        src: '/IMG_2841.JPG.jpeg',
+        label: 'The Legacy',
         caption: 'Two souls, one story — crafted to be remembered forever.',
         tag: '06 / Forever',
     },
@@ -100,9 +100,12 @@ function GalleryPanel({ item, index, total, scrollYProgress }) {
     );
     return (
         <div className="sticky top-0 h-screen w-full overflow-hidden" style={{ zIndex: index + 1 }}>
-            <motion.div
-                className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: `url(${item.src})`, y: index === 0 ? 0 : y }}
+            <motion.img
+                src={item.src}
+                alt={item.label}
+                loading="lazy"
+                className="absolute inset-0 w-full h-full object-cover"
+                style={{ y: index === 0 ? 0 : y }}
             />
             <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(10,8,4,0.85) 0%, rgba(10,8,4,0.15) 40%, rgba(10,8,4,0.35) 100%)', pointerEvents: 'none' }} />
             <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(10,8,4,0.55) 0%, transparent 60%)', pointerEvents: 'none' }} />
@@ -155,20 +158,20 @@ function ScrollGallery() {
 
 // ── Marquee Gallery images ───────────────────────────────────────────────────
 const marqueeRow1 = [
-    { src: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1600&auto=format&fit=crop', label: 'Royal Ceremony' },
-    { src: 'https://images.unsplash.com/photo-1606216794074-735e91aa2c92?q=80&w=1600&auto=format&fit=crop', label: 'Golden Hour' },
-    { src: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1600&auto=format&fit=crop', label: 'Sacred Rituals' },
-    { src: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=1600&auto=format&fit=crop', label: 'Editorial' },
-    { src: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=1600&auto=format&fit=crop', label: 'Forever Together' },
-    { src: 'https://images.unsplash.com/photo-1532712938730-4e36c56b1bf1?q=80&w=1600&auto=format&fit=crop', label: 'Candid Emotions' },
+    { src: '/IMG_2854.JPG.jpeg', label: 'Royal Ceremony' },
+    { src: '/IMG_0211.JPG.jpeg', label: 'Golden Hour' },
+    { src: '/IMG_1167.JPG.jpeg', label: 'Sacred Rituals' },
+    { src: '/IMG_2643.JPG.jpeg', label: 'Editorial' },
+    { src: '/IMG_2279.JPG.jpeg', label: 'Forever Together' },
+    { src: '/IMG_2846.JPG.jpeg', label: 'Candid Emotions' },
 ];
 const marqueeRow2 = [
-    { src: 'https://images.unsplash.com/photo-1544928147-79a2dbc1f389?q=80&w=1600&auto=format&fit=crop', label: 'Romantic Portraits' },
-    { src: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1600&auto=format&fit=crop', label: 'Bridal Moments' },
-    { src: 'https://images.unsplash.com/photo-1537633552985-df8429e8048b?q=80&w=1600&auto=format&fit=crop', label: 'Grand Reception' },
-    { src: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=1600&auto=format&fit=crop', label: 'The First Dance' },
-    { src: 'https://images.unsplash.com/photo-1501901609772-df0848060b33?q=80&w=1600&auto=format&fit=crop', label: 'Love & Joy' },
-    { src: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=1600&auto=format&fit=crop', label: 'Mehendi Glow' },
+    { src: '/IMG_0449.JPG.jpeg', label: 'Romantic Portraits' },
+    { src: '/IMG_0887.JPG.jpeg', label: 'Bridal Moments' },
+    { src: '/IMG_2319.JPG.jpeg', label: 'Grand Reception' },
+    { src: '/IMG_2831.JPG.jpeg', label: 'The First Dance' },
+    { src: '/IMG_3846.JPG.jpeg', label: 'Love & Joy' },
+    { src: '/IMG_1181.JPG.jpeg', label: 'Mehendi Glow' },
 ];
 
 // ── Marquee Gallery Component ──────────────────────────────────────────────────
@@ -188,9 +191,11 @@ function MarqueeStrip({ images, direction = 'left', speed = 40 }) {
                         key={i}
                         className="relative flex-shrink-0 w-72 md:w-96 h-56 md:h-72 rounded-xl overflow-hidden group cursor-pointer"
                     >
-                        <div
-                            className="absolute inset-0 bg-cover bg-center transition-transform duration-[2000ms] ease-out group-hover:scale-110"
-                            style={{ backgroundImage: `url(${img.src})` }}
+                        <img
+                            src={img.src}
+                            alt={img.label}
+                            loading="lazy"
+                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-[2000ms] ease-out group-hover:scale-110"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-noir/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                         <div className="absolute bottom-4 left-4 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
@@ -382,10 +387,14 @@ export default function Home() {
             <section className="pt-10 pb-10 md:pt-12 md:pb-16 px-6 md:px-12 lg:px-24 max-w-[1600px] mx-auto">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     <Reveal className="relative">
-                        <div
-                            className="w-full h-[600px] bg-cover bg-center rounded-xl overflow-hidden"
-                            style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=1974&auto=format&fit=crop)' }}
-                        />
+                        <div className="w-full h-[600px] relative rounded-xl overflow-hidden">
+                            <img
+                                src="/IMG_3907.JPG.jpeg"
+                                alt="Why Landscape Weddings"
+                                loading="lazy"
+                                className="absolute inset-0 w-full h-full object-cover"
+                            />
+                        </div>
                         {/* Floating badge */}
                         <div className="absolute -bottom-6 -right-6 hidden md:flex glass border border-gold/20 rounded-xl p-6 flex-col items-center gap-1 shadow-gold">
                             <span className="font-cinzel text-4xl font-bold text-gold">500+</span>

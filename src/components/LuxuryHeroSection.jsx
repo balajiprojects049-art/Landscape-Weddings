@@ -4,12 +4,15 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Play } from 'lucide-react';
 
 const HERO_IMAGES = [
-    'https://images.unsplash.com/photo-1606216794074-735e91aa2c92?q=80&w=2000&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=2070&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2069&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1532712938730-4e36c56b1bf1?q=80&w=2070&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=2070&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=1974&auto=format&fit=crop'
+    '/IMG_2811.JPG.jpeg',
+    '/IMG_0182.JPG.jpeg',
+    '/IMG_1182.JPG.jpeg',
+    '/IMG_1172.JPG.jpeg',
+    '/IMG_2835.JPG.jpeg',
+    '/IMG_0444.JPG.jpeg',
+    '/IMG_0887.JPG.jpeg',
+    '/IMG_0176.JPG.jpeg',
+    '/IMG_0900.JPG.jpeg'
 ];
 
 // Scrolling ticker items
@@ -26,7 +29,7 @@ export default function LuxuryHeroSection() {
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentIndex((prev) => (prev + 1) % HERO_IMAGES.length);
-        }, 5000); // Change image every 5 seconds
+        }, 4000); // 4 seconds for faster visibility
         return () => clearInterval(timer);
     }, []);
 
@@ -56,6 +59,17 @@ export default function LuxuryHeroSection() {
 
             {/* ── BOTTOM FADE ──────────────────────────── */}
             <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-noir via-noir/40 to-transparent z-10" />
+
+            {/* ── DOTS INDICATOR ────────────────── */}
+            <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-50 flex gap-2">
+                {HERO_IMAGES.map((_, i) => (
+                    <button
+                        key={i}
+                        onClick={() => setCurrentIndex(i)}
+                        className={`h-1 rounded-full transition-all duration-500 ${i === currentIndex ? 'w-10 bg-gold' : 'w-4 bg-white/20 hover:bg-white/40'}`}
+                    />
+                ))}
+            </div>
 
             {/* ── VERTICAL "LANDSCAPE WEDDINGS" text on right ── */}
             <motion.div

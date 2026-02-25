@@ -26,10 +26,10 @@ const timeline = [
 ];
 
 const team = [
-    { name: 'Arjun Mehta', role: 'Lead Photographer & Creative Director', img: 'https://i.pravatar.cc/400?img=12' },
-    { name: 'Priya Sharma', role: 'Cinematic Films Director', img: 'https://i.pravatar.cc/400?img=16' },
-    { name: 'Karan Patel', role: 'Senior Candid Photographer', img: 'https://i.pravatar.cc/400?img=14' },
-    { name: 'Divya Rao', role: 'Album Design & Client Experience', img: 'https://i.pravatar.cc/400?img=18' },
+    { name: 'Arjun Mehta', role: 'Lead Photographer & Creative Director', img: '/IMG_2276.JPG.jpeg' },
+    { name: 'Priya Sharma', role: 'Cinematic Films Director', img: '/IMG_2273.JPG.jpeg' },
+    { name: 'Karan Patel', role: 'Senior Candid Photographer', img: '/IMG_2274.JPG.jpeg' },
+    { name: 'Divya Rao', role: 'Album Design & Client Experience', img: '/IMG_2275.JPG.jpeg' },
 ];
 
 export default function About() {
@@ -40,8 +40,12 @@ export default function About() {
             <main>
                 {/* HERO */}
                 <section className="relative h-[70vh] overflow-hidden flex items-end pb-16">
-                    <div className="absolute inset-0 bg-cover bg-center brightness-40"
-                        style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1607190074257-dd4b7af0309f?q=80&w=2000&auto=format&fit=crop)' }} />
+                    <img
+                        src="/IMG_0177.JPG.jpeg"
+                        alt="Our Story"
+                        loading="lazy"
+                        className="absolute inset-0 w-full h-full object-cover brightness-40"
+                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-noir via-noir/40 to-transparent" />
                     <div className="relative z-10 max-w-[1400px] mx-auto px-8 md:px-16 w-full">
                         <motion.span initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
@@ -60,8 +64,14 @@ export default function About() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                         <Reveal>
                             <div className="relative">
-                                <div className="w-full aspect-[3/4] bg-cover bg-center rounded-2xl overflow-hidden"
-                                    style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop)' }} />
+                                <div className="w-full aspect-[3/4] relative rounded-2xl overflow-hidden">
+                                    <img
+                                        src="/IMG_0438.JPG.jpeg"
+                                        alt="Founder"
+                                        loading="lazy"
+                                        className="absolute inset-0 w-full h-full object-cover"
+                                    />
+                                </div>
                                 <div className="absolute -bottom-4 -right-4 glass border border-gold/20 rounded-xl p-5 shadow-gold">
                                     <p className="font-cinzel text-3xl font-bold text-gold">12+</p>
                                     <p className="text-white/50 text-xs uppercase tracking-widest">Years of Legacy</p>
