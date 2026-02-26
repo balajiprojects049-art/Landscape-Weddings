@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Camera, Video, Clapperboard, Image, CheckCircle2, ArrowLeft, ArrowRight, Heart, Star, MapPin, User, Phone, Mail, CalendarDays, Check, ChevronDown } from 'lucide-react';
+import { Camera, Video, Clapperboard, Image, CheckCircle2, ArrowLeft, ArrowRight, Heart, Star, MapPin, User, Phone, Mail, CalendarDays, Check, ChevronDown, X, ClipboardList } from 'lucide-react';
 import clsx from 'clsx';
 import AnimatedHeader from '../components/AnimatedHeader';
 import PremiumFooter from '../components/PremiumFooter';
@@ -107,14 +107,14 @@ const PRICES = {
 };
 
 // ── OPTION CARD ────────────────────────────────────────────────────────────
-function OptionCard({ id, label, icon: Icon, selected, onToggle, price }) {
+function OptionCard({ id, label, icon: Icon, selected, onToggle, price, showStepper, count, onUpdateCount }) {
     return (
-        <motion.button
+        <motion.div
             whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.97 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => onToggle(id)}
             className={clsx(
-                'relative flex flex-col items-center justify-center gap-4 p-8 md:p-10 border rounded-xl transition-all duration-400 group cursor-pointer',
+                'relative flex flex-col items-center justify-start gap-2 p-5 md:p-6 border rounded-xl transition-all duration-400 group cursor-pointer min-h-[220px]',
                 selected
                     ? 'bg-gold/10 border-gold shadow-gold'
                     : 'bg-white/2 border-white/10 hover:border-gold/30 hover:bg-white/5'
@@ -124,30 +124,72 @@ function OptionCard({ id, label, icon: Icon, selected, onToggle, price }) {
                 <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="absolute top-3 right-3 w-6 h-6 rounded-full bg-gold flex items-center justify-center"
+                    className="absolute top-3 right-3 w-5 h-5 rounded-full bg-gold flex items-center justify-center"
                 >
-                    <Check size={12} className="text-noir" />
+                    <Check size={10} className="text-noir" />
                 </motion.div>
             )}
             <div className={clsx(
-                'p-4 rounded-2xl transition-all duration-300',
+                'p-3 mt-1 rounded-2xl transition-all duration-300',
                 selected ? 'bg-gold text-noir' : 'bg-white/5 text-white/50 group-hover:text-gold group-hover:bg-gold/10'
             )}>
-                <Icon size={32} />
+                <Icon size={26} />
             </div>
             <span className={clsx(
-                'text-sm font-medium uppercase tracking-wider text-center transition-colors',
+                'text-[11px] md:text-xs font-bold uppercase tracking-[0.1em] text-center transition-colors',
                 selected ? 'text-gold' : 'text-white/60 group-hover:text-white'
             )}>{label}</span>
             {price && (
                 <span className={clsx(
-                    'text-xs font-semibold tracking-wider transition-all duration-300',
+                    'text-[10px] font-semibold tracking-widest transition-all duration-300',
                     selected
                         ? 'text-gold opacity-100 translate-y-0'
                         : 'text-gold/70 opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0'
                 )}>+ ₹{price.toLocaleString('en-IN')}</span>
             )}
-        </motion.button>
+
+            {/* In-Card Stepper Control */}
+            <AnimatePresence>
+                {(selected && showStepper) && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                        animate={{ opacity: 1, height: 'auto', marginTop: 12 }}
+                        exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                        className="w-full overflow-hidden"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="flex items-center justify-between border border-gold/40 rounded bg-noir h-8 w-full max-w-[120px] mx-auto">
+                            <button
+                                type="button"
+                                onClick={() => onUpdateCount(Math.max(1, count - 1))}
+                                disabled={count <= 1}
+                                className={clsx(
+                                    'w-8 h-full flex items-center justify-center text-sm font-bold transition-colors',
+                                    count <= 1 ? 'text-white/15 cursor-not-allowed' : 'text-gold hover:bg-gold/20 cursor-pointer'
+                                )}
+                            >−</button>
+                            <div className="flex-1 h-full flex items-center justify-center border-x border-gold/20 bg-gold/5 flex-col">
+                                <span className="text-gold font-bold text-xs leading-none">{count}</span>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => onUpdateCount(Math.min(4, count + 1))}
+                                disabled={count >= 4}
+                                className={clsx(
+                                    'w-8 h-full flex items-center justify-center text-sm font-bold transition-colors',
+                                    count >= 4 ? 'text-white/15 cursor-not-allowed' : 'text-gold hover:bg-gold/20 cursor-pointer'
+                                )}
+                            >+</button>
+                        </div>
+                        <div className="text-center mt-1.5">
+                            <span className="text-[8px] text-white/50 uppercase tracking-widest font-medium">
+                                {count === 1 ? 'Camera' : 'Cameras'}
+                            </span>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </motion.div>
     );
 }
 
@@ -198,101 +240,32 @@ function EventStep({ title, stepKey, selections, onToggle, cameraCount, onCamera
     ];
 
     const eventSel = selections[stepKey] || [];
-    const photoVideoSecs = eventSel.filter(s => s.includes('photo') || s.includes('video'));
 
     return (
         <div className="flex flex-col items-center w-full">
             <h2 className="font-serif text-3xl md:text-5xl text-white mb-2 text-center">{title}</h2>
             <p className="text-gold/60 uppercase tracking-widest text-xs mb-10">Select all that apply</p>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 w-full max-w-4xl">
-                {options.map((opt) => (
-                    <OptionCard
-                        key={opt.id}
-                        id={opt.id}
-                        label={opt.label}
-                        icon={opt.icon}
-                        price={opt.price}
-                        selected={eventSel.includes(opt.id)}
-                        onToggle={(id) => onToggle(stepKey, id)}
-                    />
-                ))}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 w-full max-w-[1000px] mb-8">
+                {options.map((opt) => {
+                    const isSelected = eventSel.includes(opt.id);
+                    const isPhotoVideo = opt.id.includes('photo') || opt.id.includes('video');
+                    const camKey = `${stepKey}_${opt.id}`;
+                    return (
+                        <OptionCard
+                            key={opt.id}
+                            id={opt.id}
+                            label={opt.label}
+                            icon={opt.icon}
+                            price={opt.price}
+                            selected={isSelected}
+                            onToggle={(id) => onToggle(stepKey, id)}
+                            showStepper={isPhotoVideo}
+                            count={cameraCount[camKey] || 1}
+                            onUpdateCount={(val) => onCameraCount(camKey, val)}
+                        />
+                    );
+                })}
             </div>
-            {/* Camera Count Steppers — shows when any service is selected */}
-            <AnimatePresence>
-                {photoVideoSecs.length > 0 && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 16 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 16 }}
-                        transition={{ duration: 0.4 }}
-                        className="mt-12 flex flex-col items-center gap-4 w-full max-w-xl"
-                    >
-                        <div className="flex items-center gap-3 mb-2">
-                            <Camera size={16} className="text-gold/60" />
-                            <span className="text-white/40 text-xs uppercase tracking-widest">Cameras per Service</span>
-                        </div>
-
-                        {photoVideoSecs.map(svc => {
-                            const svcLabel = options.find(o => o.id === svc)?.label;
-                            const cameras = cameraCount[`${stepKey}_${svc}`] || 1;
-
-                            return (
-                                <div key={svc} className="flex flex-col md:flex-row items-center justify-between gap-4 w-full glass px-6 py-4 rounded-2xl border border-white/5 bg-white/5">
-                                    <div className="flex flex-col items-center md:items-start text-center md:text-left">
-                                        <span className="text-white text-sm font-medium tracking-wide">{svcLabel}</span>
-                                        {cameras > 1 && (
-                                            <span className="text-gold/70 text-xs mt-1">
-                                                +₹{((cameras - 1) * PRICES.extra_camera).toLocaleString('en-IN')}
-                                            </span>
-                                        )}
-                                    </div>
-
-                                    {/* Stepper */}
-                                    <div className="flex items-center gap-0 border border-gold/30 rounded-xl overflow-hidden bg-noir">
-                                        {/* Minus */}
-                                        <motion.button
-                                            whileTap={{ scale: 0.9 }}
-                                            onClick={() => onCameraCount(`${stepKey}_${svc}`, Math.max(1, cameras - 1))}
-                                            disabled={cameras <= 1}
-                                            className={clsx(
-                                                'w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-xl font-bold transition-all duration-200',
-                                                cameras <= 1
-                                                    ? 'text-white/15 cursor-not-allowed'
-                                                    : 'text-gold hover:bg-gold/10 cursor-pointer'
-                                            )}
-                                        >
-                                            −
-                                        </motion.button>
-
-                                        {/* Count Display */}
-                                        <div className="w-14 h-10 md:w-16 md:h-12 flex flex-col items-center justify-center border-x border-gold/20">
-                                            <span className="text-gold font-bold text-lg md:text-xl leading-none">{cameras}</span>
-                                            <span className="text-white/30 text-[8px] md:text-[9px] uppercase tracking-wider mt-0.5">
-                                                {cameras === 1 ? 'Camera' : 'Cameras'}
-                                            </span>
-                                        </div>
-
-                                        {/* Plus */}
-                                        <motion.button
-                                            whileTap={{ scale: 0.9 }}
-                                            onClick={() => onCameraCount(`${stepKey}_${svc}`, Math.min(4, cameras + 1))}
-                                            disabled={cameras >= 4}
-                                            className={clsx(
-                                                'w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-xl font-bold transition-all duration-200',
-                                                cameras >= 4
-                                                    ? 'text-white/15 cursor-not-allowed'
-                                                    : 'text-gold hover:bg-gold/10 cursor-pointer'
-                                            )}
-                                        >
-                                            +
-                                        </motion.button>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </motion.div>
-                )}
-            </AnimatePresence>
         </div>
     );
 }
@@ -301,8 +274,8 @@ function EventStep({ title, stepKey, selections, onToggle, cameraCount, onCamera
 const STEPS = [
     'photography',
     'engagement',
-    'haldi_bride',
-    'haldi_groom',
+    'bride_haldi',
+    'groom_haldi',
     'mehendi',
     'sangeeth',
     'wedding',
@@ -314,10 +287,10 @@ const STEPS = [
 const STEP_LABELS = {
     photography: 'Photography Style',
     engagement: 'Engagement',
-    haldi_bride: 'Haldi Ceremony (Bride)',
-    haldi_groom: 'Haldi Ceremony (Groom)',
-    mehendi: 'Mehendi',
-    sangeeth: 'Sangeeth',
+    bride_haldi: 'Bride Haldi Ceremony',
+    groom_haldi: 'Groom Haldi Ceremony',
+    mehendi: 'Mehendi ',
+    sangeeth: 'Sangeeth ',
     wedding: 'The Big Day',
     reception: 'Reception',
     album: 'Album Selection',
@@ -335,6 +308,7 @@ export default function QuotePage() {
         email: '', events: '', date: '', location: '',
     });
     const [submitted, setSubmitted] = useState(false);
+    const [showPreview, setShowPreview] = useState(false);
 
     const totalSteps = STEPS.length;
     const progress = ((step) / (totalSteps - 1)) * 100;
@@ -397,94 +371,148 @@ export default function QuotePage() {
         const mid = [80, 80, 80];
         const light = [200, 200, 200];
         const W = doc.internal.pageSize.getWidth();
+        const H = doc.internal.pageSize.getHeight();
+
+        // ── WATERMARK BACKGROUND ─────────────────────────────────────────────
+        let logoData = null;
+        let wW = 140, wH = 80;
+        try {
+            const logoBlob = await fetch('/LOGO.png').then(r => r.blob());
+            logoData = await new Promise(resolve => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.readAsDataURL(logoBlob);
+            });
+            const img = new Image();
+            img.src = logoData;
+            await new Promise(resolve => { img.onload = resolve; });
+
+            const imgRatio = img.height / img.width;
+            wH = wW * imgRatio;
+        } catch (e) {
+            console.error("Could not load watermark", e);
+        }
+
+        const drawPageOverlay = (docObj) => {
+            // ── PREMIUM PAGE BORDER ──────────────────────────────────────────────
+            docObj.setDrawColor(...gold);
+            docObj.setLineWidth(0.4);
+            docObj.rect(5, 5, W - 10, H - 10);
+            docObj.setLineWidth(0.1);
+            docObj.rect(6.5, 6.5, W - 13, H - 13); // Double line effect
+
+            // ── WATERMARK ────────────────────────────────────────────────────────
+            if (logoData) {
+                docObj.setGState(new docObj.GState({ opacity: 0.15 }));
+                docObj.addImage(logoData, 'PNG', (W - wW) / 2, (H - wH) / 2 + 10, wW, wH, undefined, 'FAST');
+                docObj.setGState(new docObj.GState({ opacity: 1.0 }));
+            }
+
+            // ── FOOTER ───────────────────────────────────────────────────────────
+            docObj.setFillColor(...dark);
+            docObj.rect(6.5, H - 24.5, W - 13, 18, 'F');
+            docObj.setFont('helvetica', 'normal');
+            docObj.setFontSize(8);
+            docObj.setTextColor(...light);
+            docObj.text('Thank you for considering Landscape Weddings to capture your forever moments.', W / 2, H - 17, { align: 'center' });
+            docObj.setTextColor(...gold);
+            docObj.text('landscapeweddings.in  |  +91 9115994999', W / 2, H - 11, { align: 'center' });
+        };
+
+        drawPageOverlay(doc);
 
         // ── HEADER BAND ──────────────────────────────────────────────────────
         doc.setFillColor(...dark);
-        doc.rect(0, 0, W, 42, 'F');
-
-        // Gold accent line
+        doc.rect(6.5, 6.5, W - 13, 42, 'F');
         doc.setFillColor(...gold);
-        doc.rect(0, 42, W, 1.2, 'F');
+        doc.rect(6.5, 48.5, W - 13, 1.2, 'F');
 
         // Studio name
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(22);
+        doc.setFontSize(26);
         doc.setTextColor(...gold);
-        doc.text('LANDSCAPE WEDDINGS', W / 2, 16, { align: 'center' });
+        doc.text('LANDSCAPE WEDDINGS', W / 2, 22, { align: 'center' });
 
         // Tagline
         doc.setFont('helvetica', 'normal');
-        doc.setFontSize(8);
-        doc.setTextColor(...light);
-        doc.text('CINEMATIC WEDDING STUDIO', W / 2, 23, { align: 'center' });
+        doc.setFontSize(9);
+        let charSpacing = 1.5;
+        doc.setTextColor(220, 220, 220);
+        doc.text('C I N E M A T I C   W E D D I N G   S T U D I O', W / 2, 30, { align: 'center' });
 
         // Contact line
-        doc.setFontSize(7.5);
-        doc.setTextColor(180, 180, 180);
+        doc.setFontSize(8);
+        doc.setTextColor(170, 170, 170);
         doc.text(
             'Ph: +91 9115994999   |   landscapeweddings.in   |   info@landscapeweddings.in',
-            W / 2, 30, { align: 'center' }
+            W / 2, 38, { align: 'center' }
         );
         doc.text(
             'Madhapur, Hyderabad, Telangana - 500081, India',
-            W / 2, 36, { align: 'center' }
+            W / 2, 44, { align: 'center' }
         );
 
         // ── QUOTE TITLE ──────────────────────────────────────────────────────
-        let y = 52;
+        let y = 62;
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(13);
+        doc.setFontSize(16);
         doc.setTextColor(...dark);
-        doc.text('WEDDING QUOTE', 14, y);
+        doc.text('WEDDING QUOTE & ITINERARY', 16, y);
 
         // Quote date (right-aligned)
         doc.setFont('helvetica', 'normal');
-        doc.setFontSize(8);
+        doc.setFontSize(9);
         doc.setTextColor(...mid);
         const today = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
-        doc.text(`Date: ${today}`, W - 14, y, { align: 'right' });
+        doc.text(`DATE: ${today.toUpperCase()}`, W - 16, y, { align: 'right' });
 
         // Divider
-        y += 4;
+        y += 6;
         doc.setDrawColor(...gold);
-        doc.setLineWidth(0.4);
-        doc.line(14, y, W - 14, y);
+        doc.setLineWidth(0.5);
+        doc.line(16, y, W - 16, y);
 
         // ── COUPLE DETAILS ───────────────────────────────────────────────────
-        y += 8;
+        y += 6;
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(9);
         doc.setTextColor(...gold);
-        doc.text('COUPLE DETAILS', 14, y);
+        doc.text('CLIENT DETAILS', 16, y);
 
         y += 5;
-        const details = [
-            ['Bride', form.brideName || '—'],
-            ['Groom', form.groomName || '—'],
-            ['Mobile', `${form.countryCode} ${form.phone}`],
-            ['Email', form.email || '—'],
-            ['Wedding Date', form.date || 'Not specified'],
-            ['Location', form.location || 'Not specified'],
-            ['No. of Events', form.events ? `${form.events} Events` : 'Not specified'],
+        const detailsGrid = [
+            [{ label: 'Bride:', value: form.brideName || '—' }, { label: 'Wedding Date:', value: form.date || 'Not specified' }],
+            [{ label: 'Groom:', value: form.groomName || '—' }, { label: 'Location:', value: form.location || 'Not specified' }],
+            [{ label: 'Mobile:', value: `${form.countryCode} ${form.phone}` }, { label: 'No. of Events:', value: form.events ? `${form.events} Events` : 'Not specified' }],
+            [{ label: 'Email:', value: form.email || '—' }, { label: '', value: '' }]
         ];
 
-        details.forEach(([label, value]) => {
+        doc.setFontSize(9);
+        detailsGrid.forEach(row => {
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(8);
             doc.setTextColor(...mid);
-            doc.text(`${label}:`, 14, y);
+            doc.text(row[0].label, 16, y);
             doc.setFont('helvetica', 'normal');
-            doc.setTextColor(30, 30, 30);
-            doc.text(value, 55, y);
-            y += 6;
+            doc.setTextColor(20, 20, 20);
+            doc.text(row[0].value, 36, y);
+
+            if (row[1].label) {
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(...mid);
+                doc.text(row[1].label, W / 2 + 10, y);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(20, 20, 20);
+                doc.text(row[1].value, W / 2 + 40, y);
+            }
+            y += 4.5;
         });
 
         // ── SERVICE BREAKDOWN ────────────────────────────────────────────────
-        y += 4;
+        y += 5;
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(9);
         doc.setTextColor(...gold);
-        doc.text('SERVICE BREAKDOWN', 14, y);
+        doc.text('SERVICE BREAKDOWN & INVESTMENT', 16, y);
         y += 4;
 
         const SVC_LABEL = {
@@ -508,7 +536,7 @@ export default function QuotePage() {
         }
 
         // Event coverage
-        ['engagement', 'haldi_bride', 'haldi_groom', 'mehendi', 'sangeeth', 'wedding', 'reception'].forEach(ev => {
+        ['engagement', 'bride_haldi', 'groom_haldi', 'mehendi', 'sangeeth', 'wedding', 'reception'].forEach(ev => {
             const evSel = selections[ev] || [];
             if (!evSel.length) return;
 
@@ -518,28 +546,22 @@ export default function QuotePage() {
                 const extraCamCost = (camCount - 1) * PRICES.extra_camera;
                 const price = PRICES[svc] || 0;
 
-                tableRows.push([
-                    STEP_LABELS[ev],
-                    SVC_LABEL[svc] || svc,
-                    isPhotoVideo ? `${camCount} Cam${camCount > 1 ? 's' : ''}` : '-',
-                    `Rs. ${(price).toLocaleString('en-IN')}`,
-                ]);
+                const svcName = SVC_LABEL[svc] || svc;
+                const camString = isPhotoVideo ? `${camCount} Cam${camCount > 1 ? 's' : ''}` : '-';
 
-                if (isPhotoVideo && camCount > 1) {
-                    tableRows.push([
-                        '',
-                        `  ↳ Extra Camera (${camCount - 1} additional)`,
-                        '',
-                        `Rs. ${extraCamCost.toLocaleString('en-IN')}`,
-                    ]);
-                }
+                tableRows.push([
+                    STEP_LABELS[ev].toUpperCase(),
+                    svcName,
+                    camString,
+                    `Rs. ${(price + extraCamCost).toLocaleString('en-IN')}`,
+                ]);
             });
         });
 
         // Album
         if (selections.album) {
             const albumPrices = { album_synthetic: 8000, album_metallic: 12000, album_glossy: 10000 };
-            const albumNames = { album_synthetic: 'Synthetic Album', album_metallic: 'Metallic Finish Album', album_glossy: 'Glossy Print Album' };
+            const albumNames = { album_synthetic: 'Synthetic Finish Premium Album', album_metallic: 'Metallic Finish Premium Album', album_glossy: 'Glossy Print Premium Album' };
             tableRows.push([
                 'Album',
                 albumNames[selections.album] || selections.album,
@@ -550,46 +572,44 @@ export default function QuotePage() {
 
         autoTable(doc, {
             startY: y,
-            head: [['Event / Category', 'Service', 'Cameras', 'Amount']],
+            head: [['EVENT / CATEGORY', 'SERVICE TYPE', 'TOTAL CAMERAS', 'AMOUNT']],
             body: tableRows,
             theme: 'grid',
-            headStyles: { fillColor: dark, textColor: gold, fontStyle: 'bold', fontSize: 8 },
-            bodyStyles: { fontSize: 8, textColor: [30, 30, 30] },
-            alternateRowStyles: { fillColor: [248, 246, 240] },
+            headStyles: { fillColor: gold, textColor: dark, fontStyle: 'bold', fontSize: 8, halign: 'center' },
+            bodyStyles: { fontSize: 7.5, textColor: [40, 40, 40], cellPadding: 2, fillColor: false },
+            alternateRowStyles: { fillColor: [250, 248, 243, 0.4] }, // slight transparency if jsPDF accepts it, mostly it just uses light tint
             columnStyles: {
-                0: { cellWidth: 42 },
-                1: { cellWidth: 75 },
-                2: { cellWidth: 22, halign: 'center' },
-                3: { cellWidth: 35, halign: 'right' },
+                0: { cellWidth: 45, fontStyle: 'bold', textColor: [20, 20, 20] },
+                1: { cellWidth: 70 },
+                2: { cellWidth: 25, halign: 'center' },
+                3: { cellWidth: 35, halign: 'right', fontStyle: 'bold', textColor: [20, 20, 20] },
             },
-            margin: { left: 14, right: 14 },
+            margin: { left: 16, right: 16 },
+            styles: { lineColor: [220, 210, 190], lineWidth: 0.1 }
         });
 
-        // ── TOTAL ────────────────────────────────────────────────────────────
-        const finalY = doc.lastAutoTable.finalY + 6;
-        doc.setFillColor(...gold);
-        doc.roundedRect(14, finalY, W - 28, 14, 2, 2, 'F');
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(11);
-        doc.setTextColor(10, 10, 10);
-        doc.text('ESTIMATED TOTAL', 20, finalY + 9);
-        doc.text(`Rs. ${total.toLocaleString('en-IN')}`, W - 20, finalY + 9, { align: 'right' });
+        // ── TOTAL SUMMARY BOX ────────────────────────────────────────────────
+        let finalY = doc.lastAutoTable.finalY + 8;
 
-        // ── NOTE ─────────────────────────────────────────────────────────────
+        doc.setFillColor(252, 250, 245);
+        doc.setDrawColor(...gold);
+        doc.setLineWidth(0.3);
+        doc.rect(16, finalY, W - 32, 20, 'FD');
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(13);
+        doc.setTextColor(15, 15, 15);
+        doc.text('TOTAL ESTIMATED INVESTMENT', 22, finalY + 13);
+
+        doc.setFontSize(15);
+        doc.setTextColor(...gold);
+        doc.text(`Rs. ${total.toLocaleString('en-IN')}`, W - 22, finalY + 13.5, { align: 'right' });
+
+        // ── TERMS & CONDITIONS ───────────────────────────────────────────────
         doc.setFont('helvetica', 'italic');
         doc.setFontSize(7.5);
         doc.setTextColor(...mid);
-        doc.text('* Final pricing confirmed after consultation. Taxes may apply.', 14, finalY + 22);
-
-        // ── FOOTER ───────────────────────────────────────────────────────────
-        const pageH = doc.internal.pageSize.getHeight();
-        doc.setFillColor(...dark);
-        doc.rect(0, pageH - 18, W, 18, 'F');
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(7);
-        doc.setTextColor(...light);
-        doc.text('Thank you for choosing Landscape Weddings — We capture your forever moments.', W / 2, pageH - 10, { align: 'center' });
-        doc.text('landscapeweddings.in  |  +91 9115994999', W / 2, pageH - 5, { align: 'center' });
+        doc.text('* Pricing is an estimate and valid for 14 days. Final pricing confirmed after consultation. Taxes may apply as per government regulations.', 16, finalY + 28);
 
         // Download
         const fileName = `LandscapeWeddings_Quote_${form.brideName || 'Bride'}_${form.groomName || 'Groom'}.pdf`;
@@ -603,7 +623,7 @@ export default function QuotePage() {
         const albumLabel = { album_synthetic: 'Synthetic (Rs.8,000)', album_metallic: 'Metallic Finish (Rs.12,000)', album_glossy: 'Glossy Print (Rs.10,000)' }[selections.album] || 'Not selected';
 
         const serviceLabel = { candid_photo: 'Candid Photography', traditional_photo: 'Traditional Photography', candid_video: 'Candid Video', traditional_video: 'Traditional Video', drone: 'Drone Coverage (Rs.10,000)' };
-        const eventLines = ['engagement', 'haldi_bride', 'haldi_groom', 'mehendi', 'sangeeth', 'wedding', 'reception']
+        const eventLines = ['engagement', 'bride_haldi', 'groom_haldi', 'mehendi', 'sangeeth', 'wedding', 'reception']
             .map(ev => {
                 const evSel = (selections[ev] || []);
                 if (!evSel.length) return null;
@@ -659,7 +679,7 @@ export default function QuotePage() {
 
                 {/* PRICE BADGE — fixed top-right */}
                 <motion.div
-                    className="fixed top-[72px] right-4 z-50"
+                    className="fixed top-[110px] md:top-[120px] right-4 md:right-8 z-50"
                     initial={{ opacity: 0, x: 40 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.4 }}
@@ -723,7 +743,7 @@ export default function QuotePage() {
                                     )}
 
                                     {/* EVENT STEPS */}
-                                    {['engagement', 'haldi_bride', 'haldi_groom', 'mehendi', 'sangeeth', 'wedding', 'reception'].includes(currentKey) && (
+                                    {['engagement', 'bride_haldi', 'groom_haldi', 'mehendi', 'sangeeth', 'wedding', 'reception'].includes(currentKey) && (
                                         <EventStep
                                             title={STEP_LABELS[currentKey]}
                                             stepKey={currentKey}
@@ -738,7 +758,7 @@ export default function QuotePage() {
                                     {currentKey === 'album' && (
                                         <div className="flex flex-col items-center w-full gap-8">
                                             <h2 className="font-serif text-3xl md:text-5xl text-white text-center">Choose Your <span className="italic text-gold font-light">Album</span></h2>
-                                            <p className="text-white/40 text-sm">12×18 Premium Album — 40 curated photos</p>
+                                            <p className="text-white/40 text-sm">12×36 Premium Album — 30 curated photos</p>
                                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-2xl">
                                                 <RadioCard id="album_synthetic" label="Synthetic" subtitle="Durable & elegant" icon={Star} price={8000}
                                                     selected={selections.album === 'album_synthetic'} onSelect={(v) => handleSelectSingle('album', v)} />
@@ -840,14 +860,26 @@ export default function QuotePage() {
                                                         className="w-full bg-white/5 border border-white/15 rounded-lg pl-11 pr-4 py-4 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-gold/50 transition-all" />
                                                 </div>
 
-                                                <motion.button
-                                                    type="submit"
-                                                    whileHover={{ scale: 1.02 }}
-                                                    whileTap={{ scale: 0.97 }}
-                                                    className="w-full py-5 bg-gold text-noir font-bold uppercase tracking-[0.2em] text-sm rounded-lg hover:shadow-gold-lg transition-all duration-300 mt-2"
-                                                >
-                                                    ❖ Submit My Quote Request
-                                                </motion.button>
+                                                <div className="flex flex-col md:flex-row items-center gap-4 mt-2">
+                                                    <motion.button
+                                                        type="button"
+                                                        onClick={() => setShowPreview(true)}
+                                                        whileHover={{ scale: 1.02 }}
+                                                        whileTap={{ scale: 0.97 }}
+                                                        className="w-full py-5 border border-gold/40 text-gold font-bold uppercase tracking-[0.2em] text-sm rounded-lg hover:bg-gold/10 transition-all duration-300 flex items-center justify-center gap-2"
+                                                    >
+                                                        <ClipboardList size={18} /> Preview Selections
+                                                    </motion.button>
+
+                                                    <motion.button
+                                                        type="submit"
+                                                        whileHover={{ scale: 1.02 }}
+                                                        whileTap={{ scale: 0.97 }}
+                                                        className="w-full py-5 bg-gold text-noir font-bold uppercase tracking-[0.2em] text-sm rounded-lg hover:shadow-gold-lg transition-all duration-300 flex items-center justify-center gap-2"
+                                                    >
+                                                        Submit Quote <ArrowRight size={18} />
+                                                    </motion.button>
+                                                </div>
                                             </form>
                                         </div>
                                     )}
@@ -922,6 +954,105 @@ export default function QuotePage() {
                         </div>
                     )}
                 </div>
+
+                {/* PREVIEW MODAL */}
+                <AnimatePresence>
+                    {showPreview && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-[99999] bg-black/98 backdrop-blur-md flex items-center justify-center p-4"
+                        >
+                            <motion.div
+                                initial={{ scale: 0.95, y: 20 }}
+                                animate={{ scale: 1, y: 0 }}
+                                exit={{ scale: 0.95, y: 20 }}
+                                className="bg-noir-200 border border-gold/20 w-full max-w-3xl rounded-2xl overflow-hidden flex flex-col max-h-[90vh]"
+                            >
+                                <div className="flex items-center justify-between p-6 border-b border-gold/10 bg-noir">
+                                    <div>
+                                        <h3 className="font-serif text-2xl text-gold">Quote Preview</h3>
+                                        <p className="text-white/40 text-xs uppercase tracking-widest mt-1">Review your selections</p>
+                                    </div>
+                                    <button onClick={() => setShowPreview(false)} className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-gold hover:text-noir transition-colors text-white/50">
+                                        <X size={20} />
+                                    </button>
+                                </div>
+                                <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar flex-1 flex flex-col gap-8">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        {/* Left Column: Details & General */}
+                                        <div className="flex flex-col gap-6">
+                                            <div className="glass p-5 rounded-xl border border-white/5">
+                                                <h4 className="text-gold text-xs uppercase tracking-[0.2em] mb-4 font-bold border-b border-gold/10 pb-2">Client Details</h4>
+                                                <div className="flex flex-col gap-2 text-sm">
+                                                    <div className="flex justify-between"><span className="text-white/40">Bride & Groom</span><span className="text-white text-right">{form.brideName || '-'} & {form.groomName || '-'}</span></div>
+                                                    <div className="flex justify-between"><span className="text-white/40">Contact</span><span className="text-white text-right">{form.countryCode} {form.phone}</span></div>
+                                                    <div className="flex justify-between"><span className="text-white/40">Email</span><span className="text-white text-right truncate">{form.email || '-'}</span></div>
+                                                    <div className="flex justify-between"><span className="text-white/40">Date</span><span className="text-white text-right">{form.date || '-'}</span></div>
+                                                    <div className="flex justify-between"><span className="text-white/40">Location</span><span className="text-white text-right">{form.location || '-'}</span></div>
+                                                </div>
+                                            </div>
+                                            <div className="glass p-5 rounded-xl border border-white/5">
+                                                <h4 className="text-gold text-xs uppercase tracking-[0.2em] mb-4 font-bold border-b border-gold/10 pb-2">Style & Deliverables</h4>
+                                                <div className="flex flex-col gap-2 text-sm">
+                                                    <div className="flex justify-between"><span className="text-white/40">Photography</span><span className="text-white text-right capitalize">{selections.photography || 'Not selected'}</span></div>
+                                                    <div className="flex justify-between"><span className="text-white/40">Album</span><span className="text-white text-right capitalize">{selections.album ? selections.album.replace('album_', '') : 'Not selected'}</span></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Right Column: Events Payload */}
+                                        <div className="glass p-5 rounded-xl border border-white/5 h-fit">
+                                            <h4 className="text-gold text-xs uppercase tracking-[0.2em] mb-4 font-bold border-b border-gold/10 pb-2">Event Coverage</h4>
+                                            <div className="flex flex-col gap-4">
+                                                {['engagement', 'bride_haldi', 'groom_haldi', 'mehendi', 'sangeeth', 'wedding', 'reception'].map(ev => {
+                                                    const svcs = selections[ev] || [];
+                                                    if (!svcs.length) return null;
+                                                    return (
+                                                        <div key={ev} className="flex flex-col gap-1 border-b border-white/5 pb-3 last:border-0 last:pb-0">
+                                                            <span className="text-white font-medium capitalize">{ev.replace('_', ' ')}</span>
+                                                            {svcs.map(s => {
+                                                                const isCam = s.includes('photo') || s.includes('video');
+                                                                const cnt = isCam ? (cameraCount[`${ev}_${s}`] || 1) : null;
+                                                                return (
+                                                                    <div key={s} className="flex justify-between text-xs text-white/50 pl-2">
+                                                                        <span className="capitalize flex items-center gap-1">• {s.replace('_', ' ')}</span>
+                                                                        {cnt && <span className="text-gold/80">{cnt} Cam{cnt > 1 ? 's' : ''}</span>}
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    );
+                                                })}
+                                                {!STEPS.some(s => ['engagement', 'bride_haldi', 'groom_haldi', 'mehendi', 'sangeeth', 'wedding', 'reception'].includes(s) && (selections[s] || []).length > 0) && (
+                                                    <span className="text-white/30 text-xs italic">No event services selected.</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="p-6 bg-noir border-t border-gold/10 flex flex-col md:flex-row items-center justify-between gap-4">
+                                    <div>
+                                        <p className="text-white/40 text-xs uppercase tracking-widest">Total Estimated Value</p>
+                                        <p className="font-cinzel text-gold text-2xl font-bold">Rs. {total.toLocaleString('en-IN')}</p>
+                                    </div>
+                                    <button
+                                        onClick={() => {
+                                            setShowPreview(false);
+                                            // The submit event handles WhatsApp & PDF
+                                            const fakeEvent = { preventDefault: () => { } };
+                                            handleSubmit(fakeEvent);
+                                        }}
+                                        className="w-full md:w-auto px-8 py-4 bg-gold text-noir font-bold uppercase tracking-[0.2em] text-sm rounded-lg hover:shadow-gold-lg transition-all duration-300"
+                                    >
+                                        Confirm & Submit Request
+                                    </button>
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </main>
 
             <PremiumFooter />
