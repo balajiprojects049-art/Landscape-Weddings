@@ -138,6 +138,8 @@ const stories = [
 // ── STORY LIGHTBOX (shows images + couple details) ─────────────────────────
 function StoryLightbox({ story, onClose }) {
     const [imgIdx, setImgIdx] = useState(0);
+    const [showZenfolio, setShowZenfolio] = useState(false);
+
     const prev = () => setImgIdx(i => (i - 1 + story.images.length) % story.images.length);
     const next = () => setImgIdx(i => (i + 1) % story.images.length);
 
@@ -148,7 +150,7 @@ function StoryLightbox({ story, onClose }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.35 }}
-            className="fixed inset-0 z-[9999] bg-noir/98 backdrop-blur-md flex flex-col"
+            className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex flex-col"
             onClick={onClose}
         >
             {/* Close */}
@@ -156,6 +158,35 @@ function StoryLightbox({ story, onClose }) {
                 className="fixed top-5 right-5 z-[10000] flex items-center gap-2 text-white/60 hover:text-gold transition-colors text-xs uppercase tracking-widest">
                 <X size={18} /> Close
             </button>
+
+            {/* Zenfolio iframe Overlay */}
+            <AnimatePresence>
+                {showZenfolio && (
+                    <motion.div
+                        initial={{ y: '100%' }}
+                        animate={{ y: 0 }}
+                        exit={{ y: '100%' }}
+                        transition={{ damping: 25, stiffness: 200 }}
+                        className="absolute inset-0 z-[10010] bg-noir flex flex-col"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="flex items-center justify-between p-5 border-b border-gold/10 bg-noir-200">
+                            <button
+                                onClick={() => setShowZenfolio(false)}
+                                className="flex items-center gap-2 text-white hover:text-gold transition-colors text-xs uppercase tracking-[0.2em] font-bold"
+                            >
+                                <ChevronLeft size={16} /> Back to previous page
+                            </button>
+                            <span className="text-gold text-[9px] uppercase tracking-[0.4em] hidden md:block">Full Event Album</span>
+                        </div>
+                        <iframe
+                            src="https://landscapephotography.zenfolio.com/p1017498226"
+                            className="w-full flex-1 border-0 bg-white"
+                            title="Zenfolio Album"
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             <div className="flex flex-col lg:flex-row h-full overflow-hidden"
                 onClick={e => e.stopPropagation()}>
@@ -201,7 +232,7 @@ function StoryLightbox({ story, onClose }) {
                 </div>
 
                 {/* RIGHT – STORY DETAILS */}
-                <div className="w-full lg:w-[380px] flex flex-col justify-between p-8 md:p-10 overflow-y-auto border-t lg:border-t-0 lg:border-l border-gold/10">
+                <div className="w-full lg:w-[380px] flex flex-col justify-between p-8 md:p-10 overflow-y-auto border-t lg:border-t-0 lg:border-l border-gold/10 bg-noir-200 lg:bg-transparent">
                     <div>
                         <span className="text-gold text-[9px] uppercase tracking-[0.5em] font-medium block mb-4">{story.type}</span>
                         <h2 className="font-serif text-3xl md:text-4xl text-white mb-2 leading-tight">{story.couple}</h2>
@@ -234,6 +265,12 @@ function StoryLightbox({ story, onClose }) {
                     </div>
 
                     <div className="flex flex-col gap-3">
+                        <motion.button
+                            onClick={() => setShowZenfolio(true)}
+                            whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+                            className="w-full py-4 border border-gold/50 text-gold font-bold text-xs uppercase tracking-[0.25em] rounded-sm hover:bg-gold/10 transition-all duration-300 flex items-center justify-center gap-2">
+                            View Full Event Album <ArrowRight size={14} />
+                        </motion.button>
                         <Link to="/quote" onClick={onClose}>
                             <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                                 className="w-full py-4 bg-gold text-noir font-bold text-xs uppercase tracking-[0.25em] rounded-sm hover:shadow-gold transition-all duration-300 flex items-center justify-center gap-2">

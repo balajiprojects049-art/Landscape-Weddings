@@ -315,7 +315,7 @@ const STEP_LABELS = {
     engagement: 'Engagement',
     haldi: 'Haldi Ceremony',
     mehendi: 'Mehendi',
-    sangeeth: 'Sangeeth / Sangeet',
+    sangeeth: 'Sangeeth',
     wedding: 'The Big Day',
     reception: 'Reception',
     album: 'Album Selection',

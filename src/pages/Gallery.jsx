@@ -45,16 +45,16 @@ const allImages = [
     { id: 45, cat: 'Pre-Wedding', src: '/IMG_2303.JPG.jpeg' },
     { id: 46, cat: 'Pre-Wedding', src: '/IMG_2312.JPG.jpeg' },
 
-    // Candid
-    { id: 15, cat: 'Candid', src: '/IMG_2247.JPG.jpeg' },
-    { id: 16, cat: 'Candid', src: '/IMG_2252.JPG.jpeg' },
-    { id: 17, cat: 'Candid', src: '/IMG_2272.JPG.jpeg' },
-    { id: 18, cat: 'Candid', src: '/IMG_2303.JPG.jpeg' },
-    { id: 19, cat: 'Candid', src: '/IMG_2314.JPG.jpeg' },
-    { id: 20, cat: 'Candid', src: '/IMG_2319.JPG.jpeg' },
-    { id: 47, cat: 'Candid', src: '/IMG_2358.JPG.jpeg' },
-    { id: 48, cat: 'Candid', src: '/IMG_2362.JPG.jpeg' },
-    { id: 49, cat: 'Candid', src: '/IMG_2634.JPG.jpeg' },
+    // Celebrities
+    { id: 15, cat: 'Celebrities', src: '/IMG_2247.JPG.jpeg' },
+    { id: 16, cat: 'Celebrities', src: '/IMG_2252.JPG.jpeg' },
+    { id: 17, cat: 'Celebrities', src: '/IMG_2272.JPG.jpeg' },
+    { id: 18, cat: 'Celebrities', src: '/IMG_2303.JPG.jpeg' },
+    { id: 19, cat: 'Celebrities', src: '/IMG_2314.JPG.jpeg' },
+    { id: 20, cat: 'Celebrities', src: '/IMG_2319.JPG.jpeg' },
+    { id: 47, cat: 'Celebrities', src: '/IMG_2358.JPG.jpeg' },
+    { id: 48, cat: 'Celebrities', src: '/IMG_2362.JPG.jpeg' },
+    { id: 49, cat: 'Celebrities', src: '/IMG_2634.JPG.jpeg' },
 
     // Engagement
     { id: 21, cat: 'Engagement', src: '/IMG_2358.JPG.jpeg' },
@@ -76,19 +76,19 @@ const allImages = [
     { id: 54, cat: 'Ceremonies', src: '/IMG_2848.JPG.jpeg' },
     { id: 55, cat: 'Ceremonies', src: '/IMG_2849.JPG.jpeg' },
 
-    // Editorial
-    { id: 31, cat: 'Editorial', src: '/IMG_3894.JPG.jpeg' },
-    { id: 32, cat: 'Editorial', src: '/IMG_3846.JPG.jpeg' },
-    { id: 33, cat: 'Editorial', src: '/IMG_2850.JPG.jpeg' },
-    { id: 34, cat: 'Editorial', src: '/IMG_3901.JPG.jpeg' },
-    { id: 35, cat: 'Editorial', src: '/IMG_3907.JPG.jpeg' },
-    { id: 56, cat: 'Editorial', src: '/IMG_2851.JPG.jpeg' },
-    { id: 57, cat: 'Editorial', src: '/IMG_2852.JPG.jpeg' },
-    { id: 58, cat: 'Editorial', src: '/IMG_2853.JPG.jpeg' },
-    { id: 59, cat: 'Editorial', src: '/IMG_2854.JPG.jpeg' },
+    // Celebrities (formerly Editorial)
+    { id: 31, cat: 'Celebrities', src: '/IMG_3894.JPG.jpeg' },
+    { id: 32, cat: 'Celebrities', src: '/IMG_3846.JPG.jpeg' },
+    { id: 33, cat: 'Celebrities', src: '/IMG_2850.JPG.jpeg' },
+    { id: 34, cat: 'Celebrities', src: '/IMG_3901.JPG.jpeg' },
+    { id: 35, cat: 'Celebrities', src: '/IMG_3907.JPG.jpeg' },
+    { id: 56, cat: 'Celebrities', src: '/IMG_2851.JPG.jpeg' },
+    { id: 57, cat: 'Celebrities', src: '/IMG_2852.JPG.jpeg' },
+    { id: 58, cat: 'Celebrities', src: '/IMG_2853.JPG.jpeg' },
+    { id: 59, cat: 'Celebrities', src: '/IMG_2854.JPG.jpeg' },
 ];
 
-const categories = ['All', 'Weddings', 'Pre-Wedding', 'Candid', 'Engagement', 'Ceremonies', 'Editorial'];
+const categories = ['All', 'Weddings', 'Pre-Wedding', 'Engagement', 'Ceremonies', 'Celebrities'];
 
 // Height classes for masonry feel
 const hClass = { tall: 'h-80 md:h-96', normal: 'h-60 md:h-72' };
@@ -275,7 +275,7 @@ export default function Gallery() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[9999] bg-noir/97 backdrop-blur-md flex items-center justify-center p-4 md:p-8"
+                        className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 md:p-8"
                         onClick={() => setLightbox(null)}
                     >
                         {/* Close btn */}

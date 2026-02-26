@@ -107,8 +107,7 @@ function GalleryPanel({ item, index, total, scrollYProgress }) {
                 className="absolute inset-0 w-full h-full object-cover"
                 style={{ y: index === 0 ? 0 : y }}
             />
-            <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(10,8,4,0.85) 0%, rgba(10,8,4,0.15) 40%, rgba(10,8,4,0.35) 100%)', pointerEvents: 'none' }} />
-            <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(10,8,4,0.55) 0%, transparent 60%)', pointerEvents: 'none' }} />
+            {/* Gradients removed for clearer picture */}
 
             <div className="absolute top-24 left-8 md:left-16 z-10 flex items-center gap-3">
                 <span className="h-px w-8 bg-gold opacity-60" />
@@ -304,13 +303,15 @@ const youtubeVideos = [
     "https://www.youtube.com/embed/YHLg_rbTaVA",  // 4.
     "https://www.youtube.com/embed/lLHlvddKeBo",  // 5.
     "https://www.youtube.com/embed/4AimPeYr1Ac",  // 6.
+    "https://www.youtube.com/embed/lO6AZZbT6Xw",  // 7. (Duplicate of 1)
+    "https://www.youtube.com/embed/mwcwPh9d95E",  // 8. (Duplicate of 2)
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════
 export default function Home() {
     const [activeTestimonial, setActiveTestimonial] = useState(0);
     const [videoSlide, setVideoSlide] = useState(0);
-    const totalVideoSlides = Math.ceil(youtubeVideos.length / 2);
+    const totalVideoSlides = Math.ceil(youtubeVideos.length / 4);
 
     // Auto-rotate testimonials
     useEffect(() => {
@@ -382,6 +383,77 @@ export default function Home() {
 
             {/* ── MARQUEE GALLERY ────────────────────────────────────── */}
             <MarqueeGallery />
+
+            {/* ── YOUTUBE VIDEOS BLOCK ─────────────────────────── */}
+            <section className="pt-10 pb-24 md:pt-12 md:pb-32 px-6 md:px-12 lg:px-24 max-w-[1600px] mx-auto text-center">
+                <SectionHeading
+                    eyebrow="Cinematic Films"
+                    title="Watch Our"
+                    highlight="Masterpieces"
+                    subtitle="Immerse yourself in the magic and emotion of our cinematic wedding videos."
+                />
+
+                <div className="relative mt-8 group/slider">
+                    {/* Left Arrow */}
+                    <button
+                        onClick={() => setVideoSlide(prev => (prev - 1 + totalVideoSlides) % totalVideoSlides)}
+                        className="absolute left-0 top-1/2 -translate-y-1/2 -ml-6 z-10 w-12 h-12 rounded-full bg-noir border border-gold/30 flex items-center justify-center text-gold hover:bg-gold hover:text-noir transition-all duration-300"
+                    >
+                        <ChevronLeft size={22} />
+                    </button>
+
+                    <div className="overflow-hidden mx-8">
+                        <motion.div
+                            className="flex"
+                            animate={{ x: `-${videoSlide * (100 / totalVideoSlides)}%` }}
+                            transition={{ ease: "easeInOut", duration: 0.6 }}
+                            style={{ width: `${totalVideoSlides * 100}%` }}
+                        >
+                            {Array.from({ length: totalVideoSlides }).map((_, slideIndex) => (
+                                <div
+                                    key={slideIndex}
+                                    className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 px-2"
+                                    style={{ width: `${100 / totalVideoSlides}%` }}
+                                >
+                                    {youtubeVideos.slice(slideIndex * 4, slideIndex * 4 + 4).map((src, i) => (
+                                        <div key={i} className="min-w-0">
+                                            <div className="aspect-video w-full rounded-xl overflow-hidden">
+                                                <iframe
+                                                    className="w-full h-full"
+                                                    src={src}
+                                                    title="YouTube video player"
+                                                    frameBorder="0"
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                                    allowFullScreen
+                                                ></iframe>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ))}
+                        </motion.div>
+                    </div>
+
+                    {/* Right Arrow */}
+                    <button
+                        onClick={() => setVideoSlide(prev => (prev + 1) % totalVideoSlides)}
+                        className="absolute right-0 top-1/2 -translate-y-1/2 -mr-6 z-10 w-12 h-12 rounded-full bg-noir border border-gold/30 flex items-center justify-center text-gold hover:bg-gold hover:text-noir transition-all duration-300"
+                    >
+                        <ChevronRight size={22} />
+                    </button>
+
+                    {/* Dots Indicator */}
+                    <div className="flex justify-center gap-3 mt-8">
+                        {Array.from({ length: totalVideoSlides }).map((_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => setVideoSlide(i)}
+                                className={`h-px transition-all duration-500 ${i === videoSlide ? 'w-12 bg-gold' : 'w-4 bg-white/20'}`}
+                            />
+                        ))}
+                    </div>
+                </div>
+            </section>
 
             {/* ── WHY US ────────────────────────────────────────── */}
             <section className="pt-10 pb-10 md:pt-12 md:pb-16 px-6 md:px-12 lg:px-24 max-w-[1600px] mx-auto">
@@ -482,77 +554,6 @@ export default function Home() {
                                 key={i}
                                 onClick={() => setActiveTestimonial(i)}
                                 className={`h-px transition-all duration-500 ${i === activeTestimonial ? 'w-12 bg-gold' : 'w-4 bg-white/20'}`}
-                            />
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* ── YOUTUBE VIDEOS BLOCK ─────────────────────────── */}
-            <section className="pt-10 pb-24 md:pt-12 md:pb-32 px-6 md:px-12 lg:px-24 max-w-[1600px] mx-auto text-center">
-                <SectionHeading
-                    eyebrow="Cinematic Films"
-                    title="Watch Our"
-                    highlight="Masterpieces"
-                    subtitle="Immerse yourself in the magic and emotion of our cinematic wedding videos."
-                />
-
-                <div className="relative mt-8 group/slider">
-                    {/* Left Arrow */}
-                    <button
-                        onClick={() => setVideoSlide(prev => (prev - 1 + totalVideoSlides) % totalVideoSlides)}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 -ml-6 z-10 w-12 h-12 rounded-full bg-noir border border-gold/30 flex items-center justify-center text-gold hover:bg-gold hover:text-noir transition-all duration-300"
-                    >
-                        <ChevronLeft size={22} />
-                    </button>
-
-                    <div className="overflow-hidden mx-8">
-                        <motion.div
-                            className="flex"
-                            animate={{ x: `-${videoSlide * (100 / totalVideoSlides)}%` }}
-                            transition={{ ease: "easeInOut", duration: 0.6 }}
-                            style={{ width: `${totalVideoSlides * 100}%` }}
-                        >
-                            {Array.from({ length: totalVideoSlides }).map((_, slideIndex) => (
-                                <div
-                                    key={slideIndex}
-                                    className="flex justify-center gap-8 md:gap-12 px-2"
-                                    style={{ width: `${100 / totalVideoSlides}%` }}
-                                >
-                                    {youtubeVideos.slice(slideIndex * 2, slideIndex * 2 + 2).map((src, i) => (
-                                        <div key={i} className="flex-1 min-w-0">
-                                            <div className="aspect-video w-full rounded-xl overflow-hidden">
-                                                <iframe
-                                                    className="w-full h-full"
-                                                    src={src}
-                                                    title="YouTube video player"
-                                                    frameBorder="0"
-                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                                    allowFullScreen
-                                                ></iframe>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            ))}
-                        </motion.div>
-                    </div>
-
-                    {/* Right Arrow */}
-                    <button
-                        onClick={() => setVideoSlide(prev => (prev + 1) % totalVideoSlides)}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 -mr-6 z-10 w-12 h-12 rounded-full bg-noir border border-gold/30 flex items-center justify-center text-gold hover:bg-gold hover:text-noir transition-all duration-300"
-                    >
-                        <ChevronRight size={22} />
-                    </button>
-
-                    {/* Dots Indicator */}
-                    <div className="flex justify-center gap-3 mt-8">
-                        {Array.from({ length: totalVideoSlides }).map((_, i) => (
-                            <button
-                                key={i}
-                                onClick={() => setVideoSlide(i)}
-                                className={`h-px transition-all duration-500 ${i === videoSlide ? 'w-12 bg-gold' : 'w-4 bg-white/20'}`}
                             />
                         ))}
                     </div>
