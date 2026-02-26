@@ -301,7 +301,8 @@ function EventStep({ title, stepKey, selections, onToggle, cameraCount, onCamera
 const STEPS = [
     'photography',
     'engagement',
-    'haldi',
+    'haldi_bride',
+    'haldi_groom',
     'mehendi',
     'sangeeth',
     'wedding',
@@ -313,7 +314,8 @@ const STEPS = [
 const STEP_LABELS = {
     photography: 'Photography Style',
     engagement: 'Engagement',
-    haldi: 'Haldi Ceremony',
+    haldi_bride: 'Haldi Ceremony (Bride)',
+    haldi_groom: 'Haldi Ceremony (Groom)',
     mehendi: 'Mehendi',
     sangeeth: 'Sangeeth',
     wedding: 'The Big Day',
@@ -506,7 +508,7 @@ export default function QuotePage() {
         }
 
         // Event coverage
-        ['engagement', 'haldi', 'mehendi', 'sangeeth', 'wedding', 'reception'].forEach(ev => {
+        ['engagement', 'haldi_bride', 'haldi_groom', 'mehendi', 'sangeeth', 'wedding', 'reception'].forEach(ev => {
             const evSel = selections[ev] || [];
             if (!evSel.length) return;
 
@@ -601,7 +603,7 @@ export default function QuotePage() {
         const albumLabel = { album_synthetic: 'Synthetic (Rs.8,000)', album_metallic: 'Metallic Finish (Rs.12,000)', album_glossy: 'Glossy Print (Rs.10,000)' }[selections.album] || 'Not selected';
 
         const serviceLabel = { candid_photo: 'Candid Photography', traditional_photo: 'Traditional Photography', candid_video: 'Candid Video', traditional_video: 'Traditional Video', drone: 'Drone Coverage (Rs.10,000)' };
-        const eventLines = ['engagement', 'haldi', 'mehendi', 'sangeeth', 'wedding', 'reception']
+        const eventLines = ['engagement', 'haldi_bride', 'haldi_groom', 'mehendi', 'sangeeth', 'wedding', 'reception']
             .map(ev => {
                 const evSel = (selections[ev] || []);
                 if (!evSel.length) return null;
@@ -721,7 +723,7 @@ export default function QuotePage() {
                                     )}
 
                                     {/* EVENT STEPS */}
-                                    {['engagement', 'haldi', 'mehendi', 'sangeeth', 'wedding', 'reception'].includes(currentKey) && (
+                                    {['engagement', 'haldi_bride', 'haldi_groom', 'mehendi', 'sangeeth', 'wedding', 'reception'].includes(currentKey) && (
                                         <EventStep
                                             title={STEP_LABELS[currentKey]}
                                             stepKey={currentKey}

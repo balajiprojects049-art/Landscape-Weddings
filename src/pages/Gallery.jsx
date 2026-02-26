@@ -141,18 +141,28 @@ export default function Gallery() {
                 </section>
 
                 {/* ── CATEGORY FILTER ───────────────────────────────── */}
-                <div className="sticky top-16 z-40 bg-noir/90 backdrop-blur-md border-b border-gold/10 py-6">
-                    <div className="flex items-center justify-center gap-3 md:gap-5 flex-wrap px-4">
+                <div className="sticky top-16 z-40 bg-noir/90 backdrop-blur-md border-b border-gold/10 py-4">
+                    <div className="flex items-center justify-start md:justify-center gap-2 md:gap-5 px-4 overflow-x-auto no-scrollbar pb-2 pt-2">
                         {categories.map((cat) => (
                             <button
                                 key={cat}
                                 onClick={() => setActive(cat)}
-                                className={`px-6 py-2.5 text-[10px] uppercase tracking-[0.3em] font-cinzel font-semibold transition-all duration-500 rounded-sm ${active === cat
-                                    ? 'text-gold border-b-2 border-gold pb-1.5'
-                                    : 'text-white/30 hover:text-white/80'
+                                className={`relative px-4 md:px-6 py-2.5 text-[10px] uppercase tracking-[0.3em] font-cinzel font-bold transition-all duration-300 flex-shrink-0 ${active === cat
+                                    ? 'text-gold'
+                                    : 'text-white/40 hover:text-white/90'
                                     }`}
                             >
                                 {cat}
+                                {active === cat && (
+                                    <motion.div
+                                        layoutId="galleryTabOutline"
+                                        className="absolute bottom-0 left-0 right-0 h-[2px] bg-gold"
+                                        initial={false}
+                                        transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                                    >
+                                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-4 bg-gold/30 blur-md pointer-events-none" />
+                                    </motion.div>
+                                )}
                             </button>
                         ))}
                     </div>

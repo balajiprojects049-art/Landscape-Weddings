@@ -390,15 +390,23 @@ export default function Portfolio() {
                 )}
 
                 {/* ── FILTER TABS ─────────────────────────── */}
-                <div className="flex items-center justify-center gap-2 md:gap-3 flex-wrap px-4 mb-10">
+                <div className="flex items-center justify-start md:justify-center gap-2 md:gap-3 px-4 mb-10 overflow-x-auto no-scrollbar pb-2">
                     {filterTabs.map(tab => (
                         <button key={tab} onClick={() => setFilter(tab)}
-                            className={`px-5 py-2 text-[10px] uppercase tracking-[0.25em] font-medium transition-all duration-300 rounded-sm border ${filter === tab
-                                ? 'bg-gold text-noir border-gold'
+                            className={`relative px-5 py-2 text-[10px] uppercase tracking-[0.25em] font-medium transition-colors duration-300 rounded-sm border flex-shrink-0 ${filter === tab
+                                ? 'text-noir border-gold'
                                 : 'border-white/10 text-white/40 hover:border-gold/40 hover:text-white'
                                 }`}
                         >
-                            {tab}
+                            <span className="relative z-10">{tab}</span>
+                            {filter === tab && (
+                                <motion.div
+                                    layoutId="portfolioTabBg"
+                                    className="absolute inset-0 bg-gold rounded-sm pointer-events-none"
+                                    initial={false}
+                                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                />
+                            )}
                         </button>
                     ))}
                 </div>
