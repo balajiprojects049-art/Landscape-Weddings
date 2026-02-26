@@ -198,8 +198,7 @@ function EventStep({ title, stepKey, selections, onToggle, cameraCount, onCamera
     ];
 
     const eventSel = selections[stepKey] || [];
-    const hasPhoto = eventSel.some(s => s.includes('photo') || s.includes('video'));
-    const cameras = cameraCount[stepKey] || 1;
+    const photoVideoSecs = eventSel.filter(s => s.includes('photo') || s.includes('video'));
 
     return (
         <div className="flex flex-col items-center w-full">
@@ -218,79 +217,82 @@ function EventStep({ title, stepKey, selections, onToggle, cameraCount, onCamera
                     />
                 ))}
             </div>
-            {/* Camera Count Stepper — shows when any service is selected */}
+            {/* Camera Count Steppers — shows when any service is selected */}
             <AnimatePresence>
-                {hasPhoto && (
+                {photoVideoSecs.length > 0 && (
                     <motion.div
                         initial={{ opacity: 0, y: 16 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 16 }}
                         transition={{ duration: 0.4 }}
-                        className="mt-8 flex flex-col items-center gap-3"
+                        className="mt-12 flex flex-col items-center gap-4 w-full max-w-xl"
                     >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 mb-2">
                             <Camera size={16} className="text-gold/60" />
-                            <span className="text-white/40 text-xs uppercase tracking-widest">Cameras</span>
+                            <span className="text-white/40 text-xs uppercase tracking-widest">Cameras per Service</span>
                         </div>
 
-                        {/* Stepper */}
-                        <div className="flex items-center gap-0 border border-gold/30 rounded-xl overflow-hidden bg-white/3">
-                            {/* Minus */}
-                            <motion.button
-                                whileTap={{ scale: 0.9 }}
-                                onClick={() => onCameraCount(stepKey, Math.max(1, cameras - 1))}
-                                disabled={cameras <= 1}
-                                className={clsx(
-                                    'w-12 h-12 flex items-center justify-center text-xl font-bold transition-all duration-200',
-                                    cameras <= 1
-                                        ? 'text-white/15 cursor-not-allowed'
-                                        : 'text-gold hover:bg-gold/10 cursor-pointer'
-                                )}
-                            >
-                                −
-                            </motion.button>
+                        {photoVideoSecs.map(svc => {
+                            const svcLabel = options.find(o => o.id === svc)?.label;
+                            const cameras = cameraCount[`${stepKey}_${svc}`] || 1;
 
-                            {/* Count Display */}
-                            <div className="w-16 h-12 flex flex-col items-center justify-center border-x border-gold/20">
-                                <span className="text-gold font-bold text-xl leading-none">{cameras}</span>
-                                <span className="text-white/30 text-[9px] uppercase tracking-wider mt-0.5">
-                                    {cameras === 1 ? 'Camera' : 'Cameras'}
-                                </span>
-                            </div>
+                            return (
+                                <div key={svc} className="flex flex-col md:flex-row items-center justify-between gap-4 w-full glass px-6 py-4 rounded-2xl border border-white/5 bg-white/5">
+                                    <div className="flex flex-col items-center md:items-start text-center md:text-left">
+                                        <span className="text-white text-sm font-medium tracking-wide">{svcLabel}</span>
+                                        {cameras > 1 && (
+                                            <span className="text-gold/70 text-xs mt-1">
+                                                +₹{((cameras - 1) * PRICES.extra_camera).toLocaleString('en-IN')}
+                                            </span>
+                                        )}
+                                    </div>
 
-                            {/* Plus */}
-                            <motion.button
-                                whileTap={{ scale: 0.9 }}
-                                onClick={() => onCameraCount(stepKey, Math.min(4, cameras + 1))}
-                                disabled={cameras >= 4}
-                                className={clsx(
-                                    'w-12 h-12 flex items-center justify-center text-xl font-bold transition-all duration-200',
-                                    cameras >= 4
-                                        ? 'text-white/15 cursor-not-allowed'
-                                        : 'text-gold hover:bg-gold/10 cursor-pointer'
-                                )}
-                            >
-                                +
-                            </motion.button>
-                        </div>
+                                    {/* Stepper */}
+                                    <div className="flex items-center gap-0 border border-gold/30 rounded-xl overflow-hidden bg-noir">
+                                        {/* Minus */}
+                                        <motion.button
+                                            whileTap={{ scale: 0.9 }}
+                                            onClick={() => onCameraCount(`${stepKey}_${svc}`, Math.max(1, cameras - 1))}
+                                            disabled={cameras <= 1}
+                                            className={clsx(
+                                                'w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-xl font-bold transition-all duration-200',
+                                                cameras <= 1
+                                                    ? 'text-white/15 cursor-not-allowed'
+                                                    : 'text-gold hover:bg-gold/10 cursor-pointer'
+                                            )}
+                                        >
+                                            −
+                                        </motion.button>
 
-                        {/* Cost note */}
-                        <AnimatePresence>
-                            {cameras > 1 && (
-                                <motion.p
-                                    initial={{ opacity: 0, y: -4 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -4 }}
-                                    className="text-gold/70 text-xs"
-                                >
-                                    +₹{((cameras - 1) * PRICES.extra_camera).toLocaleString('en-IN')} for extra {cameras - 1} camera{cameras > 2 ? 's' : ''}
-                                </motion.p>
-                            )}
-                        </AnimatePresence>
+                                        {/* Count Display */}
+                                        <div className="w-14 h-10 md:w-16 md:h-12 flex flex-col items-center justify-center border-x border-gold/20">
+                                            <span className="text-gold font-bold text-lg md:text-xl leading-none">{cameras}</span>
+                                            <span className="text-white/30 text-[8px] md:text-[9px] uppercase tracking-wider mt-0.5">
+                                                {cameras === 1 ? 'Camera' : 'Cameras'}
+                                            </span>
+                                        </div>
+
+                                        {/* Plus */}
+                                        <motion.button
+                                            whileTap={{ scale: 0.9 }}
+                                            onClick={() => onCameraCount(`${stepKey}_${svc}`, Math.min(4, cameras + 1))}
+                                            disabled={cameras >= 4}
+                                            className={clsx(
+                                                'w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-xl font-bold transition-all duration-200',
+                                                cameras >= 4
+                                                    ? 'text-white/15 cursor-not-allowed'
+                                                    : 'text-gold hover:bg-gold/10 cursor-pointer'
+                                            )}
+                                        >
+                                            +
+                                        </motion.button>
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </motion.div>
                 )}
             </AnimatePresence>
-
         </div>
     );
 }
@@ -342,9 +344,20 @@ export default function QuotePage() {
         }
         return acc + (PRICES[val] || 0);
     }, 0);
-    const cameraTotal = Object.entries(cameraCount).reduce((acc, [key, cnt]) => {
-        const hasSel = (selections[key] || []).some(s => s.includes('photo') || s.includes('video'));
-        return acc + (hasSel && cnt > 1 ? (cnt - 1) * PRICES.extra_camera : 0);
+    const cameraTotal = STEPS.reduce((acc, stepKey) => {
+        const eventSel = selections[stepKey];
+        if (!Array.isArray(eventSel)) return acc;
+
+        let stepCamTotal = 0;
+        eventSel.forEach(svc => {
+            if (svc.includes('photo') || svc.includes('video')) {
+                const cnt = cameraCount[`${stepKey}_${svc}`] || 1;
+                if (cnt > 1) {
+                    stepCamTotal += (cnt - 1) * PRICES.extra_camera;
+                }
+            }
+        });
+        return acc + stepCamTotal;
     }, 0);
     const total = servicesTotal + cameraTotal;
 
@@ -484,12 +497,11 @@ export default function QuotePage() {
 
         // Photography style
         if (selections.photography) {
-            const pts = selections.photography === 'candid' ? 25000 : 15000;
             tableRows.push([
                 'Photography Style',
                 selections.photography === 'candid' ? 'Candid Photography' : 'Traditional Photography',
-                '1',
-                `Rs. ${pts.toLocaleString('en-IN')}`,
+                '-',
+                '-',
             ]);
         }
 
@@ -497,27 +509,29 @@ export default function QuotePage() {
         ['engagement', 'haldi', 'mehendi', 'sangeeth', 'wedding', 'reception'].forEach(ev => {
             const evSel = selections[ev] || [];
             if (!evSel.length) return;
-            const camCount = cameraCount[ev] || 1;
-            const extraCamCost = (camCount - 1) * PRICES.extra_camera;
 
             evSel.forEach(svc => {
+                const isPhotoVideo = svc.includes('photo') || svc.includes('video');
+                const camCount = isPhotoVideo ? (cameraCount[`${ev}_${svc}`] || 1) : 1;
+                const extraCamCost = (camCount - 1) * PRICES.extra_camera;
                 const price = PRICES[svc] || 0;
+
                 tableRows.push([
                     STEP_LABELS[ev],
                     SVC_LABEL[svc] || svc,
-                    `${camCount} Cam${camCount > 1 ? 's' : ''}`,
+                    isPhotoVideo ? `${camCount} Cam${camCount > 1 ? 's' : ''}` : '-',
                     `Rs. ${(price).toLocaleString('en-IN')}`,
                 ]);
-            });
 
-            if (camCount > 1) {
-                tableRows.push([
-                    STEP_LABELS[ev],
-                    `Extra Camera (${camCount - 1} additional)`,
-                    '',
-                    `Rs. ${extraCamCost.toLocaleString('en-IN')}`,
-                ]);
-            }
+                if (isPhotoVideo && camCount > 1) {
+                    tableRows.push([
+                        '',
+                        `  ↳ Extra Camera (${camCount - 1} additional)`,
+                        '',
+                        `Rs. ${extraCamCost.toLocaleString('en-IN')}`,
+                    ]);
+                }
+            });
         });
 
         // Album
@@ -591,10 +605,16 @@ export default function QuotePage() {
             .map(ev => {
                 const evSel = (selections[ev] || []);
                 if (!evSel.length) return null;
-                const camCount = cameraCount[ev] || 1;
-                const extraCost = (camCount - 1) * PRICES.extra_camera;
-                const camNote = camCount > 1 ? ` [${camCount} Cameras +Rs.${extraCost.toLocaleString('en-IN')}]` : '';
-                return `  * ${STEP_LABELS[ev]}: ${evSel.map(s => serviceLabel[s] || s).join(', ')}${camNote}`;
+
+                const svcs = evSel.map(svc => {
+                    const isPhotoVideo = svc.includes('photo') || svc.includes('video');
+                    const camCount = isPhotoVideo ? (cameraCount[`${ev}_${svc}`] || 1) : 1;
+                    const extraCost = (camCount - 1) * PRICES.extra_camera;
+                    const camNote = camCount > 1 ? ` [${camCount} Cameras +Rs.${extraCost.toLocaleString('en-IN')}]` : '';
+                    return (serviceLabel[svc] || svc) + camNote;
+                }).join(', ');
+
+                return `  * ${STEP_LABELS[ev]}: ${svcs}`;
             })
             .filter(Boolean)
             .join('\n') || '  * None selected';
@@ -608,7 +628,7 @@ export default function QuotePage() {
             `Wedding Date: ${form.date || 'Not specified'}\n` +
             `Location: ${form.location || 'Not specified'}\n` +
             `No. of Events: ${form.events || 'Not specified'}\n\n` +
-            `Photography: ${selections.photography === 'candid' ? 'Candid (Rs.25,000)' : selections.photography === 'traditional' ? 'Traditional (Rs.15,000)' : 'Not selected'}\n\n` +
+            `Photography: ${selections.photography === 'candid' ? 'Candid' : selections.photography === 'traditional' ? 'Traditional' : 'Not selected'}\n\n` +
             `Event Coverage:\n${eventLines}\n\n` +
             `Album: ${albumLabel}\n\n` +
             `*Estimated Total: Rs.${total.toLocaleString('en-IN')}*\n` +
@@ -692,9 +712,9 @@ export default function QuotePage() {
                                         <div className="flex flex-col items-center w-full gap-8">
                                             <h2 className="font-serif text-3xl md:text-5xl text-white text-center">What Photography <span className="italic text-gold font-light">Do You Want?</span></h2>
                                             <div className="grid grid-cols-2 gap-6 w-full max-w-lg">
-                                                <RadioCard id="candid" label="Candid Photography" icon={Camera} subtitle="Artistic & unposed" price={25000}
+                                                <RadioCard id="candid" label="Candid Photography" icon={Camera} subtitle="Artistic & unposed"
                                                     selected={selections.photography === 'candid'} onSelect={(v) => handleSelectSingle('photography', v)} />
-                                                <RadioCard id="traditional" label="Traditional Photography" icon={Image} subtitle="Posed & formal" price={15000}
+                                                <RadioCard id="traditional" label="Traditional Photography" icon={Image} subtitle="Posed & formal"
                                                     selected={selections.photography === 'traditional'} onSelect={(v) => handleSelectSingle('photography', v)} />
                                             </div>
                                         </div>
