@@ -188,10 +188,10 @@
 /* Hero video overlay */
 .hero-overlay {
   background: linear-gradient(to bottom,
-      rgba(0, 0, 0, 0.3) 0%,
-      rgba(0, 0, 0, 0.1) 40%,
-      rgba(0, 0, 0, 0.5) 70%,
-      rgba(5, 5, 5, 1) 100%);
+      rgba(0, 0, 0, 0.15) 0%,
+      rgba(0, 0, 0, 0.05) 40%,
+      rgba(0, 0, 0, 0.3) 70%,
+      rgba(1, 11, 3, 0.85) 100%);
 }
 
 /* Section noise texture */
@@ -236,4 +236,17 @@ select:focus {
   outline: none;
   border-color: rgba(255, 215, 0, 0.5) !important;
   box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.1);
+}
+
+/* ── Performance utilities ── */
+/* Use GPU for marquee strips */
+.marquee-gpu {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Reduce paint cost for offscreen sections */
+.content-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
 }

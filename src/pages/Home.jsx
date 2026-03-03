@@ -6,17 +6,24 @@ import LuxuryHeroSection from '../components/LuxuryHeroSection';
 import PremiumFooter from '../components/PremiumFooter';
 import { ArrowRight, Quote as QuoteIcon, Star, Heart, Camera, Video, Award, ChevronLeft, ChevronRight } from 'lucide-react';
 
-// ── Reusable animated reveal ──────────────────────────────────────────────
+// Preload first hero image for fast LCP
+const preloadLink = document.createElement('link');
+preloadLink.rel = 'preload';
+preloadLink.as = 'image';
+preloadLink.href = '/PC/01.jpg';
+document.head.appendChild(preloadLink);
+
+// ── Reusable animated reveal (optimized: faster, less movement) ───────────
 function Reveal({ children, delay = 0, className = '' }) {
     const ref = useRef(null);
-    const inView = useInView(ref, { once: true, amount: 0.15 });
+    const inView = useInView(ref, { once: true, amount: 0.1 });
     return (
         <motion.div
             ref={ref}
             className={className}
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.9, delay, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
         >
             {children}
         </motion.div>
@@ -193,6 +200,7 @@ function MarqueeStrip({ images, direction = 'left', speed = 40 }) {
                             src={img.src}
                             alt={img.label}
                             loading="lazy"
+                            decoding="async"
                             className="absolute inset-0 w-full h-full object-cover transition-transform duration-[2000ms] ease-out group-hover:scale-110"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-noir/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -517,6 +525,7 @@ export default function Home() {
                                 src="/IMG_3907.JPG.jpeg"
                                 alt="Why Landscape Weddings"
                                 loading="lazy"
+                                decoding="async"
                                 className="absolute inset-0 w-full h-full object-cover"
                             />
                         </div>
@@ -601,6 +610,8 @@ export default function Home() {
                                         <img
                                             src={t.img}
                                             alt={t.name}
+                                            loading="lazy"
+                                            decoding="async"
                                             className="absolute inset-0 w-full h-full object-cover"
                                         />
                                         {/* Gradient overlay for readability */}

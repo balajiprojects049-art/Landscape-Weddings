@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Play } from 'lucide-react';
@@ -61,7 +61,10 @@ export default function LuxuryHeroSection() {
         <section className="relative h-screen w-full overflow-hidden bg-noir noise-bg">
 
             {/* ── PARALLAX SLIDING BG ──────────────────────────── */}
-            <motion.div className="absolute inset-0 z-0" style={{ y, scale }}>
+            <motion.div
+                className="absolute inset-0 z-0"
+                style={{ y, scale, willChange: 'transform' }}
+            >
                 <AnimatePresence initial={false}>
                     <motion.div
                         key={`${isMobile ? 'm' : 'd'}-${currentIndex}`}
@@ -70,19 +73,19 @@ export default function LuxuryHeroSection() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        transition={{ duration: 1.5, ease: 'easeInOut' }}
+                        transition={{ duration: 1.2, ease: 'easeInOut' }}
                     />
                 </AnimatePresence>
                 <div className="hero-overlay absolute inset-0 z-10 pointer-events-none" />
-                {/* Extra vignette */}
-                <div className="absolute inset-0 bg-gradient-to-r from-noir/80 via-noir/20 to-noir/20 z-10 pointer-events-none" />
+                {/* Extra vignette — reduced opacity */}
+                <div className="absolute inset-0 bg-gradient-to-r from-noir/50 via-noir/10 to-noir/10 z-10 pointer-events-none" />
             </motion.div>
 
             {/* ── CINEMATIC TOP BAR ────────────────────── */}
-            <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-noir to-transparent z-10" />
+            <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-noir/60 to-transparent z-10" />
 
             {/* ── BOTTOM FADE ──────────────────────────── */}
-            <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-noir via-noir/40 to-transparent z-10" />
+            <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-noir via-noir/25 to-transparent z-10" />
 
             {/* ── DOTS INDICATOR ────────────────── */}
             <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-50 flex gap-2">
