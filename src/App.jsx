@@ -14,6 +14,8 @@ const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
 const Quote = lazy(() => import('./pages/Quote'));
 const CookiePolicy = lazy(() => import('./pages/CookiePolicy'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const TermsAndConditions = lazy(() => import('./pages/TermsAndConditions'));
 
 // Cinematic gold loading screen
 function PageLoader() {
@@ -45,6 +47,8 @@ export default function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/quote" element={<Quote />} />
           <Route path="/cookies" element={<CookiePolicy />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsAndConditions />} />
           {/* Catch-all */}
           <Route path="*" element={<Home />} />
         </Routes>
