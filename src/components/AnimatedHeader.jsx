@@ -56,6 +56,8 @@ export default function AnimatedHeader() {
                         animate={{
                             left: stickyState ? '48px' : '50%',
                             x: stickyState ? '0%' : '-50%',
+                            opacity: menuOpen ? 0 : 1,
+                            pointerEvents: menuOpen ? 'none' : 'auto'
                         }}
                         transition={{ type: 'spring', stiffness: 80, damping: 18 }}
                     >
@@ -151,12 +153,23 @@ export default function AnimatedHeader() {
                         animate={{ clipPath: 'circle(150% at calc(100% - 40px) 55px)' }}
                         exit={{ clipPath: 'circle(0% at calc(100% - 40px) 55px)' }}
                         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                        className="fixed inset-0 z-[800] bg-noir flex flex-col items-center justify-center gap-10"
+                        className="fixed inset-0 z-[800] bg-noir flex flex-col items-center justify-start pt-16 gap-4"
                     >
                         {/* Gold orb background */}
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                             <div className="w-[60vw] h-[60vw] rounded-full bg-gold/5 blur-[100px]" />
                         </div>
+
+                        {/* Logo at the top of the menu */}
+                        <motion.div
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ delay: 0.1 }}
+                            className="mb-6 mt-12"
+                        >
+                            <img src="/LOGO.png" alt="Logo" className="h-24 w-auto drop-shadow-lg" />
+                        </motion.div>
 
                         {[...navLinks, { name: 'Home', path: '/' }].map((link, i) => (
                             <motion.div
