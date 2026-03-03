@@ -108,9 +108,6 @@ function GalleryPanel({ item, index, total, scrollYProgress }) {
                 style={{ y: index === 0 ? 0 : y }}
             />
 
-            {/* Dark gradient overlay for text readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-noir/90 via-noir/20 to-noir/40 z-10" />
-
             <div className="absolute top-20 md:top-24 left-6 md:left-16 z-20 flex items-center gap-3">
                 <span className="h-px w-6 md:w-8 bg-gold opacity-60" />
                 <span className="text-gold text-[9px] md:text-[10px] uppercase tracking-[0.5em] font-medium">Our Portfolio</span>
