@@ -74,7 +74,7 @@ const scrollGallery = [
     {
         src: '/IMG_2636.JPG.jpeg',
         label: 'Candid Grace',
-        caption: 'The moments you didn\'t know were happening — we did.',
+        caption: "The moments you didn't know were happening — we did.",
         tag: '04 / Candid',
     },
     {
@@ -117,7 +117,7 @@ function GalleryPanel({ item, index, total, scrollYProgress }) {
             <div className="absolute bottom-16 left-8 md:left-16 z-10 max-w-xl">
                 <p className="text-gold/80 text-[10px] uppercase tracking-[0.5em] font-medium mb-3">{item.tag}</p>
                 <h3 className="font-serif text-5xl md:text-6xl lg:text-7xl text-white leading-tight mb-4">{item.label}</h3>
-                <p className="font-serif text-lg md:text-xl text-white/55 italic font-light">“{item.caption}”</p>
+                <p className="font-serif text-lg md:text-xl text-white/55 italic font-light">"{item.caption}"</p>
                 <div className="mt-8">
                     <Link to="/portfolio">
                         <button className="flex items-center gap-3 text-white text-xs uppercase tracking-widest hover:text-gold transition-colors group">
@@ -265,25 +265,87 @@ const services = [
     },
 ];
 
-// ── Testimonials ───────────────────────────────────────────────────────────
+// ── Google Reviews (Real) ──────────────────────────────────────────────────
 const testimonials = [
     {
-        name: 'Priya & Arjun',
-        location: 'Mumbai',
-        text: '"When you hire Landscape Weddings, you are not just paying for our time and skill, but for the pure joy and positive energy they bring to your most sacred day. Our album made us cry with happiness."',
+        name: 'Chaitanya Sanagapalli',
+        meta: 'Local Guide · 41 reviews · 8 photos',
+        date: '20 Mar 2024',
+        text: "Subba reddy & his team have done a commendable job for many events such as wedding, pre wedding, birthday party, baby shoot. We've liked the output and referred landscape to friends & family. Quality output delivered at reasonable price. Highly recommend",
         rating: 5,
+        initial: 'C',
+        color: '#2d6a4f',
+        img: '/IMG_1164.JPG.jpeg',
     },
     {
-        name: 'Sneha & Karan',
-        location: 'Hyderabad',
-        text: '"They captured moments we didn\'t even know were happening. Every frame is a work of art. The cinematic film left our entire family speechless. Truly a once-in-a-lifetime experience."',
+        name: 'Bindusan1995',
+        meta: '1 review · 0 photos',
+        date: '30 Dec 2024',
+        text: 'The wedding photos were absolutely stunning and elegant. They captured every beautiful moment of our special day. The photographer was incredibly professional and making everyone feel comfortable through out day. The memories captured were worth every penny. I highly recommend this photography professional artist for their big day. Thank you for being part of my beautiful memories.',
         rating: 5,
+        initial: 'B',
+        color: '#1b4332',
+        img: '/IMG_1174.JPG.jpeg',
     },
     {
-        name: 'Divya & Rahul',
-        location: 'Bangalore',
-        text: '"From our engagement shoot to the final reception, Landscape was present in every heartbeat. The photos are so cinematic and emotional. We could not have chosen better."',
+        name: 'Vinay Kumar Sadineni',
+        meta: '3 reviews · 0 photos',
+        date: '16 weeks ago',
+        text: 'So professional from the beginning until the end. Very friendly. They knew how to get the best shots and photos turned out so beautiful. They respond very quickly. Delivered the albums and videos on time. Highly recommended for any event.',
         rating: 5,
+        initial: 'V',
+        color: '#6b3fa0',
+        img: '/IMG_2636.JPG.jpeg',
+    },
+    {
+        name: 'Vineela Tontepu',
+        meta: '7 reviews · 0 photos',
+        date: '9 weeks ago',
+        text: "We had a wonderful experience with landscape wedding photography team for our wedding. He was very professional, friendly, and made us feel comfortable throughout. The candid, traditional, and cinematic shots were captured beautifully, and every moment was documented perfectly. We're so happy to see our wedding pictures featured here. Highly recommended! — Vineela & Vishnu",
+        rating: 5,
+        initial: 'V',
+        color: '#7b2d8b',
+        img: '/IMG_2248.JPG.jpeg',
+    },
+    {
+        name: 'Akhila Krishna',
+        meta: '6 reviews · 0 photos',
+        date: '4 weeks ago',
+        text: 'The team is very good, well communicated and awesome photography skills. Videos and photos came out exceptionally well. Thanks for giving us good memories.',
+        rating: 5,
+        initial: 'A',
+        color: '#8b4513',
+        img: '/IMG_2643.JPG.jpeg',
+    },
+    {
+        name: 'Varija Koppolu',
+        meta: 'Local Guide · 85 reviews · 98 photos',
+        date: '15 Oct 2023',
+        text: 'I had a great time working with LSP. They are all a wonderful and hard working team. Very easy to work with. I would highly recommend LSP for all your events.',
+        rating: 5,
+        initial: 'V',
+        color: '#c0392b',
+        img: '/IMG_2841.JPG.jpeg',
+    },
+    {
+        name: 'Harsha Annapureddy',
+        meta: '8 reviews · 4 photos',
+        date: '3 weeks ago',
+        text: 'Amazing experience with the Landscape Photography team. All the photos came out beautifully, especially the candid shots which are our absolute favorites. The staff is incredibly friendly and made the entire process so easy for us. One of the best parts is that they provide a link containing all the wedding photos that we can access and use for a lifetime. If you want your memories captured beautifully and stored safely, go with them.',
+        rating: 5,
+        initial: 'H',
+        color: '#1a5276',
+        img: '/IMG_0887.JPG.jpeg',
+    },
+    {
+        name: 'Roja Kodanda Reddy',
+        meta: '6 reviews · 0 photos',
+        date: '2 days ago',
+        text: "Our heartfelt thanks to Team Sathish, Gopikrishna, Chandu, Ravi, and Akhil for capturing the most precious moments of our wedding so beautifully. From the emotional muhurtam moments to the joyful celebrations, every picture reflects your dedication, creativity, and passion. You didn't just take photos — you preserved memories that we will cherish for a lifetime. Your teamwork, patience, and attention to every small detail truly made our big day even more special. We felt comfortable, guided, and confident throughout, all because of your wonderful support. We are beyond grateful for your hard work and for giving us such timeless memories. Thank you for being such an amazing team and for making our wedding unforgettable. ✨📷💛",
+        rating: 5,
+        initial: 'R',
+        color: '#922b21',
+        img: '/IMG_3907.JPG.jpeg',
     },
 ];
 
@@ -518,45 +580,143 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* ── TESTIMONIALS ─────────────────────────────────── */}
-            <section className="pt-12 pb-10 md:pt-16 md:pb-16 relative overflow-hidden bg-noir-100">
+            {/* ── GOOGLE REVIEWS SLIDER ─────────────────────────── */}
+            <section className="pt-16 pb-20 md:pt-20 md:pb-28 relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #0a0a0a 0%, #0f0f0f 100%)' }}>
+                {/* Ambient glow */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div className="w-[70vw] h-[50vh] rounded-full bg-gold/4 blur-[200px]" />
+                    <div className="w-[60vw] h-[40vh] rounded-full blur-[180px]" style={{ background: 'radial-gradient(ellipse, rgba(212,175,55,0.06) 0%, transparent 70%)' }} />
                 </div>
-                <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
-                    <SectionHeading eyebrow="Client Stories" title="Words of" highlight="Love" />
 
-                    <div className="relative min-h-[220px] flex items-center justify-center">
-                        {testimonials.map((t, i) => (
-                            <motion.div
-                                key={i}
-                                className="absolute inset-0 flex flex-col items-center"
-                                initial={{ opacity: 0, y: 30 }}
-                                animate={i === activeTestimonial ? { opacity: 1, y: 0 } : { opacity: 0, y: -30 }}
-                                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                            >
-                                <div className="flex gap-1 mb-6">
-                                    {Array.from({ length: t.rating }).map((_, j) => (
-                                        <Star key={j} size={16} className="text-gold fill-gold" />
-                                    ))}
-                                </div>
-                                <p className="font-serif text-xl md:text-2xl text-white/80 italic leading-relaxed mb-8 font-light">{t.text}</p>
-                                <p className="font-cinzel text-gold text-sm font-semibold tracking-wider">{t.name}</p>
-                                <p className="text-white/40 text-xs tracking-widest uppercase mt-1">{t.location}</p>
-                            </motion.div>
-                        ))}
+                <div className="max-w-[1200px] mx-auto px-6 md:px-16 relative z-10">
+                    {/* Heading */}
+                    <SectionHeading eyebrow="Google Reviews" title="Words of" highlight="Love" subtitle="Real experiences from our cherished clients — verified on Google." />
+
+                    {/* Slider wrapper */}
+                    <div className="relative">
+
+                        {/* Card container — fixed height so all reviews look uniform */}
+                        <div className="rounded-2xl overflow-hidden relative" style={{ border: '1px solid rgba(212,175,55,0.16)', height: '440px' }}>
+                            {testimonials.map((t, i) => (
+                                <motion.div
+                                    key={i}
+                                    initial={false}
+                                    animate={i === activeTestimonial ? { opacity: 1, x: 0 } : { opacity: 0, x: 80 }}
+                                    transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+                                    style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, pointerEvents: i !== activeTestimonial ? 'none' : 'auto' }}
+                                    className="flex flex-col md:flex-row w-full h-full"
+                                >
+                                    {/* LEFT — Big full-height image + reviewer name overlaid at bottom */}
+                                    <div className="relative flex-shrink-0 md:w-[40%] h-48 md:h-full overflow-hidden">
+                                        <img
+                                            src={t.img}
+                                            alt={t.name}
+                                            className="absolute inset-0 w-full h-full object-cover"
+                                        />
+                                        {/* Gradient overlay for readability */}
+                                        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.25) 55%, rgba(0,0,0,0.0) 100%)' }} />
+                                        {/* Gold accent bar on the left */}
+                                        <div className="absolute top-0 left-0 w-1 h-full" style={{ background: 'linear-gradient(to bottom, #d4af37, rgba(212,175,55,0.1))' }} />
+                                        {/* Reviewer name + meta pinned to bottom */}
+                                        <div className="absolute bottom-0 left-0 right-0 px-6 pb-6 pt-10" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)' }}>
+                                            <p className="font-cinzel font-bold text-xl leading-tight" style={{ color: '#d4af37' }}>{t.name}</p>
+                                            <p className="text-xs mt-1.5 font-light" style={{ color: 'rgba(255,255,255,0.55)' }}>{t.meta}</p>
+                                            <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-full" style={{ background: 'rgba(0,0,0,0.55)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)' }}>
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                                                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                                                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                                                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05" />
+                                                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                                                </svg>
+                                                <span className="text-xs" style={{ color: 'rgba(255,255,255,0.6)' }}>Google Review</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* RIGHT — Stars, Date, full review text — fills height with space-between */}
+                                    <div
+                                        className="flex-1 flex flex-col justify-between px-8 md:px-14 py-10 md:py-12 h-full overflow-hidden"
+                                        style={{ background: 'rgba(255,255,255,0.025)', borderLeft: '1px solid rgba(212,175,55,0.1)' }}
+                                    >
+                                        {/* TOP: Stars + Date */}
+                                        <div>
+                                            <div className="flex items-center gap-4 mb-5">
+                                                <div className="flex gap-1">
+                                                    {Array.from({ length: t.rating }).map((_, j) => (
+                                                        <Star key={j} size={20} fill="#FCC419" color="#FCC419" />
+                                                    ))}
+                                                </div>
+                                                <span className="text-sm font-light" style={{ color: 'rgba(255,255,255,0.4)' }}>{t.date}</span>
+                                            </div>
+                                            {/* Big quote mark */}
+                                            <QuoteIcon size={32} className="mb-4" style={{ color: 'rgba(212,175,55,0.2)' }} />
+                                            {/* Review text — clamp to avoid overflow on very long reviews */}
+                                            <p
+                                                className="font-serif leading-relaxed font-light"
+                                                style={{
+                                                    color: 'rgba(255,255,255,0.85)',
+                                                    fontSize: t.text.length > 300 ? '0.95rem' : '1.1rem',
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: t.text.length > 300 ? 9 : 20,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden',
+                                                }}
+                                            >
+                                                {t.text}
+                                            </p>
+                                        </div>
+                                        {/* BOTTOM: Gold accent line */}
+                                        <div className="pt-6">
+                                            <div className="h-px w-24" style={{ background: 'linear-gradient(to right, #d4af37, transparent)' }} />
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+
+                        {/* Prev Arrow */}
+                        <button
+                            id="reviews-prev"
+                            onClick={() => setActiveTestimonial(prev => (prev - 1 + testimonials.length) % testimonials.length)}
+                            style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'rgba(212,175,55,0.35)', color: '#d4af37', left: '-22px' }}
+                            className="absolute top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full flex items-center justify-center border transition-all duration-300 hover:bg-yellow-500 hover:text-black"
+                        >
+                            <ChevronLeft size={20} />
+                        </button>
+
+                        {/* Next Arrow */}
+                        <button
+                            id="reviews-next"
+                            onClick={() => setActiveTestimonial(prev => (prev + 1) % testimonials.length)}
+                            style={{ background: 'rgba(212,175,55,0.1)', borderColor: 'rgba(212,175,55,0.35)', color: '#d4af37', right: '-22px' }}
+                            className="absolute top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full flex items-center justify-center border transition-all duration-300 hover:bg-yellow-500 hover:text-black"
+                        >
+                            <ChevronRight size={20} />
+                        </button>
                     </div>
 
-                    {/* Dots */}
-                    <div className="flex justify-center gap-3 mt-16">
+                    {/* Dot indicators */}
+                    <div className="flex justify-center gap-3 mt-10 items-center">
                         {testimonials.map((_, i) => (
                             <button
                                 key={i}
                                 onClick={() => setActiveTestimonial(i)}
-                                className={`h-px transition-all duration-500 ${i === activeTestimonial ? 'w-12 bg-gold' : 'w-4 bg-white/20'}`}
+                                style={{
+                                    width: i === activeTestimonial ? '2.5rem' : '0.5rem',
+                                    height: '4px',
+                                    borderRadius: '9999px',
+                                    background: i === activeTestimonial ? '#d4af37' : 'rgba(255,255,255,0.2)',
+                                    transition: 'all 0.5s ease',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                }}
                             />
                         ))}
                     </div>
+
+                    {/* Slide counter */}
+                    <p className="text-center mt-4 text-xs" style={{ color: 'rgba(255,255,255,0.3)', letterSpacing: '0.2em' }}>
+                        {String(activeTestimonial + 1).padStart(2, '0')} / {String(testimonials.length).padStart(2, '0')}
+                    </p>
                 </div>
             </section>
 
