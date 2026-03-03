@@ -4,15 +4,16 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Play } from 'lucide-react';
 
 const HERO_IMAGES = [
-    '/IMG_2811.JPG.jpeg',
-    '/IMG_0182.JPG.jpeg',
-    '/IMG_1182.JPG.jpeg',
-    '/IMG_1172.JPG.jpeg',
-    '/IMG_2835.JPG.jpeg',
-    '/IMG_0444.JPG.jpeg',
-    '/IMG_0887.JPG.jpeg',
-    '/IMG_0176.JPG.jpeg',
-    '/IMG_0900.JPG.jpeg'
+    '/PC/01.jpg',
+    '/PC/02.jpg',
+    '/PC/03.jpg',
+    '/PC/04.jpg',
+    '/PC/05.jpg',
+    '/PC/06.jpg',
+    '/PC/07.jpg',
+    '/PC/08.jpg',
+    '/PC/09.jpg',
+    '/PC/10.jpg'
 ];
 
 // Scrolling ticker items
