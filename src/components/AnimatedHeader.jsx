@@ -14,14 +14,24 @@ const navLinks = [
 export default function AnimatedHeader() {
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
     const location = useLocation();
     const isHome = location.pathname === '/';
 
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 60);
+        const onResize = () => setIsMobile(window.innerWidth < 768);
+
         window.addEventListener('scroll', onScroll);
+        window.addEventListener('resize', onResize);
+
         onScroll();
-        return () => window.removeEventListener('scroll', onScroll);
+        onResize();
+
+        return () => {
+            window.removeEventListener('scroll', onScroll);
+            window.removeEventListener('resize', onResize);
+        };
     }, []);
 
     const stickyState = scrolled || !isHome;
@@ -53,7 +63,11 @@ export default function AnimatedHeader() {
                             <motion.img
                                 src="/LOGO.png"
                                 alt="Landscape Weddings"
-                                animate={{ height: stickyState ? '80px' : '120px' }}
+                                animate={{
+                                    height: isMobile
+                                        ? (stickyState ? '50px' : '75px')
+                                        : (stickyState ? '80px' : '120px')
+                                }}
                                 transition={{ type: 'spring', stiffness: 80, damping: 18 }}
                                 className="w-auto object-contain drop-shadow-md"
                             />
