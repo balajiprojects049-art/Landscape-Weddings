@@ -3,16 +3,17 @@ import fs from 'fs/promises';
 import path from 'path';
 
 const PC_DIR = 'c:/Users/hp/OneDrive/Desktop/staffarc/LandScape Weddings/public/PC';
+const MOBILE_DIR = 'c:/Users/hp/OneDrive/Desktop/staffarc/LandScape Weddings/public/Mobile';
 
-async function compressImages() {
-    const files = await fs.readdir(PC_DIR);
+async function compressImagesInDir(dirPath) {
+    const files = await fs.readdir(dirPath);
     const images = files.filter(f => f.toLowerCase().endsWith('.jpg') || f.toLowerCase().endsWith('.jpeg'));
 
-    console.log(`Found ${images.length} images to compress...`);
+    console.log(`Found ${images.length} images in ${path.basename(dirPath)} to compress...`);
 
     for (const img of images) {
-        const inputPath = path.join(PC_DIR, img);
-        const outputPath = path.join(PC_DIR, `comp_${img}`);
+        const inputPath = path.join(dirPath, img);
+        const outputPath = path.join(dirPath, `comp_${img}`);
 
         console.log(`Compressing ${img}...`);
 
@@ -32,7 +33,12 @@ async function compressImages() {
     }
 }
 
-compressImages().catch(err => {
+async function run() {
+    await compressImagesInDir(PC_DIR);
+    await compressImagesInDir(MOBILE_DIR);
+}
+
+run().catch(err => {
     console.error(err);
     process.exit(1);
 });

@@ -16,6 +16,20 @@ const HERO_IMAGES = [
     '/PC/10.jpg'
 ];
 
+const MOBILE_IMAGES = [
+    '/Mobile/01.jpg',
+    '/Mobile/02.jpg',
+    '/Mobile/03.jpg',
+    '/Mobile/04.jpg',
+    '/Mobile/05.jpg',
+    '/Mobile/06.jpg',
+    '/Mobile/07.jpg',
+    '/Mobile/08.jpg',
+    '/Mobile/09.jpg',
+    '/Mobile/10.jpg',
+    '/Mobile/11.jpg'
+];
+
 // Scrolling ticker items
 const TICKER = ['Candid Photography', '✦', 'Cinematic Films', '✦', 'Premium Albums', '✦', 'Destination Weddings', '✦', 'Drone Coverage', '✦', 'Hyderabad', '✦', 'Pan India', '✦'];
 
@@ -26,13 +40,22 @@ export default function LuxuryHeroSection() {
     const scale = useTransform(scrollY, [0, 700], [1, 1.1]);
 
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    const images = isMobile ? MOBILE_IMAGES : HERO_IMAGES;
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setCurrentIndex((prev) => (prev + 1) % HERO_IMAGES.length);
-        }, 4000); // 4 seconds for faster visibility
+            setCurrentIndex((prev) => (prev + 1) % images.length);
+        }, 4000);
         return () => clearInterval(timer);
-    }, []);
+    }, [images.length]);
 
     return (
         <section className="relative h-screen w-full overflow-hidden bg-noir noise-bg">
@@ -41,9 +64,9 @@ export default function LuxuryHeroSection() {
             <motion.div className="absolute inset-0 z-0" style={{ y, scale }}>
                 <AnimatePresence initial={false}>
                     <motion.div
-                        key={currentIndex}
+                        key={`${isMobile ? 'm' : 'd'}-${currentIndex}`}
                         className="absolute inset-0 bg-cover bg-center"
-                        style={{ backgroundImage: `url(${HERO_IMAGES[currentIndex]})` }}
+                        style={{ backgroundImage: `url(${images[currentIndex]})` }}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -63,7 +86,7 @@ export default function LuxuryHeroSection() {
 
             {/* ── DOTS INDICATOR ────────────────── */}
             <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-50 flex gap-2">
-                {HERO_IMAGES.map((_, i) => (
+                {images.map((_, i) => (
                     <button
                         key={i}
                         onClick={() => setCurrentIndex(i)}
