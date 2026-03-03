@@ -41,12 +41,12 @@ export default function About() {
                 {/* HERO */}
                 <section className="relative h-[70vh] overflow-hidden flex items-end pb-16">
                     <img
-                        src="/IMG_0177.JPG.jpeg"
+                        src="/IMG_2767.JPG.jpeg"
                         alt="Our Story"
-                        loading="lazy"
-                        className="absolute inset-0 w-full h-full object-cover brightness-40"
+                        loading="eager"
+                        className="absolute inset-0 w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-noir via-noir/40 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-noir/50 via-transparent to-transparent" />
                     <div className="relative z-10 max-w-[1400px] mx-auto px-8 md:px-16 w-full">
                         <motion.span initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
                             className="text-gold text-xs uppercase tracking-[0.5em] font-medium block mb-4 flex items-center gap-3">
