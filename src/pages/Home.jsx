@@ -107,36 +107,38 @@ function GalleryPanel({ item, index, total, scrollYProgress }) {
                 className="absolute inset-0 w-full h-full object-cover"
                 style={{ y: index === 0 ? 0 : y }}
             />
-            {/* Gradients removed for clearer picture */}
 
-            <div className="absolute top-24 left-8 md:left-16 z-10 flex items-center gap-3">
-                <span className="h-px w-8 bg-gold opacity-60" />
-                <span className="text-gold text-[10px] uppercase tracking-[0.5em] font-medium">Our Portfolio</span>
+            {/* Dark gradient overlay for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-noir/90 via-noir/20 to-noir/40 z-10" />
+
+            <div className="absolute top-20 md:top-24 left-6 md:left-16 z-20 flex items-center gap-3">
+                <span className="h-px w-6 md:w-8 bg-gold opacity-60" />
+                <span className="text-gold text-[9px] md:text-[10px] uppercase tracking-[0.5em] font-medium">Our Portfolio</span>
             </div>
 
-            <div className="absolute bottom-16 left-8 md:left-16 z-10 max-w-xl">
-                <p className="text-gold/80 text-[10px] uppercase tracking-[0.5em] font-medium mb-3">{item.tag}</p>
-                <h3 className="font-serif text-5xl md:text-6xl lg:text-7xl text-white leading-tight mb-4">{item.label}</h3>
-                <p className="font-serif text-lg md:text-xl text-white/55 italic font-light">"{item.caption}"</p>
-                <div className="mt-8">
+            <div className="absolute bottom-32 md:bottom-16 left-6 md:left-16 z-20 max-w-[85vw] md:max-w-xl pr-4">
+                <p className="text-gold/80 text-[9px] md:text-[10px] uppercase tracking-[0.5em] font-medium mb-2 md:mb-3">{item.tag}</p>
+                <h3 className="font-serif text-3xl md:text-6xl lg:text-7xl text-white leading-tight mb-3 md:mb-4">{item.label}</h3>
+                <p className="font-serif text-sm md:text-xl text-white/55 italic font-light leading-relaxed truncate-2-lines">"{item.caption}"</p>
+                <div className="mt-6 md:mt-8">
                     <Link to="/portfolio">
-                        <button className="flex items-center gap-3 text-white text-xs uppercase tracking-widest hover:text-gold transition-colors group">
+                        <button className="flex items-center gap-2 md:gap-3 text-white text-[10px] md:text-xs uppercase tracking-widest hover:text-gold transition-colors group">
                             View Full Portfolio
-                            <span className="h-px w-8 bg-gold group-hover:w-16 transition-all duration-500" />
+                            <span className="h-px w-6 md:w-8 bg-gold group-hover:w-16 transition-all duration-500" />
                         </button>
                     </Link>
                 </div>
             </div>
 
-            <div className="absolute right-8 md:right-12 bottom-16 z-10 flex flex-col items-center gap-2">
-                <span className="font-cinzel text-gold text-2xl font-bold leading-none">{String(index + 1).padStart(2, '0')}</span>
+            <div className="absolute right-6 md:right-12 bottom-32 md:bottom-16 z-20 flex flex-col items-center gap-2">
+                <span className="font-cinzel text-gold text-xl md:text-2xl font-bold leading-none">{String(index + 1).padStart(2, '0')}</span>
                 <span className="h-px w-4 bg-gold/30" />
-                <span className="text-white/30 text-xs font-light">{String(total).padStart(2, '0')}</span>
+                <span className="text-white/30 text-[10px] md:text-xs font-light">{String(total).padStart(2, '0')}</span>
             </div>
 
-            <div className="absolute right-8 md:right-12 top-1/2 -translate-y-1/2 z-10 flex flex-col items-center gap-3">
+            <div className="absolute right-6 md:right-12 top-1/2 -translate-y-1/2 z-20 flex flex-col items-center gap-3">
                 {Array.from({ length: total }).map((_, i) => (
-                    <div key={i} className="w-px bg-gold rounded-full" style={{ height: i === index ? '2.5rem' : '0.5rem', opacity: i === index ? 1 : 0.25 }} />
+                    <div key={i} className="w-px bg-gold rounded-full" style={{ height: i === index ? '2rem' : '0.4rem', opacity: i === index ? 1 : 0.2 }} />
                 ))}
             </div>
         </div>
