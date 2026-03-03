@@ -126,18 +126,21 @@ export default function LuxuryHeroSection() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 2.5, duration: 1 }}
             >
-                <div className="flex whitespace-nowrap gap-0 py-2 bg-noir/60 backdrop-blur-sm">
-                    {[...TICKER, ...TICKER, ...TICKER].map((item, i) => (
-                        <motion.span
-                            key={i}
-                            className="text-[9px] uppercase tracking-[0.4em] font-medium text-gold/50 px-6 flex-shrink-0"
-                            animate={{ x: [0, '-33.333%'] }}
-                            transition={{ duration: 7, repeat: Infinity, ease: 'linear', delay: 0 }}
-                            style={{ display: 'inline-block' }}
-                        >
-                            {item}
-                        </motion.span>
-                    ))}
+                <div className="py-2 bg-noir/60 backdrop-blur-sm overflow-hidden">
+                    <motion.div
+                        className="flex whitespace-nowrap"
+                        animate={{ x: '-50%' }}
+                        transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+                    >
+                        {[...TICKER, ...TICKER].map((item, i) => (
+                            <span
+                                key={i}
+                                className="text-[9px] uppercase tracking-[0.4em] font-medium text-gold/50 px-6 flex-shrink-0"
+                            >
+                                {item}
+                            </span>
+                        ))}
+                    </motion.div>
                 </div>
             </motion.div>
         </section>

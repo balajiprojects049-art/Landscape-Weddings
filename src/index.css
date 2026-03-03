@@ -18,7 +18,7 @@
   }
 
   body {
-    @apply bg-[#050505] text-white font-sans overflow-x-hidden;
+    @apply bg-[#010B03] text-white font-sans overflow-x-hidden;
     cursor: none;
   }
 
@@ -97,7 +97,7 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #050505;
+  background: #010B03;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -162,8 +162,8 @@
   position: fixed;
   pointer-events: none;
   z-index: 9999999;
-  transition: transform 0.1s ease;
   mix-blend-mode: difference;
+  will-change: transform;
 }
 
 .cursor-ring {
@@ -174,7 +174,15 @@
   position: fixed;
   pointer-events: none;
   z-index: 9999998;
-  transition: transform 0.15s ease, width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
+  transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease, border-width 0.3s ease;
+  will-change: transform;
+}
+
+.cursor-ring.cursor-hover {
+  width: 60px;
+  height: 60px;
+  border-color: rgba(255, 215, 0, 0.9);
+  border-width: 1px;
 }
 
 /* Hero video overlay */

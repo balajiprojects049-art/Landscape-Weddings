@@ -15,22 +15,37 @@ export default function AnimatedHeader() {
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    const [initialLogoVisible, setInitialLogoVisible] = useState(true);
     const location = useLocation();
     const isHome = location.pathname === '/';
 
     useEffect(() => {
-        const onScroll = () => setScrolled(window.scrollY > 60);
+        let lastScrolled = false;
+        const onScroll = () => {
+            const isScrolled = window.scrollY > 60;
+            if (isScrolled !== lastScrolled) {
+                setScrolled(isScrolled);
+                lastScrolled = isScrolled;
+            }
+        };
+
         const onResize = () => setIsMobile(window.innerWidth < 768);
 
-        window.addEventListener('scroll', onScroll);
+        window.addEventListener('scroll', onScroll, { passive: true });
         window.addEventListener('resize', onResize);
 
         onScroll();
         onResize();
 
+        // Logo visibility timer: hide centered logo after 5 seconds if not scrolled
+        const timer = setTimeout(() => {
+            setInitialLogoVisible(false);
+        }, 5000);
+
         return () => {
             window.removeEventListener('scroll', onScroll);
             window.removeEventListener('resize', onResize);
+            clearTimeout(timer);
         };
     }, []);
 
@@ -38,66 +53,85 @@ export default function AnimatedHeader() {
 
     return (
         <>
-            <motion.header
-                className="fixed top-0 left-0 w-full z-[900]"
-                animate={{
-                    backgroundColor: stickyState ? 'rgba(5,5,5,0.92)' : 'rgba(0,0,0,0)',
-                    borderBottomColor: stickyState ? 'rgba(255,215,0,0.15)' : 'rgba(255,215,0,0)',
-                    height: stickyState ? '90px' : '130px',
-                }}
-                style={{ backdropFilter: stickyState ? 'blur(20px)' : 'none', borderBottomWidth: 1, borderBottomStyle: 'solid' }}
-                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            >
-                <div className="h-full max-w-[1600px] mx-auto px-6 lg:px-12 flex items-center justify-between relative">
+            <header className="fixed top-0 left-0 w-full z-[900] h-20 md:h-24 pointer-events-none">
+                {/* BACKGROUND LAYER — Isolated for performance */}
+                <motion.div
+                    className="absolute inset-0 border-b pointer-events-auto"
+                    initial={false}
+                    animate={{
+                        backgroundColor: stickyState ? 'rgba(5,5,5,0.92)' : 'rgba(0,0,0,0)',
+                        borderBottomColor: stickyState ? 'rgba(255,215,0,0.15)' : 'rgba(255,215,0,0)',
+                        scaleY: stickyState ? 1 : 1.2, // Visual height simulation
+                    }}
+                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    style={{
+                        backdropFilter: stickyState ? 'blur(12px)' : 'none',
+                        WebkitBackdropFilter: stickyState ? 'blur(12px)' : 'none',
+                        originY: 0,
+                        willChange: 'transform, background-color'
+                    }}
+                />
 
+                <div className="h-full max-w-[1600px] mx-auto px-6 lg:px-12 flex items-center justify-between relative pointer-events-auto">
                     {/* LOGO — CENTER on hero, LEFT after scroll */}
                     <motion.div
                         className="absolute cursor-pointer"
                         animate={{
-                            left: stickyState ? '48px' : '50%',
+                            left: stickyState ? (isMobile ? '24px' : '48px') : '50%',
                             x: stickyState ? '0%' : '-50%',
-                            opacity: menuOpen ? 0 : 1,
-                            pointerEvents: menuOpen ? 'none' : 'auto'
+                            opacity: menuOpen
+                                ? 0
+                                : (stickyState ? 1 : (initialLogoVisible ? 1 : 0)),
+                            pointerEvents: menuOpen || (!stickyState && !initialLogoVisible) ? 'none' : 'auto',
+                            y: stickyState ? 0 : 10,
+                            scale: stickyState ? 0.7 : 1
                         }}
-                        transition={{ type: 'spring', stiffness: 80, damping: 18 }}
+                        transition={{ type: 'spring', stiffness: 90, damping: 22 }}
+                        style={{ willChange: 'transform, opacity' }}
                     >
                         <Link to="/" className="flex items-center group">
-                            <motion.img
-                                src="/LOGO.png"
+                            <img
+                                src="/final logo water marks copy.png"
                                 alt="Landscape Weddings"
-                                animate={{
-                                    height: isMobile
-                                        ? (stickyState ? '50px' : '75px')
-                                        : (stickyState ? '80px' : '120px')
-                                }}
-                                transition={{ type: 'spring', stiffness: 80, damping: 18 }}
                                 className="w-auto object-contain drop-shadow-md"
+                                style={{
+                                    height: isMobile ? '70px' : '100px',
+                                }}
                             />
                         </Link>
                     </motion.div>
 
                     {/* NAV LINKS — Right fade-in after scroll */}
-                    <div className="hidden lg:flex flex-1 justify-end items-center gap-10 pr-48">
-                        <AnimatePresence>
-                            {stickyState && navLinks.map((link, i) => (
+                    <div className="hidden lg:flex flex-1 justify-end items-center gap-10 pr-48 relative">
+                        <AnimatePresence mode="wait">
+                            {stickyState && (
                                 <motion.div
-                                    key={link.name}
-                                    initial={{ opacity: 0, y: -10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -10 }}
-                                    transition={{ delay: i * 0.05, duration: 0.4 }}
+                                    className="flex items-center gap-10"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.3 }}
                                 >
-                                    <Link
-                                        to={link.path}
-                                        className={clsx(
-                                            'text-xs font-medium uppercase tracking-[0.2em] transition-colors gold-underline',
-                                            location.pathname === link.path ? 'text-gold' : 'text-white/60 hover:text-white'
-                                        )}
-                                    >
-                                        {link.name}
-                                    </Link>
+                                    {navLinks.map((link, i) => (
+                                        <motion.div
+                                            key={link.name}
+                                            initial={{ opacity: 0, y: -5 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: i * 0.04 }}
+                                        >
+                                            <Link
+                                                to={link.path}
+                                                className={clsx(
+                                                    'text-[10px] font-medium uppercase tracking-[0.2em] transition-colors gold-underline',
+                                                    location.pathname === link.path ? 'text-gold' : 'text-white/60 hover:text-white'
+                                                )}
+                                            >
+                                                {link.name}
+                                            </Link>
+                                        </motion.div>
+                                    ))}
                                 </motion.div>
-                            ))}
+                            )}
                         </AnimatePresence>
                     </div>
 
@@ -106,13 +140,14 @@ export default function AnimatedHeader() {
                         {stickyState && (
                             <motion.div
                                 className="hidden lg:block absolute right-6"
-                                initial={{ opacity: 0, x: 20 }}
+                                initial={{ opacity: 0, x: 10 }}
                                 animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: 20 }}
-                                transition={{ duration: 0.4 }}
+                                exit={{ opacity: 0, x: 10 }}
+                                transition={{ duration: 0.3 }}
+                                style={{ willChange: 'transform, opacity' }}
                             >
                                 <Link to="/quote">
-                                    <button className="px-6 py-2.5 bg-gold text-noir font-semibold text-xs uppercase tracking-widest rounded-sm hover:shadow-gold transition-all duration-300 hover:scale-105 active:scale-95">
+                                    <button className="px-6 py-2 bg-gold text-noir font-semibold text-[10px] uppercase tracking-widest rounded-sm hover:shadow-gold transition-all duration-300 hover:scale-105 active:scale-95">
                                         Build Quote
                                     </button>
                                 </Link>
@@ -143,7 +178,7 @@ export default function AnimatedHeader() {
                         </button>
                     </div>
                 </div>
-            </motion.header>
+            </header>
 
             {/* FULLSCREEN MOBILE MENU */}
             <AnimatePresence>
@@ -168,7 +203,7 @@ export default function AnimatedHeader() {
                             transition={{ delay: 0.1 }}
                             className="mb-6 mt-12"
                         >
-                            <img src="/LOGO.png" alt="Logo" className="h-24 w-auto drop-shadow-lg" />
+                            <img src="/final logo water marks copy.png" alt="Logo" className="h-24 w-auto drop-shadow-lg" />
                         </motion.div>
 
                         {[...navLinks, { name: 'Home', path: '/' }].map((link, i) => (

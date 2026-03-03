@@ -16,7 +16,7 @@ function Reveal({ children, delay = 0, className = '' }) {
             className={className}
             initial={{ opacity: 0, y: 50 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.65, delay, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.9, delay, ease: [0.16, 1, 0.3, 1] }}
         >
             {children}
         </motion.div>
@@ -146,7 +146,7 @@ function ScrollGallery() {
     const containerRef = useRef(null);
     const { scrollYProgress } = useScroll({ target: containerRef, offset: ['start start', 'end end'] });
     return (
-        <section ref={containerRef} style={{ height: `${scrollGallery.length * 60}vh` }} className="relative">
+        <section ref={containerRef} style={{ height: `${scrollGallery.length * 100}vh` }} className="relative">
             {scrollGallery.map((item, index) => (
                 <GalleryPanel key={index} item={item} index={index} total={scrollGallery.length} scrollYProgress={scrollYProgress} />
             ))}
