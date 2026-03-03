@@ -41,7 +41,7 @@ export default function About() {
                 {/* HERO */}
                 <section className="relative h-screen overflow-hidden flex items-end pb-32">
                     <img
-                        src="/about-hero.png"
+                        src="/IMG_2761.JPG.jpeg"
                         alt="Our Story"
                         loading="eager"
                         className="absolute inset-0 w-full h-full object-cover"
