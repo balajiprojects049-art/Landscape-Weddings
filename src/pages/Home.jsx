@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import AnimatedHeader from '../components/AnimatedHeader';
 import LuxuryHeroSection from '../components/LuxuryHeroSection';
 import PremiumFooter from '../components/PremiumFooter';
-import { ArrowRight, Quote as QuoteIcon, Star, Heart, Camera, Video, Award, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, Quote as QuoteIcon, Star, Heart, Camera, Video, Award, ChevronLeft, ChevronRight, Aperture, Film, Crown } from 'lucide-react';
 
 // Preload first hero image for fast LCP
 const preloadLink = document.createElement('link');
@@ -256,17 +256,17 @@ function MarqueeGallery() {
 // ── Services data ──────────────────────────────────────────────────────────
 const services = [
     {
-        icon: Camera,
+        icon: Aperture,
         title: 'Candid Photography',
         desc: 'Artistic, unposed photographs that capture the raw emotion, joy, and beauty of your wedding day as it naturally unfolds.',
     },
     {
-        icon: Video,
+        icon: Film,
         title: 'Cinematic Films',
         desc: 'Breathtaking wedding films crafted like feature movies, scored to music that moves the soul and preserves your story forever.',
     },
     {
-        icon: Award,
+        icon: Crown,
         title: 'Complete Coverage',
         desc: 'From intimate mehendi to grand receptions — every ritual, every emotion, every detail captured with royal precision.',
     },

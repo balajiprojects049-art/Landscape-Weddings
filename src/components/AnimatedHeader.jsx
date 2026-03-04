@@ -75,21 +75,25 @@ export default function AnimatedHeader() {
                 <div className="h-full max-w-[1600px] mx-auto px-6 lg:px-12 flex items-center justify-between relative pointer-events-auto">
                     {/* LOGO — CENTER on hero, LEFT after scroll */}
                     <motion.div
-                        className="absolute cursor-pointer"
+                        className="absolute cursor-pointer z-[1001]"
+                        onClick={() => {
+                            if (isHome) window.scrollTo({ top: 0, behavior: 'smooth' });
+                            if (menuOpen) setMenuOpen(false);
+                        }}
                         animate={{
                             left: stickyState ? (isMobile ? '24px' : '48px') : '50%',
                             x: stickyState ? '0%' : '-50%',
                             opacity: menuOpen
                                 ? 0
                                 : (stickyState ? 1 : (initialLogoVisible ? 1 : 0)),
-                            pointerEvents: menuOpen || (!stickyState && !initialLogoVisible) ? 'none' : 'auto',
+                            pointerEvents: (menuOpen || (!stickyState && !initialLogoVisible)) ? 'none' : 'auto',
                             y: stickyState ? 0 : 10,
                             scale: stickyState ? 0.7 : 1
                         }}
                         transition={{ type: 'spring', stiffness: 90, damping: 22 }}
                         style={{ willChange: 'transform, opacity' }}
                     >
-                        <Link to="/" className="flex items-center group">
+                        <Link to="/" className="flex items-center group block">
                             <img
                                 src="/final logo water marks copy.png"
                                 alt="Landscape Weddings"
@@ -201,9 +205,11 @@ export default function AnimatedHeader() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
                             transition={{ delay: 0.1 }}
-                            className="mb-6 mt-12"
+                            className="mb-6 mt-12 cursor-pointer"
                         >
-                            <img src="/final logo water marks copy.png" alt="Logo" className="h-24 w-auto drop-shadow-lg" />
+                            <Link to="/" onClick={() => setMenuOpen(false)}>
+                                <img src="/final logo water marks copy.png" alt="Logo" className="h-24 w-auto drop-shadow-lg" />
+                            </Link>
                         </motion.div>
 
                         {[...navLinks, { name: 'Home', path: '/' }].map((link, i) => (

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, ArrowLeft, Camera, Video, MapPin, Map, Star, CircleDollarSign } from 'lucide-react';
+import { ChevronRight, ArrowLeft, Camera, Video, MapPin, Map, Star, CircleDollarSign, Heart, Gem, Plane, Building2, TreeDeciduous, Aperture, Film, Sparkles } from 'lucide-react';
 import clsx from 'clsx';
 
 const stepsData = [
@@ -8,8 +8,8 @@ const stepsData = [
         title: 'Event Type',
         subtitle: 'What are we celebrating?',
         options: [
-            { id: 'wedding', label: 'Wedding', icon: <Star /> },
-            { id: 'engagement', label: 'Engagement', icon: <Star /> },
+            { id: 'wedding', label: 'Wedding', icon: <Heart /> },
+            { id: 'engagement', label: 'Engagement', icon: <Gem /> },
             { id: 'prewedding', label: 'Pre-Wedding', icon: <Camera /> }
         ]
     },
@@ -17,18 +17,18 @@ const stepsData = [
         title: 'Location Style',
         subtitle: 'Where is your event taking place?',
         options: [
-            { id: 'destination', label: 'Destination / Resort', icon: <Map /> },
-            { id: 'city', label: 'City Venue', icon: <MapPin /> },
-            { id: 'outdoor', label: 'Outdoor Natural', icon: <MapPin /> }
+            { id: 'destination', label: 'Destination / Resort', icon: <Plane /> },
+            { id: 'city', label: 'City Venue', icon: <Building2 /> },
+            { id: 'outdoor', label: 'Outdoor Natural', icon: <TreeDeciduous /> }
         ]
     },
     {
         title: 'Service Style',
         subtitle: 'What captures your essence?',
         options: [
-            { id: 'photo', label: 'Photography Only', icon: <Camera /> },
-            { id: 'video', label: 'Cinematography Only', icon: <Video /> },
-            { id: 'both', label: 'Full Team (Photo + Video)', icon: <Star /> }
+            { id: 'photo', label: 'Photography Only', icon: <Aperture /> },
+            { id: 'video', label: 'Cinematography Only', icon: <Film /> },
+            { id: 'both', label: 'Full Team (Photo + Video)', icon: <Sparkles /> }
         ]
     },
     {
