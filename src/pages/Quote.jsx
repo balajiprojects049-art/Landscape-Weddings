@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Camera, Video, Clapperboard, Image, CheckCircle2, ArrowLeft, ArrowRight, Heart, Star, MapPin, User, Phone, Mail, CalendarDays, Check, ChevronDown, X, ClipboardList } from 'lucide-react';
+import { Camera, Video, Clapperboard, Image, CheckCircle2, ArrowLeft, ArrowRight, Heart, Star, MapPin, User, Phone, Mail, CalendarDays, Check, ChevronDown, X, ClipboardList, Aperture, Film, Plane, BookOpen } from 'lucide-react';
 import clsx from 'clsx';
 import AnimatedHeader from '../components/AnimatedHeader';
 import PremiumFooter from '../components/PremiumFooter';
@@ -105,6 +105,26 @@ const PRICES = {
     album_metallic: 12000,
     album_glossy: 10000,
 };
+
+// ── ICON HELPERS ────────────────────────────────────────────────────────────
+// Helper to use PNG images as theme-aware icons using CSS masks
+const ImageIcon = ({ src, size = 24 }) => (
+    <div
+        style={{
+            width: size,
+            height: size,
+            maskImage: `url(${src})`,
+            WebkitMaskImage: `url(${src})`,
+            maskSize: 'contain',
+            WebkitMaskSize: 'contain',
+            maskPosition: 'center',
+            WebkitMaskPosition: 'center',
+            maskRepeat: 'no-repeat',
+            WebkitMaskRepeat: 'no-repeat',
+            backgroundColor: 'currentColor'
+        }}
+    />
+);
 
 // ── OPTION CARD ────────────────────────────────────────────────────────────
 function OptionCard({ id, label, icon: Icon, selected, onToggle, price, showStepper, count, onUpdateCount }) {
@@ -233,10 +253,10 @@ function RadioCard({ id, label, subtitle, icon: Icon, selected, onSelect, price 
 function EventStep({ title, stepKey, selections, onToggle, cameraCount, onCameraCount }) {
     const options = [
         { id: 'candid_photo', label: 'Candid Photo', icon: Camera, price: PRICES.candid_photo },
-        { id: 'traditional_photo', label: 'Traditional Photo', icon: Image, price: PRICES.traditional_photo },
+        { id: 'traditional_photo', label: 'Traditional Photo', icon: Aperture, price: PRICES.traditional_photo },
         { id: 'candid_video', label: 'Candid Video', icon: Video, price: PRICES.candid_video },
-        { id: 'traditional_video', label: 'Traditional Video', icon: Clapperboard, price: PRICES.traditional_video },
-        { id: 'drone', label: 'Drone Coverage', icon: Star, price: PRICES.drone },
+        { id: 'traditional_video', label: 'Traditional Video', icon: Film, price: PRICES.traditional_video },
+        { id: 'drone', label: 'Drone Coverage', icon: (props) => <ImageIcon src="/camera-drone.png" {...props} />, price: PRICES.drone },
     ];
 
     const eventSel = selections[stepKey] || [];
@@ -736,7 +756,7 @@ export default function QuotePage() {
                                             <div className="grid grid-cols-2 gap-6 w-full max-w-lg">
                                                 <RadioCard id="candid" label="Candid Photography" icon={Camera} subtitle="Artistic & unposed"
                                                     selected={selections.photography === 'candid'} onSelect={(v) => handleSelectSingle('photography', v)} />
-                                                <RadioCard id="traditional" label="Traditional Photography" icon={Image} subtitle="Posed & formal"
+                                                <RadioCard id="traditional" label="Traditional Photography" icon={Aperture} subtitle="Posed & formal"
                                                     selected={selections.photography === 'traditional'} onSelect={(v) => handleSelectSingle('photography', v)} />
                                             </div>
                                         </div>
@@ -760,11 +780,11 @@ export default function QuotePage() {
                                             <h2 className="font-serif text-3xl md:text-5xl text-white text-center">Choose Your <span className="italic text-gold font-light">Album</span></h2>
                                             <p className="text-white/40 text-sm">12×36 Premium Album — 30 curated photos</p>
                                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-2xl">
-                                                <RadioCard id="album_synthetic" label="Synthetic" subtitle="Durable & elegant" icon={Star} price={8000}
+                                                <RadioCard id="album_synthetic" label="Synthetic" subtitle="Durable & elegant" icon={BookOpen} price={8000}
                                                     selected={selections.album === 'album_synthetic'} onSelect={(v) => handleSelectSingle('album', v)} />
-                                                <RadioCard id="album_metallic" label="Metallic Finish" subtitle="Vivid & luxurious" icon={Star} price={12000}
+                                                <RadioCard id="album_metallic" label="Metallic Finish" subtitle="Vivid & luxurious" icon={BookOpen} price={12000}
                                                     selected={selections.album === 'album_metallic'} onSelect={(v) => handleSelectSingle('album', v)} />
-                                                <RadioCard id="album_glossy" label="Glossy Print" subtitle="Classic premium" icon={Star} price={10000}
+                                                <RadioCard id="album_glossy" label="Glossy Print" subtitle="Classic premium" icon={BookOpen} price={10000}
                                                     selected={selections.album === 'album_glossy'} onSelect={(v) => handleSelectSingle('album', v)} />
                                             </div>
                                         </div>
