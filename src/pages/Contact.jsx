@@ -33,7 +33,7 @@ export default function Contact() {
 💬 *Message:*
 ${form.message}
 
-_Sent from the Contact Form on landscapeweddings.in_`;
+_Sent from the Contact Form on landscapeweddings.com_`;
         sendToWhatsApp(msg);
         setSent(true);
     };

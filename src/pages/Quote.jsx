@@ -514,7 +514,7 @@ export default function QuotePage() {
             docObj.setTextColor(...light);
             docObj.text('Thank you for considering Landscape Weddings to capture your forever moments.', W / 2, H - 17, { align: 'center' });
             docObj.setTextColor(...gold);
-            docObj.text('landscapeweddings.in  |  +91 9115994999', W / 2, H - 11, { align: 'center' });
+            docObj.text('landscapeweddings.com  |  +91 9115994999', W / 2, H - 11, { align: 'center' });
         };
 
         drawPageOverlay(doc);
@@ -542,7 +542,7 @@ export default function QuotePage() {
         doc.setFontSize(8);
         doc.setTextColor(170, 170, 170);
         doc.text(
-            'Ph: +91 9115994999   |   landscapeweddings.in   |   info@landscapeweddings.in',
+            'Ph: +91 9115994999   |   landscapeweddings.com   |   info@landscapeweddings.com',
             W / 2, 38, { align: 'center' }
         );
         doc.text(
@@ -920,7 +920,7 @@ export default function QuotePage() {
             `Album: ${albumLines}\n\n` +
             `*Estimated Total: Rs.${total.toLocaleString('en-IN')}*\n` +
             `_(Final pricing confirmed after consultation)_\n\n` +
-            `_Sent from Quote Builder on landscapeweddings.in_`;
+            `_Sent from Quote Builder on landscapeweddings.com_`;
 
         await generateQuotePDF();
         sendToWhatsApp(msg);
