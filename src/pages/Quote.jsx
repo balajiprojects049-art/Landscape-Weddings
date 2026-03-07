@@ -95,15 +95,15 @@ function CountryPicker({ value, onChange }) {
 
 // ── PRICE MAP ──────────────────────────────────────────────────────────────
 const PRICES = {
-    candid_photo: 25000,
-    traditional_photo: 15000,
-    candid_video: 35000,
-    traditional_video: 20000,
-    drone: 10000,
+    candid_photo: 15000,
+    traditional_photo: 10000,
+    candid_video: 15000,
+    traditional_video: 10000,
     extra_camera: 10000,
-    album_synthetic: 8000,
-    album_metallic: 12000,
-    album_glossy: 10000,
+    album_classic: 15000,
+    album_premium: 20000,
+    delivery_30days: 80000,
+    delivery_6months: 40000,
 };
 
 // ── ICON HELPERS ────────────────────────────────────────────────────────────
@@ -250,23 +250,27 @@ function RadioCard({ id, label, subtitle, icon: Icon, selected, onSelect, price 
 }
 
 // ── EVENT STEP (multi-select toggles) ─────────────────────────────────────
-function EventStep({ title, stepKey, selections, onToggle, cameraCount, onCameraCount }) {
-    const options = [
+function EventStep({ title, stepKey, selections, onToggle, cameraCount, onCameraCount, options: customOptions }) {
+    const defaultOptions = [
         { id: 'candid_photo', label: 'Candid Photo', icon: Camera, price: PRICES.candid_photo },
         { id: 'traditional_photo', label: 'Traditional Photo', icon: Aperture, price: PRICES.traditional_photo },
-        { id: 'candid_video', label: 'Candid Video', icon: Video, price: PRICES.candid_video },
+        { id: 'candid_video', label: 'Cinematic Video', icon: Video, price: PRICES.candid_video },
         { id: 'traditional_video', label: 'Traditional Video', icon: Film, price: PRICES.traditional_video },
-        { id: 'drone', label: 'Drone Coverage', icon: (props) => <ImageIcon src="/camera-drone.png" {...props} />, price: PRICES.drone },
     ];
 
     const eventSel = selections[stepKey] || [];
+    const displayOptions = customOptions || defaultOptions;
+    const isSmallGrid = displayOptions.length <= 2;
 
     return (
         <div className="flex flex-col items-center w-full">
             <h2 className="font-serif text-3xl md:text-5xl text-white mb-2 text-center">{title}</h2>
             <p className="text-gold/60 uppercase tracking-widest text-xs mb-10">Select all that apply</p>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 w-full max-w-[1000px] mb-8">
-                {options.map((opt) => {
+            <div className={clsx(
+                "grid gap-4 md:gap-6 w-full mb-8",
+                isSmallGrid ? "grid-cols-1 md:grid-cols-2 max-w-2xl" : "grid-cols-2 md:grid-cols-2 lg:grid-cols-4 max-w-5xl"
+            )}>
+                {displayOptions.map((opt) => {
                     const isSelected = eventSel.includes(opt.id);
                     const isPhotoVideo = opt.id.includes('photo') || opt.id.includes('video');
                     const camKey = `${stepKey}_${opt.id}`;
@@ -295,11 +299,16 @@ const STEPS = [
     'photography',
     'engagement',
     'bride_haldi',
+    'bride',
     'groom_haldi',
+    'groom',
     'mehendi',
     'sangeeth',
     'wedding',
     'reception',
+    'drone',
+    'weblive',
+    'delivery',
     'album',
     'details',
 ];
@@ -307,13 +316,18 @@ const STEPS = [
 const STEP_LABELS = {
     photography: 'Photography Style',
     engagement: 'Engagement',
-    bride_haldi: 'Bride Haldi Ceremony',
-    groom_haldi: 'Groom Haldi Ceremony',
+    'bride_haldi': 'Bride Haldi Ceremony',
+    bride: 'Bride',
+    'groom_haldi': 'Groom Haldi Ceremony',
+    groom: 'Groom',
     mehendi: 'Mehendi ',
     sangeeth: 'Sangeeth ',
     wedding: 'The Big Day',
     reception: 'Reception',
     album: 'Album Selection',
+    drone: 'Drone Coverage',
+    weblive: 'Web Live',
+    delivery: 'Delivery Timeline',
     details: 'Your Details',
 };
 
@@ -355,7 +369,12 @@ export default function QuotePage() {
         });
         return acc + stepCamTotal;
     }, 0);
-    const total = servicesTotal + cameraTotal;
+    // Drone total
+    const droneEvents = selections.drone || [];
+    const droneTotal = droneEvents.length * 10000;
+    const webLiveEvents = selections.weblive || [];
+    const webLiveTotal = webLiveEvents.length * 8000;
+    const total = servicesTotal + cameraTotal + droneTotal + webLiveTotal;
 
     const handleToggleMulti = (key, id) => {
         setSelections((prev) => {
@@ -538,9 +557,8 @@ export default function QuotePage() {
         const SVC_LABEL = {
             candid_photo: 'Candid Photography',
             traditional_photo: 'Traditional Photography',
-            candid_video: 'Candid Video',
+            candid_video: 'Cinematic Video',
             traditional_video: 'Traditional Video',
-            drone: 'Drone Coverage',
         };
 
         const tableRows = [];
@@ -556,7 +574,7 @@ export default function QuotePage() {
         }
 
         // Event coverage
-        ['engagement', 'bride_haldi', 'groom_haldi', 'mehendi', 'sangeeth', 'wedding', 'reception'].forEach(ev => {
+        ['engagement', 'bride_haldi', 'bride', 'groom_haldi', 'groom', 'mehendi', 'sangeeth', 'wedding', 'reception'].forEach(ev => {
             const evSel = selections[ev] || [];
             if (!evSel.length) return;
 
@@ -578,10 +596,44 @@ export default function QuotePage() {
             });
         });
 
+        // Drone coverage
+        const droneEvs = selections.drone || [];
+        droneEvs.forEach(ev => {
+            tableRows.push([
+                'DRONE COVERAGE',
+                `Drone - ${(STEP_LABELS[ev] || ev).toUpperCase()}`,
+                '-',
+                'Rs. 10,000',
+            ]);
+        });
+
+        // Web Live coverage
+        const webLiveEvs = selections.weblive || [];
+        webLiveEvs.forEach(ev => {
+            tableRows.push([
+                'WEB LIVE',
+                `Web Live - ${(STEP_LABELS[ev] || ev).toUpperCase()}`,
+                '-',
+                'Rs. 8,000',
+            ]);
+        });
+
+        // Delivery Timeline
+        if (selections.delivery) {
+            const deliveryLabel = selections.delivery === 'delivery_30days' ? 'Within 30 Days (Express)' : 'Within 6 Months (Standard)';
+            const deliveryAmt = PRICES[selections.delivery] || 0;
+            tableRows.push([
+                'DELIVERY',
+                deliveryLabel,
+                '-',
+                `Rs. ${deliveryAmt.toLocaleString('en-IN')}`,
+            ]);
+        }
+
         // Album
         if (selections.album) {
-            const albumPrices = { album_synthetic: 8000, album_metallic: 12000, album_glossy: 10000 };
-            const albumNames = { album_synthetic: 'Synthetic Finish Premium Album', album_metallic: 'Metallic Finish Premium Album', album_glossy: 'Glossy Print Premium Album' };
+            const albumPrices = { album_classic: 15000, album_premium: 20000 };
+            const albumNames = { album_classic: 'Classic Premium Album', album_premium: 'Premium Luxury Album' };
             tableRows.push([
                 'Album',
                 albumNames[selections.album] || selections.album,
@@ -640,10 +692,10 @@ export default function QuotePage() {
         e.preventDefault();
 
         const phoneFormatted = `${form.countryCode} ${form.phone}`;
-        const albumLabel = { album_synthetic: 'Synthetic (Rs.8,000)', album_metallic: 'Metallic Finish (Rs.12,000)', album_glossy: 'Glossy Print (Rs.10,000)' }[selections.album] || 'Not selected';
+        const albumLabel = { album_classic: 'Classic Album (Rs.15,000)', album_premium: 'Premium Album (Rs.20,000)' }[selections.album] || 'Not selected';
 
-        const serviceLabel = { candid_photo: 'Candid Photography', traditional_photo: 'Traditional Photography', candid_video: 'Candid Video', traditional_video: 'Traditional Video', drone: 'Drone Coverage (Rs.10,000)' };
-        const eventLines = ['engagement', 'bride_haldi', 'groom_haldi', 'mehendi', 'sangeeth', 'wedding', 'reception']
+        const serviceLabel = { candid_photo: 'Candid Photography', traditional_photo: 'Traditional Photography', candid_video: 'Cinematic Video', traditional_video: 'Traditional Video' };
+        const eventLines = ['engagement', 'bride_haldi', 'bride', 'groom_haldi', 'groom', 'mehendi', 'sangeeth', 'wedding', 'reception']
             .map(ev => {
                 const evSel = (selections[ev] || []);
                 if (!evSel.length) return null;
@@ -672,6 +724,9 @@ export default function QuotePage() {
             `No. of Events: ${form.events || 'Not specified'}\n\n` +
             `Photography: ${selections.photography === 'candid' ? 'Candid' : selections.photography === 'traditional' ? 'Traditional' : 'Not selected'}\n\n` +
             `Event Coverage:\n${eventLines}\n\n` +
+            `Drone Coverage: ${(selections.drone || []).length > 0 ? (selections.drone || []).map(ev => STEP_LABELS[ev] || ev).join(', ') + ` (Rs.${((selections.drone || []).length * 10000).toLocaleString('en-IN')})` : 'None'}\n\n` +
+            `Web Live: ${(selections.weblive || []).length > 0 ? (selections.weblive || []).map(ev => STEP_LABELS[ev] || ev).join(', ') + ` (Rs.${((selections.weblive || []).length * 8000).toLocaleString('en-IN')})` : 'None'}\n\n` +
+            `Delivery Timeline: ${selections.delivery === 'delivery_30days' ? 'Within 30 Days (Rs.80,000)' : selections.delivery === 'delivery_6months' ? 'Within 6 Months (Rs.40,000)' : 'Not selected'}\n\n` +
             `Album: ${albumLabel}\n\n` +
             `*Estimated Total: Rs.${total.toLocaleString('en-IN')}*\n` +
             `_(Final pricing confirmed after consultation)_\n\n` +
@@ -705,7 +760,11 @@ export default function QuotePage() {
                     transition={{ duration: 0.4 }}
                 >
                     <motion.div
-                        animate={{ scale: total > 0 ? [1, 1.06, 1] : 1 }}
+                        animate={{
+                            scale: total > 0 ? [1, 1.06, 1] : 1,
+                            opacity: step === 0 ? 0 : 1,
+                            pointerEvents: step === 0 ? 'none' : 'auto'
+                        }}
                         transition={{ duration: 1.8, repeat: Infinity }}
                         className="flex items-center gap-2 bg-gold text-noir pl-3 pr-4 py-2 rounded-full shadow-gold-lg cursor-default"
                     >
@@ -763,7 +822,7 @@ export default function QuotePage() {
                                     )}
 
                                     {/* EVENT STEPS */}
-                                    {['engagement', 'bride_haldi', 'groom_haldi', 'mehendi', 'sangeeth', 'wedding', 'reception'].includes(currentKey) && (
+                                    {['engagement', 'bride_haldi', 'bride', 'groom_haldi', 'groom', 'mehendi', 'sangeeth', 'wedding', 'reception'].includes(currentKey) && (
                                         <EventStep
                                             title={STEP_LABELS[currentKey]}
                                             stepKey={currentKey}
@@ -771,21 +830,156 @@ export default function QuotePage() {
                                             onToggle={handleToggleMulti}
                                             cameraCount={cameraCount}
                                             onCameraCount={handleCameraCount}
+                                            options={currentKey === 'bride' || currentKey === 'groom' ? [
+                                                { id: 'traditional_photo', label: 'Traditional Photo', icon: Aperture, price: PRICES.traditional_photo },
+                                                { id: 'traditional_video', label: 'Traditional Video', icon: Film, price: PRICES.traditional_video },
+                                            ] : null}
                                         />
+                                    )}
+
+                                    {/* DRONE STEP */}
+                                    {currentKey === 'drone' && (
+                                        <div className="flex flex-col items-center w-full gap-8">
+                                            <h2 className="font-serif text-3xl md:text-5xl text-white text-center">Drone <span className="italic text-gold font-light">Coverage</span></h2>
+                                            <p className="text-gold/60 uppercase tracking-widest text-xs -mt-4">Select events you want drone for · ₹10,000 per event</p>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-3xl">
+                                                {['engagement', 'wedding', 'reception'].map(ev => {
+                                                    const isChecked = (selections.drone || []).includes(ev);
+                                                    return (
+                                                        <motion.button
+                                                            key={ev}
+                                                            type="button"
+                                                            whileHover={{ scale: 1.02 }}
+                                                            whileTap={{ scale: 0.97 }}
+                                                            onClick={() => handleToggleMulti('drone', ev)}
+                                                            className={clsx(
+                                                                'flex items-center gap-4 p-4 border rounded-xl transition-all duration-300 text-left group',
+                                                                isChecked
+                                                                    ? 'bg-gold/10 border-gold shadow-gold'
+                                                                    : 'bg-white/2 border-white/10 hover:border-gold/30 hover:bg-white/5'
+                                                            )}
+                                                        >
+                                                            <div className={clsx(
+                                                                'w-5 h-5 rounded flex items-center justify-center flex-shrink-0 border-2 transition-all duration-300',
+                                                                isChecked ? 'bg-gold border-gold' : 'border-white/30 group-hover:border-gold/50'
+                                                            )}>
+                                                                {isChecked && <Check size={12} className="text-noir" />}
+                                                            </div>
+                                                            <span className={clsx(
+                                                                'font-medium text-sm uppercase tracking-wider flex-1',
+                                                                isChecked ? 'text-gold' : 'text-white/70 group-hover:text-white'
+                                                            )}>{STEP_LABELS[ev] || ev}</span>
+                                                            <span className={clsx(
+                                                                'text-xs font-semibold tracking-wider flex-shrink-0 transition-all duration-300',
+                                                                isChecked ? 'text-gold' : 'text-gold/40 group-hover:text-gold/70'
+                                                            )}>₹10K</span>
+                                                        </motion.button>
+                                                    );
+                                                })}
+                                            </div>
+                                            {(selections.drone || []).length > 0 && (
+                                                <div className="glass border border-gold/20 rounded-xl px-6 py-4 text-center">
+                                                    <p className="text-white/50 text-xs uppercase tracking-widest">Drone Subtotal</p>
+                                                    <p className="text-gold font-cinzel text-2xl font-bold mt-1">₹{((selections.drone || []).length * 10000).toLocaleString('en-IN')}</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* WEB LIVE STEP */}
+                                    {currentKey === 'weblive' && (
+                                        <div className="flex flex-col items-center w-full gap-8">
+                                            <h2 className="font-serif text-3xl md:text-5xl text-white text-center">Web <span className="italic text-gold font-light">Live</span></h2>
+                                            <p className="text-gold/60 uppercase tracking-widest text-xs -mt-4">Select events you want live streaming for · ₹8,000 per event</p>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-3xl">
+                                                {['engagement', 'wedding', 'reception'].map(ev => {
+                                                    const isChecked = (selections.weblive || []).includes(ev);
+                                                    return (
+                                                        <motion.button
+                                                            key={ev}
+                                                            type="button"
+                                                            whileHover={{ scale: 1.02 }}
+                                                            whileTap={{ scale: 0.97 }}
+                                                            onClick={() => handleToggleMulti('weblive', ev)}
+                                                            className={clsx(
+                                                                'flex items-center gap-4 p-4 border rounded-xl transition-all duration-300 text-left group',
+                                                                isChecked
+                                                                    ? 'bg-gold/10 border-gold shadow-gold'
+                                                                    : 'bg-white/2 border-white/10 hover:border-gold/30 hover:bg-white/5'
+                                                            )}
+                                                        >
+                                                            <div className={clsx(
+                                                                'w-5 h-5 rounded flex items-center justify-center flex-shrink-0 border-2 transition-all duration-300',
+                                                                isChecked ? 'bg-gold border-gold' : 'border-white/30 group-hover:border-gold/50'
+                                                            )}>
+                                                                {isChecked && <Check size={12} className="text-noir" />}
+                                                            </div>
+                                                            <span className={clsx(
+                                                                'font-medium text-sm uppercase tracking-wider flex-1',
+                                                                isChecked ? 'text-gold' : 'text-white/70 group-hover:text-white'
+                                                            )}>{STEP_LABELS[ev] || ev}</span>
+                                                            <span className={clsx(
+                                                                'text-xs font-semibold tracking-wider flex-shrink-0 transition-all duration-300',
+                                                                isChecked ? 'text-gold' : 'text-gold/40 group-hover:text-gold/70'
+                                                            )}>₹8K</span>
+                                                        </motion.button>
+                                                    );
+                                                })}
+                                            </div>
+                                            {(selections.weblive || []).length > 0 && (
+                                                <div className="glass border border-gold/20 rounded-xl px-6 py-4 text-center">
+                                                    <p className="text-white/50 text-xs uppercase tracking-widest">Web Live Subtotal</p>
+                                                    <p className="text-gold font-cinzel text-2xl font-bold mt-1">₹{((selections.weblive || []).length * 8000).toLocaleString('en-IN')}</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* DELIVERY TIMELINE */}
+                                    {currentKey === 'delivery' && (
+                                        <div className="flex flex-col items-center w-full gap-8">
+                                            <h2 className="font-serif text-3xl md:text-5xl text-white text-center">Delivery <span className="italic text-gold font-light">Timeline</span></h2>
+                                            <p className="text-gold/60 uppercase tracking-widest text-xs -mt-4">When would you like to receive your memories?</p>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl">
+                                                <RadioCard
+                                                    id="delivery_30days"
+                                                    label="Within 30 Days"
+                                                    subtitle="Premium express delivery"
+                                                    icon={ClipboardList}
+                                                    price={80000}
+                                                    selected={selections.delivery === 'delivery_30days'}
+                                                    onSelect={(v) => handleSelectSingle('delivery', v)}
+                                                />
+                                                <RadioCard
+                                                    id="delivery_6months"
+                                                    label="Within 6 Months"
+                                                    subtitle="Standard delivery"
+                                                    icon={ClipboardList}
+                                                    price={40000}
+                                                    selected={selections.delivery === 'delivery_6months'}
+                                                    onSelect={(v) => handleSelectSingle('delivery', v)}
+                                                />
+                                            </div>
+                                            <div className="flex items-start gap-3 bg-white/3 border border-white/10 rounded-xl px-5 py-4 max-w-2xl w-full">
+                                                <span className="text-gold text-lg leading-none mt-0.5">★</span>
+                                                <p className="text-white/55 text-sm leading-relaxed font-light">
+                                                    <span className="text-gold font-medium">Please Note: </span>
+                                                    The delivery timeline begins only after the completion of your <span className="text-white/80">entire event</span>. The countdown starts from the last day of your event coverage.
+                                                </p>
+                                            </div>
+                                        </div>
                                     )}
 
                                     {/* ALBUM */}
                                     {currentKey === 'album' && (
                                         <div className="flex flex-col items-center w-full gap-8">
                                             <h2 className="font-serif text-3xl md:text-5xl text-white text-center">Choose Your <span className="italic text-gold font-light">Album</span></h2>
-                                            <p className="text-white/40 text-sm">12×36 Premium Album — 30 curated photos</p>
-                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-2xl">
-                                                <RadioCard id="album_synthetic" label="Synthetic" subtitle="Durable & elegant" icon={BookOpen} price={8000}
-                                                    selected={selections.album === 'album_synthetic'} onSelect={(v) => handleSelectSingle('album', v)} />
-                                                <RadioCard id="album_metallic" label="Metallic Finish" subtitle="Vivid & luxurious" icon={BookOpen} price={12000}
-                                                    selected={selections.album === 'album_metallic'} onSelect={(v) => handleSelectSingle('album', v)} />
-                                                <RadioCard id="album_glossy" label="Glossy Print" subtitle="Classic premium" icon={BookOpen} price={10000}
-                                                    selected={selections.album === 'album_glossy'} onSelect={(v) => handleSelectSingle('album', v)} />
+                                            <p className="text-white/40 text-sm">12×36 Premium Album — 30 Sheets</p>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl">
+                                                <RadioCard id="album_classic" label="Classic" subtitle="Elegant & timeless" icon={BookOpen} price={15000}
+                                                    selected={selections.album === 'album_classic'} onSelect={(v) => handleSelectSingle('album', v)} />
+                                                <RadioCard id="album_premium" label="Premium" subtitle="Luxurious & vivid" icon={BookOpen} price={20000}
+                                                    selected={selections.album === 'album_premium'} onSelect={(v) => handleSelectSingle('album', v)} />
                                             </div>
                                         </div>
                                     )}
