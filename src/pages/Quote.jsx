@@ -136,10 +136,10 @@ function OptionCard({ id, label, icon: Icon, selected, onToggle, price, showStep
             whileTap={{ scale: 0.98 }}
             onClick={() => onToggle(id)}
             className={clsx(
-                'relative flex flex-col items-center justify-start gap-2 p-5 md:p-6 border rounded-xl transition-all duration-400 group cursor-pointer min-h-[220px]',
+                'relative flex flex-col items-center justify-start gap-2 p-5 md:p-6 border rounded-xl transition-all duration-500 group cursor-pointer min-h-[220px] overflow-hidden',
                 selected
-                    ? 'bg-gold/10 border-gold shadow-gold'
-                    : 'bg-white/2 border-white/10 hover:border-gold/30 hover:bg-white/5'
+                    ? 'bg-gradient-to-br from-gold/20 to-gold/5 border-gold shadow-[0_0_25px_rgba(212,175,55,0.2)] backdrop-blur-md'
+                    : 'bg-gradient-to-br from-white/[0.04] to-white/[0.01] border-white/10 hover:border-gold/40 hover:from-white/[0.08] hover:to-white/[0.03] backdrop-blur-sm hover:shadow-[0_8px_30px_rgba(212,175,55,0.15)]'
             )}
         >
             {selected && (
@@ -223,10 +223,10 @@ function RadioCard({ id, label, subtitle, icon: Icon, selected, onSelect, price 
             whileTap={{ scale: 0.97 }}
             onClick={() => onSelect(id)}
             className={clsx(
-                'relative flex flex-col items-center justify-center gap-3 p-8 border rounded-xl transition-all duration-400 group cursor-pointer w-full',
+                'relative flex flex-col items-center justify-center gap-3 p-8 border rounded-xl transition-all duration-500 group cursor-pointer w-full overflow-hidden',
                 selected
-                    ? 'bg-gold/10 border-gold shadow-gold'
-                    : 'bg-white/2 border-white/10 hover:border-gold/30 hover:bg-white/5'
+                    ? 'bg-gradient-to-br from-gold/20 to-gold/5 border-gold shadow-[0_0_25px_rgba(212,175,55,0.2)] backdrop-blur-md'
+                    : 'bg-gradient-to-br from-white/[0.04] to-white/[0.01] border-white/10 hover:border-gold/40 hover:from-white/[0.08] hover:to-white/[0.03] backdrop-blur-sm hover:shadow-[0_8px_30px_rgba(212,175,55,0.15)]'
             )}
         >
             {selected && (
