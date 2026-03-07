@@ -104,6 +104,8 @@ const PRICES = {
     album_premium: 20000,
     delivery_30days: 80000,
     delivery_6months: 40000,
+    prewedding_photo: 20000,
+    prewedding_both: 50000,
 };
 
 // ── ICON HELPERS ────────────────────────────────────────────────────────────
@@ -252,7 +254,7 @@ function RadioCard({ id, label, subtitle, icon: Icon, selected, onSelect, price 
 // ── EVENT STEP (multi-select toggles) ─────────────────────────────────────
 function EventStep({ title, stepKey, selections, onToggle, cameraCount, onCameraCount, options: customOptions }) {
     const defaultOptions = [
-        { id: 'candid_photo', label: 'Candid Photo', icon: Camera, price: PRICES.candid_photo },
+        { id: 'candid_photo', label: 'Cinematic Photo', icon: Camera, price: PRICES.candid_photo },
         { id: 'traditional_photo', label: 'Traditional Photo', icon: Aperture, price: PRICES.traditional_photo },
         { id: 'candid_video', label: 'Cinematic Video', icon: Video, price: PRICES.candid_video },
         { id: 'traditional_video', label: 'Traditional Video', icon: Film, price: PRICES.traditional_video },
@@ -267,7 +269,7 @@ function EventStep({ title, stepKey, selections, onToggle, cameraCount, onCamera
             <h2 className="font-serif text-3xl md:text-5xl text-white mb-2 text-center">{title}</h2>
             <p className="text-gold/60 uppercase tracking-widest text-xs mb-10">Select all that apply</p>
             <div className={clsx(
-                "grid gap-4 md:gap-6 w-full mb-8",
+                "grid gap-4 md:gap-6 w-full",
                 isSmallGrid ? "grid-cols-1 md:grid-cols-2 max-w-2xl" : "grid-cols-2 md:grid-cols-2 lg:grid-cols-4 max-w-5xl"
             )}>
                 {displayOptions.map((opt) => {
@@ -290,6 +292,14 @@ function EventStep({ title, stepKey, selections, onToggle, cameraCount, onCamera
                     );
                 })}
             </div>
+
+            <div className="mt-10 flex items-start gap-4 p-5 md:p-6 bg-gold/5 border border-gold/20 rounded-2xl w-full max-w-3xl text-left">
+                <Star className="text-gold flex-shrink-0 mt-0.5 fill-gold" size={18} />
+                <p className="text-white/60 text-sm md:text-base leading-relaxed">
+                    <span className="text-gold font-medium">Please Note: </span>
+                    Coverage time is strictly <span className="text-white/80 font-medium">6 to 8 hours</span> per event.
+                </p>
+            </div>
         </div>
     );
 }
@@ -305,11 +315,14 @@ const STEPS = [
     'mehendi',
     'sangeeth',
     'wedding',
+    'vratham',
     'reception',
+    'prewedding',
     'drone',
     'weblive',
     'delivery',
     'album',
+    'deliverables_info',
     'details',
 ];
 
@@ -323,19 +336,61 @@ const STEP_LABELS = {
     mehendi: 'Mehendi ',
     sangeeth: 'Sangeeth ',
     wedding: 'The Big Day',
+    vratham: 'Vratham',
     reception: 'Reception',
+    prewedding: 'Pre-Wedding Shoot',
     album: 'Album Selection',
+    deliverables_info: 'Deliverables',
     drone: 'Drone Coverage',
     weblive: 'Web Live',
     delivery: 'Delivery Timeline',
     details: 'Your Details',
 };
 
+const TERMS = [
+    'Coverage time is strictly 6 to 8 hours per event.',
+    'Transportation is included only for wedding and formal events, not for pre-wedding shoots.',
+    'Accommodation must be provided by the client.',
+    'Advance payment is non-refundable.',
+    'Once the advance is paid, no negotiations on the final price will be entertained.',
+    'Any changes to dates or venues must be informed 15–20 days in advance.',
+    'The remaining 10% balance must be paid on or before delivery.',
+    'In case of event cancellation, the price remains unchanged (no reduction).',
+    'Any additional events will be charged extra.',
+    'Food coverage is not included; coverage is strictly based on time with the same team.',
+    'The client must provide two 4TB external hard drives before the event begins.',
+    'For Pellikuthuru & Pellikoduku events, the team will cover both traditional and candid photography.',
+    'Pre-Wedding Shoot: Any location charges, travel expenses, or team accommodation for pre/post-wedding shoots must be borne by the client.',
+    'Pre-Wedding Shoot: Costumes and makeup artist charges are not included and must be borne by the client.',
+];
+
+// ── DELIVERABLES ────────────────────────────────────────────────────────────
+const getDeliverables = (selections) => {
+    const list = [
+        'Approximately 200 colour-corrected images (soft copies)',
+        'All remaining images provided on the client’s hard drive',
+        'Online gallery hosted on our website with password protection',
+        '4K edited wedding video (provided on client’s hard drive)',
+    ];
+    if ((selections.engagement || []).length > 0) {
+        list.push('3–4 minute engagement teaser');
+    }
+    list.push(
+        '7–10 minute wedding highlights video',
+        'Instant wedding reel based on the wedding date (50% probability)',
+        'One reel per event based on available content',
+        'WhatsApp invitation video (using our templates only)',
+        'Two pen drives'
+    );
+    return list;
+};
+
 // ── MAIN QUOTE PAGE ────────────────────────────────────────────────────────
 export default function QuotePage() {
     const [step, setStep] = useState(0);
     const [selections, setSelections] = useState({});
-    const [cameraCount, setCameraCount] = useState({});  // { engagement: 1, haldi: 2, ... }
+    const [cameraCount, setCameraCount] = useState({});
+    const [albumQty, setAlbumQty] = useState({ album_classic: 0, album_premium: 0 });
     const [form, setForm] = useState({
         brideName: '', groomName: '',
         countryCode: '+91', phone: '',
@@ -343,6 +398,7 @@ export default function QuotePage() {
     });
     const [submitted, setSubmitted] = useState(false);
     const [showPreview, setShowPreview] = useState(false);
+    const [showTerms, setShowTerms] = useState(false);
 
     const totalSteps = STEPS.length;
     const progress = ((step) / (totalSteps - 1)) * 100;
@@ -374,7 +430,9 @@ export default function QuotePage() {
     const droneTotal = droneEvents.length * 10000;
     const webLiveEvents = selections.weblive || [];
     const webLiveTotal = webLiveEvents.length * 8000;
-    const total = servicesTotal + cameraTotal + droneTotal + webLiveTotal;
+    // Album total (qty-based)
+    const albumTotal = (albumQty.album_classic || 0) * PRICES.album_classic + (albumQty.album_premium || 0) * PRICES.album_premium;
+    const total = servicesTotal + cameraTotal + droneTotal + webLiveTotal + albumTotal;
 
     const handleToggleMulti = (key, id) => {
         setSelections((prev) => {
@@ -406,9 +464,10 @@ export default function QuotePage() {
 
         const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
         const gold = [193, 155, 65];
+        const headerBg = [18, 52, 32];   // deep forest green
         const dark = [15, 15, 15];
         const mid = [80, 80, 80];
-        const light = [200, 200, 200];
+        const light = [220, 220, 220];
         const W = doc.internal.pageSize.getWidth();
         const H = doc.internal.pageSize.getHeight();
 
@@ -448,7 +507,7 @@ export default function QuotePage() {
             }
 
             // ── FOOTER ───────────────────────────────────────────────────────────
-            docObj.setFillColor(...dark);
+            docObj.setFillColor(...headerBg);
             docObj.rect(6.5, H - 24.5, W - 13, 18, 'F');
             docObj.setFont('helvetica', 'normal');
             docObj.setFontSize(8);
@@ -461,7 +520,7 @@ export default function QuotePage() {
         drawPageOverlay(doc);
 
         // ── HEADER BAND ──────────────────────────────────────────────────────
-        doc.setFillColor(...dark);
+        doc.setFillColor(...headerBg);
         doc.rect(6.5, 6.5, W - 13, 42, 'F');
         doc.setFillColor(...gold);
         doc.rect(6.5, 48.5, W - 13, 1.2, 'F');
@@ -511,14 +570,14 @@ export default function QuotePage() {
         doc.setLineWidth(0.5);
         doc.line(16, y, W - 16, y);
 
-        // ── COUPLE DETAILS ───────────────────────────────────────────────────
+        // ── CLIENT DETAILS ───────────────────────────────────────────────────
         y += 6;
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(9);
         doc.setTextColor(...gold);
         doc.text('CLIENT DETAILS', 16, y);
-
         y += 5;
+
         const detailsGrid = [
             [{ label: 'Bride:', value: form.brideName || '—' }, { label: 'Wedding Date:', value: form.date || 'Not specified' }],
             [{ label: 'Groom:', value: form.groomName || '—' }, { label: 'Location:', value: form.location || 'Not specified' }],
@@ -534,7 +593,6 @@ export default function QuotePage() {
             doc.setFont('helvetica', 'normal');
             doc.setTextColor(20, 20, 20);
             doc.text(row[0].value, 36, y);
-
             if (row[1].label) {
                 doc.setFont('helvetica', 'bold');
                 doc.setTextColor(...mid);
@@ -546,8 +604,39 @@ export default function QuotePage() {
             y += 4.5;
         });
 
-        // ── SERVICE BREAKDOWN ────────────────────────────────────────────────
+        // ── STYLE & DELIVERABLES ──────────────────────────────────────────────
+        y += 3;
+        doc.setDrawColor(...gold);
+        doc.setLineWidth(0.3);
+        doc.line(16, y, W - 16, y);
         y += 5;
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+        doc.setTextColor(...gold);
+        doc.text('STYLE & DELIVERABLES', 16, y);
+        y += 5;
+
+        const styleRows = [];
+        styleRows.push(['Photography', selections.photography === 'candid' ? 'Candid Photography' : selections.photography === 'traditional' ? 'Traditional Photography' : 'Not selected']);
+        styleRows.push(['Delivery Timeline', selections.delivery === 'delivery_30days' ? 'Within 30 Days (Express)' : selections.delivery === 'delivery_6months' ? 'Within 6 Months (Standard)' : 'Not selected']);
+        const albumSummary = [albumQty.album_classic > 0 ? `Classic ×${albumQty.album_classic}` : null, albumQty.album_premium > 0 ? `Premium ×${albumQty.album_premium}` : null].filter(Boolean).join(', ') || 'None';
+        styleRows.push(['Album', albumSummary]);
+        if ((selections.drone || []).length > 0) styleRows.push(['Drone Coverage', (selections.drone || []).map(ev => STEP_LABELS[ev] || ev).join(', ')]);
+        if ((selections.weblive || []).length > 0) styleRows.push(['Web Live', (selections.weblive || []).map(ev => STEP_LABELS[ev] || ev).join(', ')]);
+
+        styleRows.forEach(([label, value]) => {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(8);
+            doc.setTextColor(...mid);
+            doc.text(label + ':', 16, y);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(20, 20, 20);
+            doc.text(value, 70, y);
+            y += 4.5;
+        });
+
+        // ── SERVICE BREAKDOWN ────────────────────────────────────────────────
+        y += 4;
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(9);
         doc.setTextColor(...gold);
@@ -555,163 +644,264 @@ export default function QuotePage() {
         y += 4;
 
         const SVC_LABEL = {
-            candid_photo: 'Candid Photography',
+            candid_photo: 'Cinematic Photography',
             traditional_photo: 'Traditional Photography',
             candid_video: 'Cinematic Video',
             traditional_video: 'Traditional Video',
         };
 
         const tableRows = [];
+        const rowMeta = []; // track row type: 'event-header' | 'service' | 'extra'
 
-        // Photography style
-        if (selections.photography) {
-            tableRows.push([
-                'Photography Style',
-                selections.photography === 'candid' ? 'Candid Photography' : 'Traditional Photography',
-                '-',
-                '-',
-            ]);
-        }
-
-        // Event coverage
-        ['engagement', 'bride_haldi', 'bride', 'groom_haldi', 'groom', 'mehendi', 'sangeeth', 'wedding', 'reception'].forEach(ev => {
+        ['engagement', 'bride_haldi', 'bride', 'groom_haldi', 'groom', 'mehendi', 'sangeeth', 'wedding', 'vratham', 'reception'].forEach(ev => {
             const evSel = selections[ev] || [];
             if (!evSel.length) return;
 
+            // Event group header row (spans all 4 cols visually via styling)
+            tableRows.push([{ content: STEP_LABELS[ev].toUpperCase(), colSpan: 4 }]);
+            rowMeta.push('event-header');
+
+            // Service sub-rows under this event
             evSel.forEach(svc => {
                 const isPhotoVideo = svc.includes('photo') || svc.includes('video');
                 const camCount = isPhotoVideo ? (cameraCount[`${ev}_${svc}`] || 1) : 1;
                 const extraCamCost = (camCount - 1) * PRICES.extra_camera;
                 const price = PRICES[svc] || 0;
-
-                const svcName = SVC_LABEL[svc] || svc;
-                const camString = isPhotoVideo ? `${camCount} Cam${camCount > 1 ? 's' : ''}` : '-';
-
                 tableRows.push([
-                    STEP_LABELS[ev].toUpperCase(),
-                    svcName,
-                    camString,
+                    `  • ${SVC_LABEL[svc] || svc}`,
+                    isPhotoVideo ? `${camCount} Cam${camCount > 1 ? 's' : ''}` : '-',
                     `Rs. ${(price + extraCamCost).toLocaleString('en-IN')}`,
+                    '',
                 ]);
+                rowMeta.push('service');
             });
         });
 
-        // Drone coverage
-        const droneEvs = selections.drone || [];
-        droneEvs.forEach(ev => {
-            tableRows.push([
-                'DRONE COVERAGE',
-                `Drone - ${(STEP_LABELS[ev] || ev).toUpperCase()}`,
-                '-',
-                'Rs. 10,000',
-            ]);
-        });
+        // Pre-Wedding
+        if (selections.prewedding) {
+            tableRows.push([{ content: 'PRE-WEDDING SHOOT', colSpan: 4 }]);
+            rowMeta.push('event-header');
+            const label = selections.prewedding === 'prewedding_photo' ? 'Photography Only' : 'Photography & Video';
+            const price = selections.prewedding === 'prewedding_photo' ? 20000 : 50000;
+            tableRows.push([`  • ${label}`, '-', `Rs. ${(price).toLocaleString('en-IN')}`, '']);
+            rowMeta.push('service');
+        }
 
-        // Web Live coverage
-        const webLiveEvs = selections.weblive || [];
-        webLiveEvs.forEach(ev => {
-            tableRows.push([
-                'WEB LIVE',
-                `Web Live - ${(STEP_LABELS[ev] || ev).toUpperCase()}`,
-                '-',
-                'Rs. 8,000',
-            ]);
-        });
+        // Drone
+        if ((selections.drone || []).length > 0) {
+            tableRows.push([{ content: 'DRONE COVERAGE', colSpan: 4 }]);
+            rowMeta.push('event-header');
+            (selections.drone || []).forEach(ev => {
+                tableRows.push([`  • ${STEP_LABELS[ev] || ev}`, '-', 'Rs. 10,000', '']);
+                rowMeta.push('service');
+            });
+        }
 
-        // Delivery Timeline
+        // Web Live
+        if ((selections.weblive || []).length > 0) {
+            tableRows.push([{ content: 'WEB LIVE STREAMING', colSpan: 4 }]);
+            rowMeta.push('event-header');
+            (selections.weblive || []).forEach(ev => {
+                tableRows.push([`  • ${STEP_LABELS[ev] || ev}`, '-', 'Rs. 8,000', '']);
+                rowMeta.push('service');
+            });
+        }
+
+        // Delivery
         if (selections.delivery) {
-            const deliveryLabel = selections.delivery === 'delivery_30days' ? 'Within 30 Days (Express)' : 'Within 6 Months (Standard)';
-            const deliveryAmt = PRICES[selections.delivery] || 0;
+            tableRows.push([{ content: 'DELIVERY TIMELINE', colSpan: 4 }]);
+            rowMeta.push('event-header');
             tableRows.push([
-                'DELIVERY',
-                deliveryLabel,
+                `  • ${selections.delivery === 'delivery_30days' ? 'Within 30 Days (Express)' : 'Within 6 Months (Standard)'}`,
                 '-',
-                `Rs. ${deliveryAmt.toLocaleString('en-IN')}`,
+                `Rs. ${(PRICES[selections.delivery] || 0).toLocaleString('en-IN')}`,
+                '',
             ]);
+            rowMeta.push('service');
         }
 
         // Album
-        if (selections.album) {
-            const albumPrices = { album_classic: 15000, album_premium: 20000 };
-            const albumNames = { album_classic: 'Classic Premium Album', album_premium: 'Premium Luxury Album' };
-            tableRows.push([
-                'Album',
-                albumNames[selections.album] || selections.album,
-                '1',
-                `Rs. ${(albumPrices[selections.album] || 0).toLocaleString('en-IN')}`,
-            ]);
+        const albumDefs2 = [{ id: 'album_classic', name: 'Classic Premium Album', price: 15000 }, { id: 'album_premium', name: 'Premium Luxury Album', price: 20000 }];
+        const hasAlbum = albumDefs2.some(({ id }) => (albumQty[id] || 0) > 0);
+        if (hasAlbum) {
+            tableRows.push([{ content: 'ALBUM', colSpan: 4 }]);
+            rowMeta.push('event-header');
+            albumDefs2.forEach(({ id, name, price }) => {
+                const qty = albumQty[id] || 0;
+                if (qty > 0) {
+                    tableRows.push([`  • ${name}`, `Qty: ${qty}`, `Rs. ${(qty * price).toLocaleString('en-IN')}`, '']);
+                    rowMeta.push('service');
+                }
+            });
         }
 
         autoTable(doc, {
             startY: y,
-            head: [['EVENT / CATEGORY', 'SERVICE TYPE', 'TOTAL CAMERAS', 'AMOUNT']],
+            head: [['SERVICE / EVENT', 'CAMS / QTY', 'AMOUNT', '']],
             body: tableRows,
             theme: 'grid',
             headStyles: { fillColor: gold, textColor: dark, fontStyle: 'bold', fontSize: 8, halign: 'center' },
-            bodyStyles: { fontSize: 7.5, textColor: [40, 40, 40], cellPadding: 2, fillColor: false },
-            alternateRowStyles: { fillColor: [250, 248, 243, 0.4] }, // slight transparency if jsPDF accepts it, mostly it just uses light tint
+            bodyStyles: { fontSize: 7.5, textColor: [40, 40, 40], cellPadding: [2, 4, 2, 4], fillColor: false },
+            alternateRowStyles: {},
             columnStyles: {
-                0: { cellWidth: 45, fontStyle: 'bold', textColor: [20, 20, 20] },
-                1: { cellWidth: 70 },
-                2: { cellWidth: 25, halign: 'center' },
-                3: { cellWidth: 35, halign: 'right', fontStyle: 'bold', textColor: [20, 20, 20] },
+                0: { cellWidth: 90 },
+                1: { cellWidth: 35, halign: 'center' },
+                2: { cellWidth: 40, halign: 'right', fontStyle: 'bold' },
+                3: { cellWidth: 10 },
             },
-            margin: { left: 16, right: 16 },
-            styles: { lineColor: [220, 210, 190], lineWidth: 0.1 }
+            margin: { left: 16, right: 16, bottom: 32 },
+            styles: { lineColor: [220, 210, 190], lineWidth: 0.1 },
+            didParseCell: ({ row, cell, section }) => {
+                if (section !== 'body') return;
+                const meta = rowMeta[row.index];
+                if (meta === 'event-header') {
+                    cell.styles.fillColor = [248, 235, 175];
+                    cell.styles.textColor = [10, 10, 5];
+                    cell.styles.fontStyle = 'bold';
+                    cell.styles.fontSize = 8.5;
+                    cell.styles.cellPadding = [3, 6, 3, 6];
+                } else {
+                    cell.styles.fillColor = [252, 250, 245];
+                    cell.styles.textColor = [40, 40, 40];
+                }
+            },
         });
 
         // ── TOTAL SUMMARY BOX ────────────────────────────────────────────────
         let finalY = doc.lastAutoTable.finalY + 8;
+        if (finalY > H - 90) { doc.addPage(); drawPageOverlay(doc); finalY = 20; }
 
         doc.setFillColor(252, 250, 245);
         doc.setDrawColor(...gold);
         doc.setLineWidth(0.3);
         doc.rect(16, finalY, W - 32, 20, 'FD');
-
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(13);
         doc.setTextColor(15, 15, 15);
         doc.text('TOTAL ESTIMATED INVESTMENT', 22, finalY + 13);
-
         doc.setFontSize(15);
         doc.setTextColor(...gold);
         doc.text(`Rs. ${total.toLocaleString('en-IN')}`, W - 22, finalY + 13.5, { align: 'right' });
 
-        // ── TERMS & CONDITIONS ───────────────────────────────────────────────
-        doc.setFont('helvetica', 'italic');
-        doc.setFontSize(7.5);
-        doc.setTextColor(...mid);
-        doc.text('* Pricing is an estimate and valid for 14 days. Final pricing confirmed after consultation. Taxes may apply as per government regulations.', 16, finalY + 28);
+        // ── POST-PRODUCTION NOTE ──────────────────────────────────────────────
+        finalY += 28;
+        doc.setFillColor(252, 249, 240);
+        doc.setDrawColor(...gold);
+        doc.setLineWidth(0.2);
+        doc.rect(16, finalY, W - 32, 10, 'FD');
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(8);
+        doc.setTextColor(...gold);
+        doc.text('★ Note:', 20, finalY + 6.5);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(40, 40, 40);
+        doc.text('Post-production work will commence after receiving 90% payment.', 38, finalY + 6.5);
+
+        // ── DELIVERABLES ──────────────────────────────────────────────────────
+        finalY += 16;
+        if (finalY > H - 100) { doc.addPage(); drawPageOverlay(doc); finalY = 20; }
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+        doc.setTextColor(...gold);
+        doc.text('DELIVERABLES', 16, finalY);
+        finalY += 2;
+        doc.setDrawColor(...gold);
+        doc.setLineWidth(0.3);
+        doc.line(16, finalY + 1, W - 16, finalY + 1);
+        finalY += 5;
+
+        getDeliverables(selections).forEach((item) => {
+            if (finalY > H - 30) { doc.addPage(); drawPageOverlay(doc); finalY = 20; }
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(8);
+            doc.setTextColor(...gold);
+            doc.text(`•`, 16, finalY);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(50, 50, 50);
+            const lines = doc.splitTextToSize(item, W - 50);
+            doc.text(lines, 22, finalY);
+            finalY += (lines.length * 4) + 1;
+        });
+
+        // ── TERMS & CONDITIONS ────────────────────────────────────────────────
+        finalY += 16;
+        if (finalY > H - 100) { doc.addPage(); drawPageOverlay(doc); finalY = 20; }
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+        doc.setTextColor(...gold);
+        doc.text('TERMS & CONDITIONS', 16, finalY);
+        finalY += 2;
+        doc.setDrawColor(...gold);
+        doc.setLineWidth(0.3);
+        doc.line(16, finalY + 1, W - 16, finalY + 1);
+        finalY += 5;
+
+        TERMS.forEach((term, i) => {
+            if (finalY > H - 30) { doc.addPage(); drawPageOverlay(doc); finalY = 20; }
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(7.5);
+            doc.setTextColor(...gold);
+            doc.text(`${i + 1}.`, 16, finalY);
+
+            const prefix = 'Pre-Wedding Shoot:';
+            if (term.startsWith(prefix)) {
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(50, 50, 50);
+                doc.text(prefix, 22, finalY);
+
+                doc.setFont('helvetica', 'normal');
+                const prefixWidth = doc.getTextWidth(prefix) + 1.5;
+                const restText = term.substring(prefix.length).trim();
+                const lines = doc.splitTextToSize(restText, W - 50 - prefixWidth);
+                doc.text(lines, 22 + prefixWidth, finalY);
+                finalY += lines.length * 4 + 1.5;
+            } else {
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(50, 50, 50);
+                const lines = doc.splitTextToSize(term, W - 50);
+                doc.text(lines, 22, finalY);
+                finalY += lines.length * 4 + 1.5;
+            }
+        });
 
         // Download
         const fileName = `LandscapeWeddings_Quote_${form.brideName || 'Bride'}_${form.groomName || 'Groom'}.pdf`;
         doc.save(fileName);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         const phoneFormatted = `${form.countryCode} ${form.phone}`;
-        const albumLabel = { album_classic: 'Classic Album (Rs.15,000)', album_premium: 'Premium Album (Rs.20,000)' }[selections.album] || 'Not selected';
+        const albumLines = [
+            albumQty.album_classic > 0 ? `Classic x${albumQty.album_classic} (Rs.${(albumQty.album_classic * 15000).toLocaleString('en-IN')})` : null,
+            albumQty.album_premium > 0 ? `Premium x${albumQty.album_premium} (Rs.${(albumQty.album_premium * 20000).toLocaleString('en-IN')})` : null,
+        ].filter(Boolean).join(', ') || 'None';
 
         const serviceLabel = { candid_photo: 'Candid Photography', traditional_photo: 'Traditional Photography', candid_video: 'Cinematic Video', traditional_video: 'Traditional Video' };
-        const eventLines = ['engagement', 'bride_haldi', 'bride', 'groom_haldi', 'groom', 'mehendi', 'sangeeth', 'wedding', 'reception']
+        const eventLines = ['engagement', 'bride_haldi', 'bride', 'groom_haldi', 'groom', 'mehendi', 'sangeeth', 'wedding', 'vratham', 'reception']
             .map(ev => {
                 const evSel = (selections[ev] || []);
                 if (!evSel.length) return null;
 
                 const svcs = evSel.map(svc => {
-                    const isPhotoVideo = svc.includes('photo') || svc.includes('video');
-                    const camCount = isPhotoVideo ? (cameraCount[`${ev}_${svc}`] || 1) : 1;
-                    const extraCost = (camCount - 1) * PRICES.extra_camera;
-                    const camNote = camCount > 1 ? ` [${camCount} Cameras +Rs.${extraCost.toLocaleString('en-IN')}]` : '';
-                    return (serviceLabel[svc] || svc) + camNote;
+                    const cnt = cameraCount[`${ev}_${svc}`] || 1;
+                    return `${serviceLabel[svc] || svc} x${cnt}`;
                 }).join(', ');
-
-                return `  * ${STEP_LABELS[ev]}: ${svcs}`;
+                return `• ${(STEP_LABELS[ev] || ev)}: ${svcs}`;
             })
-            .filter(Boolean)
-            .join('\n') || '  * None selected';
+            .filter(Boolean);
+
+        if (selections.prewedding) {
+            const lbl = selections.prewedding === 'prewedding_photo' ? 'Photography Only' : 'Photography & Video';
+            eventLines.push(`• Pre-Wedding: ${lbl}`);
+        }
+
+        const eventLinesString = eventLines.join('\n') || '  * None selected';
+
+        const droneLines = (selections.drone || []).length ? `\n*Drone Coverage:* ${selections.drone.map(e => STEP_LABELS[e] || e).join(', ')} (Rs.${((selections.drone || []).length * 10000).toLocaleString('en-IN')})` : '';
 
         const msg =
             `*New Quote Request - Landscape Weddings*\n\n` +
@@ -723,17 +913,17 @@ export default function QuotePage() {
             `Location: ${form.location || 'Not specified'}\n` +
             `No. of Events: ${form.events || 'Not specified'}\n\n` +
             `Photography: ${selections.photography === 'candid' ? 'Candid' : selections.photography === 'traditional' ? 'Traditional' : 'Not selected'}\n\n` +
-            `Event Coverage:\n${eventLines}\n\n` +
+            `Event Coverage:\n${eventLinesString}\n\n` +
             `Drone Coverage: ${(selections.drone || []).length > 0 ? (selections.drone || []).map(ev => STEP_LABELS[ev] || ev).join(', ') + ` (Rs.${((selections.drone || []).length * 10000).toLocaleString('en-IN')})` : 'None'}\n\n` +
             `Web Live: ${(selections.weblive || []).length > 0 ? (selections.weblive || []).map(ev => STEP_LABELS[ev] || ev).join(', ') + ` (Rs.${((selections.weblive || []).length * 8000).toLocaleString('en-IN')})` : 'None'}\n\n` +
             `Delivery Timeline: ${selections.delivery === 'delivery_30days' ? 'Within 30 Days (Rs.80,000)' : selections.delivery === 'delivery_6months' ? 'Within 6 Months (Rs.40,000)' : 'Not selected'}\n\n` +
-            `Album: ${albumLabel}\n\n` +
+            `Album: ${albumLines}\n\n` +
             `*Estimated Total: Rs.${total.toLocaleString('en-IN')}*\n` +
             `_(Final pricing confirmed after consultation)_\n\n` +
             `_Sent from Quote Builder on landscapeweddings.in_`;
 
+        await generateQuotePDF();
         sendToWhatsApp(msg);
-        generateQuotePDF();
         setSubmitted(true);
     };
 
@@ -822,7 +1012,7 @@ export default function QuotePage() {
                                     )}
 
                                     {/* EVENT STEPS */}
-                                    {['engagement', 'bride_haldi', 'bride', 'groom_haldi', 'groom', 'mehendi', 'sangeeth', 'wedding', 'reception'].includes(currentKey) && (
+                                    {['engagement', 'bride_haldi', 'bride', 'groom_haldi', 'groom', 'mehendi', 'sangeeth', 'wedding', 'vratham', 'reception'].includes(currentKey) && (
                                         <EventStep
                                             title={STEP_LABELS[currentKey]}
                                             stepKey={currentKey}
@@ -830,11 +1020,46 @@ export default function QuotePage() {
                                             onToggle={handleToggleMulti}
                                             cameraCount={cameraCount}
                                             onCameraCount={handleCameraCount}
-                                            options={currentKey === 'bride' || currentKey === 'groom' ? [
-                                                { id: 'traditional_photo', label: 'Traditional Photo', icon: Aperture, price: PRICES.traditional_photo },
-                                                { id: 'traditional_video', label: 'Traditional Video', icon: Film, price: PRICES.traditional_video },
-                                            ] : null}
+                                            options={
+                                                (currentKey === 'bride' || currentKey === 'groom' || currentKey === 'vratham') ? [
+                                                    { id: 'traditional_photo', label: 'Traditional Photo', icon: Aperture, price: PRICES.traditional_photo },
+                                                    { id: 'traditional_video', label: 'Traditional Video', icon: Film, price: PRICES.traditional_video },
+                                                ] : currentKey === 'mehendi' ? [
+                                                    { id: 'candid_photo', label: 'Cinematic Photo', icon: Camera, price: PRICES.candid_photo },
+                                                    { id: 'candid_video', label: 'Cinematic Video', icon: Video, price: PRICES.candid_video },
+                                                ] : null
+                                            }
                                         />
+                                    )}
+
+                                    {/* PRE-WEDDING STEP */}
+                                    {currentKey === 'prewedding' && (
+                                        <div className="flex flex-col items-center w-full gap-8">
+                                            <h2 className="font-serif text-3xl md:text-5xl text-white text-center">Pre-Wedding <span className="italic text-gold font-light">Shoot</span></h2>
+                                            <p className="text-gold/60 uppercase tracking-widest text-xs -mt-4">Optional add-on before your big events</p>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-lg">
+                                                <RadioCard id="prewedding_photo" label="Photography Only" icon={Camera} price={20000}
+                                                    selected={selections.prewedding === 'prewedding_photo'} onSelect={(v) => handleSelectSingle('prewedding', selections.prewedding === v ? null : v)} />
+                                                <RadioCard id="prewedding_both" label="Photography & Video" icon={Video} price={50000}
+                                                    selected={selections.prewedding === 'prewedding_both'} onSelect={(v) => handleSelectSingle('prewedding', selections.prewedding === v ? null : v)} />
+                                            </div>
+
+                                            <div className="mt-6 flex flex-col gap-2 p-5 border border-white/10 rounded-2xl w-full max-w-3xl text-left bg-noir/40 backdrop-blur-sm">
+                                                <div className="flex items-start gap-4">
+                                                    <Star className="text-gold flex-shrink-0 mt-0.5 fill-gold" size={16} />
+                                                    <p className="text-white/60 text-sm leading-relaxed">
+                                                        <span className="text-gold font-medium">Please Note: </span>
+                                                        Any location charges, travel expenses, or team accommodation for pre/post-wedding shoots must be borne by the client.
+                                                    </p>
+                                                </div>
+                                                <div className="flex items-start gap-4">
+                                                    <Star className="text-gold flex-shrink-0 mt-0.5 fill-gold" size={16} />
+                                                    <p className="text-white/60 text-sm leading-relaxed">
+                                                        Costumes and makeup artist charges are not included and must be borne by the client.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
                                     )}
 
                                     {/* DRONE STEP */}
@@ -976,10 +1201,70 @@ export default function QuotePage() {
                                             <h2 className="font-serif text-3xl md:text-5xl text-white text-center">Choose Your <span className="italic text-gold font-light">Album</span></h2>
                                             <p className="text-white/40 text-sm">12×36 Premium Album — 30 Sheets</p>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl">
-                                                <RadioCard id="album_classic" label="Classic" subtitle="Elegant & timeless" icon={BookOpen} price={15000}
-                                                    selected={selections.album === 'album_classic'} onSelect={(v) => handleSelectSingle('album', v)} />
-                                                <RadioCard id="album_premium" label="Premium" subtitle="Luxurious & vivid" icon={BookOpen} price={20000}
-                                                    selected={selections.album === 'album_premium'} onSelect={(v) => handleSelectSingle('album', v)} />
+                                                {[
+                                                    { id: 'album_classic', label: 'Classic', subtitle: 'Elegant & timeless', price: PRICES.album_classic },
+                                                    { id: 'album_premium', label: 'Premium', subtitle: 'Luxurious & vivid', price: PRICES.album_premium },
+                                                ].map(alb => {
+                                                    const qty = albumQty[alb.id] || 0;
+                                                    const isSelected = qty > 0;
+                                                    return (
+                                                        <div
+                                                            key={alb.id}
+                                                            className={clsx(
+                                                                'relative flex flex-col items-center gap-4 p-6 border rounded-2xl transition-all duration-300',
+                                                                isSelected ? 'bg-gold/10 border-gold shadow-gold' : 'bg-white/2 border-white/10 hover:border-gold/30'
+                                                            )}
+                                                        >
+                                                            {isSelected && (
+                                                                <span className="absolute top-3 right-3 w-5 h-5 rounded-full bg-gold flex items-center justify-center">
+                                                                    <Check size={11} className="text-noir" />
+                                                                </span>
+                                                            )}
+                                                            <BookOpen size={32} className={isSelected ? 'text-gold' : 'text-white/30'} />
+                                                            <div className="text-center">
+                                                                <p className={clsx('font-semibold uppercase tracking-widest text-sm', isSelected ? 'text-gold' : 'text-white')}>{alb.label}</p>
+                                                                <p className="text-white/40 text-xs mt-1">{alb.subtitle}</p>
+                                                                <p className="text-gold font-cinzel text-lg font-bold mt-2">₹{alb.price.toLocaleString('en-IN')}<span className="text-white/30 text-xs font-normal"> /album</span></p>
+                                                            </div>
+                                                            {/* Quantity Stepper */}
+                                                            <div className="flex items-center gap-4 mt-2">
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setAlbumQty(prev => ({ ...prev, [alb.id]: Math.max(0, (prev[alb.id] || 0) - 1) }))}
+                                                                    className="w-8 h-8 rounded-full border border-white/20 hover:border-gold text-white/60 hover:text-gold flex items-center justify-center transition-all text-lg font-light"
+                                                                >−</button>
+                                                                <span className={clsx('font-cinzel text-xl font-bold w-6 text-center', isSelected ? 'text-gold' : 'text-white/40')}>{qty}</span>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setAlbumQty(prev => ({ ...prev, [alb.id]: (prev[alb.id] || 0) + 1 }))}
+                                                                    className="w-8 h-8 rounded-full border border-white/20 hover:border-gold text-white/60 hover:text-gold flex items-center justify-center transition-all text-lg font-light"
+                                                                >+</button>
+                                                            </div>
+                                                            {isSelected && (
+                                                                <p className="text-gold/70 text-xs">Subtotal: ₹{(qty * alb.price).toLocaleString('en-IN')}</p>
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* DELIVERABLES INFO STEP */}
+                                    {currentKey === 'deliverables_info' && (
+                                        <div className="flex flex-col items-center w-full gap-8 max-w-2xl mx-auto">
+                                            <h2 className="font-serif text-3xl md:text-5xl text-white text-center">
+                                                Your <span className="italic text-gold font-light">Deliverables</span>
+                                            </h2>
+                                            <div className="glass w-full border border-gold/20 rounded-2xl p-6 md:p-8 text-left max-h-[50vh] overflow-y-auto custom-scrollbar">
+                                                <ul className="flex flex-col gap-4">
+                                                    {getDeliverables(selections).map((item, i) => (
+                                                        <li key={i} className="flex gap-4 text-sm md:text-base text-white/80 items-start">
+                                                            <CheckCircle2 size={18} className="text-gold flex-shrink-0 mt-0.5" />
+                                                            <span>{item}</span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
                                             </div>
                                         </div>
                                     )}
@@ -1072,6 +1357,45 @@ export default function QuotePage() {
                                                         value={form.location}
                                                         onChange={e => setForm(p => ({ ...p, location: e.target.value }))}
                                                         className="w-full bg-white/5 border border-white/15 rounded-lg pl-11 pr-4 py-4 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-gold/50 transition-all" />
+                                                </div>
+
+                                                {/* Post-production Note */}
+                                                <div className="flex items-start gap-3 bg-white/3 border border-gold/20 rounded-xl px-5 py-4 w-full">
+                                                    <span className="text-gold text-lg leading-none mt-0.5">★</span>
+                                                    <p className="text-white/60 text-sm leading-relaxed font-light">
+                                                        <span className="text-gold font-medium">Note: </span>
+                                                        Post-production work will commence after receiving <span className="text-white font-medium">90% payment</span>.
+                                                    </p>
+                                                </div>
+
+                                                {/* Terms & Conditions */}
+                                                <div className="w-full">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setShowTerms(p => !p)}
+                                                        className="flex items-center gap-2 text-gold/70 hover:text-gold text-xs uppercase tracking-widest transition-colors"
+                                                    >
+                                                        <span className={`transition-transform duration-300 ${showTerms ? 'rotate-90' : ''}`}>▶</span>
+                                                        {showTerms ? 'Hide' : 'View'} Terms &amp; Conditions
+                                                    </button>
+                                                    {showTerms && (
+                                                        <motion.div
+                                                            initial={{ opacity: 0, height: 0 }}
+                                                            animate={{ opacity: 1, height: 'auto' }}
+                                                            exit={{ opacity: 0, height: 0 }}
+                                                            className="mt-4 glass border border-white/10 rounded-xl p-5"
+                                                        >
+                                                            <h4 className="text-gold text-xs uppercase tracking-widest font-bold mb-4 border-b border-gold/10 pb-2">Terms &amp; Conditions</h4>
+                                                            <ol className="flex flex-col gap-2">
+                                                                {TERMS.map((t, i) => (
+                                                                    <li key={i} className="flex gap-3 text-xs text-white/55 leading-relaxed">
+                                                                        <span className="text-gold font-bold flex-shrink-0">{i + 1}.</span>
+                                                                        <span>{t}</span>
+                                                                    </li>
+                                                                ))}
+                                                            </ol>
+                                                        </motion.div>
+                                                    )}
                                                 </div>
 
                                                 <div className="flex flex-col md:flex-row items-center gap-4 mt-2">
@@ -1211,7 +1535,12 @@ export default function QuotePage() {
                                                 <h4 className="text-gold text-xs uppercase tracking-[0.2em] mb-4 font-bold border-b border-gold/10 pb-2">Style & Deliverables</h4>
                                                 <div className="flex flex-col gap-2 text-sm">
                                                     <div className="flex justify-between"><span className="text-white/40">Photography</span><span className="text-white text-right capitalize">{selections.photography || 'Not selected'}</span></div>
-                                                    <div className="flex justify-between"><span className="text-white/40">Album</span><span className="text-white text-right capitalize">{selections.album ? selections.album.replace('album_', '') : 'Not selected'}</span></div>
+                                                    <div className="flex justify-between"><span className="text-white/40">Delivery</span><span className="text-white text-right">{selections.delivery === 'delivery_30days' ? 'Within 30 Days' : selections.delivery === 'delivery_6months' ? 'Within 6 Months' : 'Not selected'}</span></div>
+                                                    <div className="flex justify-between"><span className="text-white/40">Album</span><span className="text-white text-right">
+                                                        {[albumQty.album_classic > 0 ? `Classic ×${albumQty.album_classic}` : null, albumQty.album_premium > 0 ? `Premium ×${albumQty.album_premium}` : null].filter(Boolean).join(', ') || 'None'}
+                                                    </span></div>
+                                                    {(selections.drone || []).length > 0 && <div className="flex justify-between"><span className="text-white/40">Drone</span><span className="text-white text-right">{(selections.drone || []).map(ev => STEP_LABELS[ev] || ev).join(', ')}</span></div>}
+                                                    {(selections.weblive || []).length > 0 && <div className="flex justify-between"><span className="text-white/40">Web Live</span><span className="text-white text-right">{(selections.weblive || []).map(ev => STEP_LABELS[ev] || ev).join(', ')}</span></div>}
                                                 </div>
                                             </div>
                                         </div>
@@ -1220,29 +1549,79 @@ export default function QuotePage() {
                                         <div className="glass p-5 rounded-xl border border-white/5 h-fit">
                                             <h4 className="text-gold text-xs uppercase tracking-[0.2em] mb-4 font-bold border-b border-gold/10 pb-2">Event Coverage</h4>
                                             <div className="flex flex-col gap-4">
-                                                {['engagement', 'bride_haldi', 'groom_haldi', 'mehendi', 'sangeeth', 'wedding', 'reception'].map(ev => {
+                                                {['engagement', 'bride_haldi', 'bride', 'groom_haldi', 'groom', 'mehendi', 'sangeeth', 'wedding', 'vratham', 'reception'].map(ev => {
                                                     const svcs = selections[ev] || [];
                                                     if (!svcs.length) return null;
+                                                    const SVC_PREVIEW_LABEL = {
+                                                        candid_photo: 'Cinematic Photo',
+                                                        traditional_photo: 'Traditional Photo',
+                                                        candid_video: 'Cinematic Video',
+                                                        traditional_video: 'Traditional Video',
+                                                    };
                                                     return (
-                                                        <div key={ev} className="flex flex-col gap-1 border-b border-white/5 pb-3 last:border-0 last:pb-0">
-                                                            <span className="text-white font-medium capitalize">{ev.replace('_', ' ')}</span>
+                                                        <div key={ev} className="border-b border-white/5 pb-4 last:border-0 last:pb-0">
+                                                            <p className="text-white font-semibold text-sm mb-2">{STEP_LABELS[ev] || ev}</p>
                                                             {svcs.map(s => {
                                                                 const isCam = s.includes('photo') || s.includes('video');
                                                                 const cnt = isCam ? (cameraCount[`${ev}_${s}`] || 1) : null;
                                                                 return (
-                                                                    <div key={s} className="flex justify-between text-xs text-white/50 pl-2">
-                                                                        <span className="capitalize flex items-center gap-1">• {s.replace('_', ' ')}</span>
-                                                                        {cnt && <span className="text-gold/80">{cnt} Cam{cnt > 1 ? 's' : ''}</span>}
+                                                                    <div key={s} className="flex justify-between items-center text-xs py-0.5 pl-3">
+                                                                        <span className="text-white/50 flex items-center gap-1.5">
+                                                                            <span className="text-gold/50">•</span>
+                                                                            {SVC_PREVIEW_LABEL[s] || s.replace(/_/g, ' ')}
+                                                                        </span>
+                                                                        {cnt && <span className="text-gold font-medium">{cnt} Cam{cnt > 1 ? 's' : ''}</span>}
                                                                     </div>
                                                                 );
                                                             })}
                                                         </div>
                                                     );
                                                 })}
-                                                {!STEPS.some(s => ['engagement', 'bride_haldi', 'groom_haldi', 'mehendi', 'sangeeth', 'wedding', 'reception'].includes(s) && (selections[s] || []).length > 0) && (
+                                                {!['engagement', 'bride_haldi', 'bride', 'groom_haldi', 'groom', 'mehendi', 'sangeeth', 'wedding', 'vratham', 'reception'].some(s => (selections[s] || []).length > 0) && (
                                                     <span className="text-white/30 text-xs italic">No event services selected.</span>
                                                 )}
+
+                                                {/* Pre Wedding Preview addition */}
+                                                {selections.prewedding && (
+                                                    <div className="border-b border-white/5 pb-4 last:border-0 last:pb-0">
+                                                        <p className="text-white font-semibold text-sm mb-2">Pre-Wedding Shoot</p>
+                                                        <div className="flex justify-between items-center text-xs py-0.5 pl-3">
+                                                            <span className="text-white/50 flex items-center gap-1.5">
+                                                                <span className="text-gold/50">•</span>
+                                                                {selections.prewedding === 'prewedding_photo' ? 'Photography Only' : 'Photography & Video'}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
+                                        </div>
+
+                                        {/* Deliverables Preview */}
+                                        <div className="glass p-5 rounded-xl border border-white/5 h-fit mt-6">
+                                            <h4 className="text-gold text-xs uppercase tracking-[0.2em] mb-4 font-bold border-b border-gold/10 pb-2">Deliverables</h4>
+                                            <ul className="flex flex-col gap-3">
+                                                {getDeliverables(selections).map((item, i) => (
+                                                    <li key={i} className="flex gap-3 text-xs text-white/70">
+                                                        <span className="text-gold flex-shrink-0 mt-0.5">•</span>
+                                                        <span>{item}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    {/* T&C in Preview */}
+                                    <div className="px-8 pb-6">
+                                        <div className="border border-white/8 rounded-xl p-5">
+                                            <h4 className="text-gold text-xs uppercase tracking-widest font-bold mb-4 border-b border-gold/10 pb-2">Terms &amp; Conditions</h4>
+                                            <ol className="flex flex-col gap-2">
+                                                {TERMS.map((t, i) => (
+                                                    <li key={i} className="flex gap-3 text-xs text-white/50 leading-relaxed">
+                                                        <span className="text-gold font-bold flex-shrink-0">{i + 1}.</span>
+                                                        <span>{t}</span>
+                                                    </li>
+                                                ))}
+                                            </ol>
                                         </div>
                                     </div>
                                 </div>
