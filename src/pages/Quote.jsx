@@ -880,7 +880,7 @@ export default function QuotePage() {
             albumQty.album_premium > 0 ? `Premium x${albumQty.album_premium} (Rs.${(albumQty.album_premium * 20000).toLocaleString('en-IN')})` : null,
         ].filter(Boolean).join(', ') || 'None';
 
-        const serviceLabel = { candid_photo: 'Candid Photography', traditional_photo: 'Traditional Photography', candid_video: 'Cinematic Video', traditional_video: 'Traditional Video' };
+        const serviceLabel = { candid_photo: 'Candid Photo', traditional_photo: 'Trad Photo', candid_video: 'Cinematic Video', traditional_video: 'Trad Video' };
         const eventLines = ['engagement', 'bride_haldi', 'bride', 'groom_haldi', 'groom', 'mehendi', 'sangeeth', 'wedding', 'vratham', 'reception']
             .map(ev => {
                 const evSel = (selections[ev] || []);
@@ -888,39 +888,43 @@ export default function QuotePage() {
 
                 const svcs = evSel.map(svc => {
                     const cnt = cameraCount[`${ev}_${svc}`] || 1;
-                    return `${serviceLabel[svc] || svc} x${cnt}`;
-                }).join(', ');
-                return `• ${(STEP_LABELS[ev] || ev)}: ${svcs}`;
+                    return `${serviceLabel[svc] || svc} (x${cnt})`;
+                }).join('  |  ');
+                return `🔹 *${(STEP_LABELS[ev] || ev)}*\n      ${svcs}`;
             })
             .filter(Boolean);
 
         if (selections.prewedding) {
             const lbl = selections.prewedding === 'prewedding_photo' ? 'Photography Only' : 'Photography & Video';
-            eventLines.push(`• Pre-Wedding: ${lbl}`);
+            eventLines.push(`🔹 *Pre-Wedding Shoot*\n      ${lbl}`);
         }
 
-        const eventLinesString = eventLines.join('\n') || '  * None selected';
-
-        const droneLines = (selections.drone || []).length ? `\n*Drone Coverage:* ${selections.drone.map(e => STEP_LABELS[e] || e).join(', ')} (Rs.${((selections.drone || []).length * 10000).toLocaleString('en-IN')})` : '';
+        const eventLinesString = eventLines.join('\n\n') || '  None selected';
 
         const msg =
-            `*New Quote Request - Landscape Weddings*\n\n` +
-            `Bride: ${form.brideName}\n` +
-            `Groom: ${form.groomName}\n` +
-            `Phone: ${phoneFormatted}\n` +
-            `Email: ${form.email}\n` +
-            `Wedding Date: ${form.date || 'Not specified'}\n` +
-            `Location: ${form.location || 'Not specified'}\n` +
-            `No. of Events: ${form.events || 'Not specified'}\n\n` +
-            `Photography: ${selections.photography === 'candid' ? 'Candid' : selections.photography === 'traditional' ? 'Traditional' : 'Not selected'}\n\n` +
-            `Event Coverage:\n${eventLinesString}\n\n` +
-            `Drone Coverage: ${(selections.drone || []).length > 0 ? (selections.drone || []).map(ev => STEP_LABELS[ev] || ev).join(', ') + ` (Rs.${((selections.drone || []).length * 10000).toLocaleString('en-IN')})` : 'None'}\n\n` +
-            `Web Live: ${(selections.weblive || []).length > 0 ? (selections.weblive || []).map(ev => STEP_LABELS[ev] || ev).join(', ') + ` (Rs.${((selections.weblive || []).length * 8000).toLocaleString('en-IN')})` : 'None'}\n\n` +
-            `Delivery Timeline: ${selections.delivery === 'delivery_30days' ? 'Within 30 Days (Rs.80,000)' : selections.delivery === 'delivery_6months' ? 'Within 6 Months (Rs.40,000)' : 'Not selected'}\n\n` +
-            `Album: ${albumLines}\n\n` +
-            `*Estimated Total: Rs.${total.toLocaleString('en-IN')}*\n` +
+            `✨ *NEW QUOTE — LANDSCAPE WEDDINGS* ✨\n\n` +
+            `*👤 CLIENT DETAILS*\n` +
+            `Bride: ${form.brideName || '-'}\n` +
+            `Groom: ${form.groomName || '-'}\n` +
+            `📞 Phone: ${phoneFormatted}\n` +
+            `✉️ Email: ${form.email || '-'}\n` +
+            `📅 Date: ${form.date || '-'}\n` +
+            `📍 Location: ${form.location || '-'}\n` +
+            `🎉 Events: ${form.events || '-'}\n\n` +
+            `*📸 PRIMARY PREFERENCE*\n` +
+            `Style: ${selections.photography === 'candid' ? 'Candid Photography' : selections.photography === 'traditional' ? 'Traditional Photography' : '-'}\n\n` +
+            `*🎥 EVENT COVERAGE*\n` +
+            `${eventLinesString}\n\n` +
+            `*🚁 ADD-ONS*\n` +
+            `Drone Coverage: ${(selections.drone || []).length > 0 ? (selections.drone || []).map(ev => STEP_LABELS[ev] || ev).join(', ') : 'None'}\n` +
+            `Web Live: ${(selections.weblive || []).length > 0 ? (selections.weblive || []).map(ev => STEP_LABELS[ev] || ev).join(', ') : 'None'}\n\n` +
+            `*📦 FINAL DELIVERABLES*\n` +
+            `Timeline: ${selections.delivery === 'delivery_30days' ? 'Within 30 Days' : selections.delivery === 'delivery_6months' ? 'Within 6 Months' : '-'}\n` +
+            `Albums: ${albumLines}\n\n` +
+            `*💰 ESTIMATED TOTAL*\n` +
+            `*Rs. ${total.toLocaleString('en-IN')}*\n` +
             `_(Final pricing confirmed after consultation)_\n\n` +
-            `_Sent from Quote Builder on landscapeweddings.com_`;
+            `_Sent from landscapeweddings.com_`;
 
         await generateQuotePDF();
         sendToWhatsApp(msg);
