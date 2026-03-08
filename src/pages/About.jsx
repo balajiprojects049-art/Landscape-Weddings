@@ -18,11 +18,11 @@ function Reveal({ children, delay = 0, className = '' }) {
 }
 
 const timeline = [
-    { year: '2012', title: 'The Beginning', desc: 'Founded with a single camera and a vision to document weddings as cinematic art, not just events.' },
-    { year: '2015', title: 'First Award', desc: 'Recognized at the South India Wedding Photography Awards for Best Candid Photography.' },
-    { year: '2018', title: 'Studio Expansion', desc: 'Launched our full Cinematic Films division with a dedicated post-production team.' },
-    { year: '2021', title: 'National Recognition', desc: 'Featured in Vogue India and named one of the Top 10 Wedding Studios in India.' },
-    { year: '2024', title: 'Today & Beyond', desc: '500+ weddings documented, an international portfolio, and an unwavering commitment to royal excellence.' },
+    { year: '2017', title: 'The Journey Begins', desc: 'Stepped into the world of wedding photography with a passion to capture raw emotions and turn them into visual storytelling.' },
+    { year: '2020', title: 'Establishing Roots', desc: 'Opened our very first independent studio in Guntur, laying the foundation for our luxury cinematic vision.' },
+    { year: '2022', title: 'City of Pearls', desc: 'Expanded our premium photography services and team footprint into the vibrant city of Hyderabad.' },
+    { year: '2025', title: 'Coastal Expansion', desc: 'Grew the luxury brand across Andhra Pradesh by opening dedicated branches in Rajahmundry & Vizag.' },
+    { year: '2026', title: 'The Next Chapter', desc: 'Continued our remarkable growth scale by proudly launching new studio operations in Vijayawada.' },
 ];
 
 const team = [
@@ -73,7 +73,7 @@ export default function About() {
                                     />
                                 </div>
                                 <div className="absolute -bottom-4 -right-4 glass border border-gold/20 rounded-xl p-5 shadow-gold">
-                                    <p className="font-cinzel text-3xl font-bold text-gold">12+</p>
+                                    <p className="font-cinzel text-3xl font-bold text-gold">9+</p>
                                     <p className="text-white/50 text-xs uppercase tracking-widest">Years of Legacy</p>
                                 </div>
                             </div>
@@ -96,7 +96,7 @@ export default function About() {
                             </Reveal>
                             <Reveal delay={0.3}>
                                 <p className="text-white/50 leading-relaxed font-light">
-                                    Over 12 years, we have built a team of visual artists, storytellers, and emotion-catchers who bring their whole heart to every single wedding. Our philosophy is simple: <strong className="text-white font-medium">feel first, shoot second.</strong>
+                                    Over 9 years, we have built a team of visual artists, storytellers, and emotion-catchers who bring their whole heart to every single wedding. Our philosophy is simple: <strong className="text-white font-medium">feel first, shoot second.</strong>
                                 </p>
                             </Reveal>
                             <Reveal delay={0.4}>
