@@ -66,7 +66,7 @@ export default function About() {
                             <div className="relative">
                                 <div className="w-full aspect-[3/4] relative rounded-2xl overflow-hidden">
                                     <img
-                                        src="/IMG_0438.JPG.jpeg"
+                                        src="/Founder.jpeg"
                                         alt="Founder"
                                         loading="lazy"
                                         className="absolute inset-0 w-full h-full object-cover"
