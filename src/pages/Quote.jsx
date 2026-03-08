@@ -499,12 +499,7 @@ export default function QuotePage() {
             docObj.setLineWidth(0.1);
             docObj.rect(6.5, 6.5, W - 13, H - 13); // Double line effect
 
-            // ── WATERMARK ────────────────────────────────────────────────────────
-            if (logoData) {
-                docObj.setGState(new docObj.GState({ opacity: 0.15 }));
-                docObj.addImage(logoData, 'PNG', (W - wW) / 2, (H - wH) / 2 + 10, wW, wH, undefined, 'FAST');
-                docObj.setGState(new docObj.GState({ opacity: 1.0 }));
-            }
+
 
             // ── FOOTER ───────────────────────────────────────────────────────────
             docObj.setFillColor(...headerBg);
