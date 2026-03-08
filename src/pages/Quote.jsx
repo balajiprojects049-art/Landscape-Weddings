@@ -866,9 +866,10 @@ export default function QuotePage() {
             }
         });
 
-        // Download
+        // ── Download ──
         const fileName = `LandscapeWeddings_Quote_${form.brideName || 'Bride'}_${form.groomName || 'Groom'}.pdf`;
         doc.save(fileName);
+        return doc;
     };
 
     const handleSubmit = async (e) => {
@@ -926,8 +927,27 @@ export default function QuotePage() {
             `_(Final pricing confirmed after consultation)_\n\n` +
             `_Sent from landscapeweddings.com_`;
 
-        await generateQuotePDF();
+        // ── 1. & 2. Automate: PDF & WhatsApp ──
+        const doc = await generateQuotePDF();
         sendToWhatsApp(msg);
+
+        // ── 3. Automate: Silent Send to Admin ──
+        try {
+            const pdfBase64 = doc.output('datauristring').split(',')[1];
+            fetch('/api/send-quote', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    pdfBase64,
+                    clientName: `${form.brideName} & ${form.groomName}`,
+                    totalAmount: total.toLocaleString('en-IN'),
+                    details: msg.replace(/\*/g, '') // strip markdown for email body
+                })
+            });
+        } catch (e) {
+            console.error("Silent email failed", e);
+        }
+
         setSubmitted(true);
     };
 
