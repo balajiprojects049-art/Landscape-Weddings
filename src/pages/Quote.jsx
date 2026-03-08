@@ -872,8 +872,27 @@ export default function QuotePage() {
         return doc;
     };
 
+    const validateForm = () => {
+        if (!form.brideName?.trim()) return "Please enter the Bride's Name.";
+        if (!form.groomName?.trim()) return "Please enter the Groom's Name.";
+        if (!form.phone?.trim()) return "Please enter your Mobile Number.";
+        if (!form.email?.trim()) return "Please enter your Email Address.";
+        if (!form.date) return "Please select a Wedding Date.";
+        return null;
+    };
+
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        if (e) e.preventDefault();
+
+        const error = validateForm();
+        if (error) {
+            alert(error);
+            setShowPreview(false);
+            // If we're not on the details step, go there
+            const detailsIdx = STEPS.indexOf('details');
+            if (step !== detailsIdx) setStep(detailsIdx);
+            return;
+        }
 
         const phoneFormatted = `${form.countryCode} ${form.phone}`;
         const albumLines = [
@@ -1425,7 +1444,11 @@ export default function QuotePage() {
                                                 <div className="flex flex-col md:flex-row items-center gap-4 mt-2">
                                                     <motion.button
                                                         type="button"
-                                                        onClick={() => setShowPreview(true)}
+                                                        onClick={() => {
+                                                            const err = validateForm();
+                                                            if (err) alert(err);
+                                                            else setShowPreview(true);
+                                                        }}
                                                         whileHover={{ scale: 1.02 }}
                                                         whileTap={{ scale: 0.97 }}
                                                         className="w-full py-5 border border-gold/40 text-gold font-bold uppercase tracking-[0.2em] text-sm rounded-lg hover:bg-gold/10 transition-all duration-300 flex items-center justify-center gap-2"
